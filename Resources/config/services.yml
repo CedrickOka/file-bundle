@@ -1,0 +1,51 @@
+services:
+# Factory
+    oka_file.object_manager:
+        class: Doctrine\Common\Persistence\ObjectManager
+        arguments: ['']
+        public: false
+
+# Form
+    oka_file.image.form_type:
+        class: Oka\FileBundle\Form\Type\ImageFormType
+        arguments: [ "%oka_file.image.default_class%" ]
+        tags:
+          - { name: form.type }
+
+# Services
+    oka_file.uploaded_image.manager:
+        class: Oka\FileBundle\Service\UploadedImageManager
+        arguments: [ '%oka_file.image.uploaded.thumbnail_factory%', '%oka_file.image.thumbnail.mode%', '%oka_file.image.thumbnail.quality%' ]
+
+# Listener
+    oka_file.uploaded_image.event_listener:
+        class: Oka\FileBundle\EventListener\UploadedImageListener
+        arguments: [ '@oka_file.uploaded_image.manager', '%oka_file.image.uploaded.detect_dominant_color%' ]
+        tags:
+          - { name: kernel.event_subscriber }
+
+# Routing
+    oka_file.file_uri.routing_loader:
+        class: Oka\FileBundle\Routing\FileUriLoader
+        arguments: [ [], '%kernel.environment%', '%oka_file.image.thumbnail.mode%', '%oka_file.image.thumbnail.quality%' ]
+        public: false
+        tags:
+          - { name: routing.loader }
+
+#    oka_file.image_upload.form_type:
+#        class: Oka\FileBundle\Form\Type\UploadImageFormType
+#        arguments: [ "%oka_file.image.default_class%" ]
+#        tags:
+#          - { name: form.type }
+#
+#    oka_file.video.form_type:
+#        class: Oka\FileBundle\Form\Type\VideoFormType
+#        arguments: [ "%oka_file.video.default_class%" ]
+#        tags:
+#          - { name: form.type }
+#
+#    oka_file.video_upload.form_type:
+#        class: Oka\FileBundle\Form\Type\UploadVideoFormType
+#        arguments: [ "%oka_file.video.default_class%" ]
+#        tags:
+#          - { name: form.type }

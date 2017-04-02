@@ -1,0 +1,39 @@
+services:
+# Services
+#    oka_file.file_manager.default:
+#        class: Oka\FileBundle\Model\FileManager
+#        arguments: [ '@oka_file.object_manager' ]
+#        public: false
+#        lazy: true
+
+    oka_file.image_manager:
+        class: Oka\FileBundle\Doctrine\ImageManager
+        arguments: [ '@oka_file.object_manager', '%oka_file.image.default_class%' ]
+        lazy: true
+
+#    oka_file.audio_manager.default:
+#        class: Oka\FileBundle\Doctrine\AudioManager
+#        arguments: [ '@oka_file.object_manager', '%oka_file.entity.audio.class_name%' ]
+#
+#    oka_file.video_manager.default:
+#        class: Oka\FileBundle\Doctrine\VideoManager
+#        arguments: [ '@oka_file.object_manager', '%oka_file.entity.video.class_name%' ]
+#
+#    oka_file.others_manager.default:
+#        class: Oka\FileBundle\Doctrine\OthersManager
+#        arguments: [ '@oka_file.object_manager', '%oka_file.entity.others.class_name%' ]
+
+# Listener
+    oka_file.file.doctrine_listener:
+        class: Oka\FileBundle\Doctrine\FileListener
+        arguments: [ '@event_dispatcher', '%oka_file.container.root_path%', '%oka_file.container.data_dirnames%', '%oka_file.container.web_server.host%', '%oka_file.container.web_server.port%', '%oka_file.container.web_server.secure%' ]
+        public: false
+        tags:
+          - { name: doctrine.event_subscriber }
+
+    oka_file.image.doctrine_listener:
+        class: Oka\FileBundle\Doctrine\ImageListener
+        arguments: [ '%oka_file.image.thumbnail.mode%', '%oka_file.image.thumbnail.quality%' ]
+        public: false
+        tags:
+          - { name: doctrine.event_subscriber }

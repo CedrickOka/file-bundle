@@ -1,0 +1,15 @@
+Oka\FileBundle\Model\Image:
+    properties:
+        uploadedFile:
+            - Image:
+                mimeTypes: [ 'image/*', 'application/x-shockwave-flash', 'application/octet-stream' ]
+                mimeTypesMessage: 'Seul les fichiers de type image sont acceptés.'
+                groups: [ 'Upload', 'Default' ]
+
+Oka\FileBundle\Model\Video:
+    properties:
+        uploadedFile:
+            - File:
+                # mimeTypes: [ 'image/png', 'image/jpeg', 'image/gif', 'image/psd', 'image/bmp', 'image/tiff', 'image/jp2', 'image/iff', 'image/vnd.wap.wbmp', 'image/xbm', 'image/vnd.microsoft.icon', 'application/x-shockwave-flash', 'application/octet-stream' ]
+                # mimeTypesMessage: 'Seul les fichiers de type video sont acceptés.'
+                groups: [ 'Upload', 'Default' ]

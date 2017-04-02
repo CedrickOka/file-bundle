@@ -1,0 +1,54 @@
+{
+	"name" : "oka/file-bundle",
+	"description" : "Symfony Oka file bundle",
+	"type" : "symfony-bundle",
+	"license" : "MIT",
+	"keywords" : [
+		"file",
+		"image",
+		"audio",
+		"video",
+		"upload",
+		"manipulation",
+		"thumbnail",
+		"cropping",
+		"behaviors"
+	],
+	"authors" : [{
+			"name" : "Cedrick Oka",
+			"email" : "cedrickoka@fermentuse.com"
+		}
+	],
+	"homepage" : "https://github.com/CedrickOka/oka-file",
+	"minimum-stability" : "dev",
+	"require" : {
+		"php" : "^5.5 || ^7.0",
+		"ext-imagick" : ">=6.2.9",
+		"symfony/symfony" : "2.8.*",
+		"doctrine/orm" : "^2.4.8",
+		"doctrine/doctrine-bundle" : "~1.4",
+		"imagine/imagine" : "^0.6.3",
+		"coka/pagination-bundle" : "~1.0"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Oka\\FileBundle\\" : ""
+		},
+		"exclude-from-classmap" : [
+			"/Tests/"
+		]
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"Oka\\PaginationBundle\\Tests\\" : "Tests/"
+		}
+	},
+	"extra" : {
+		"branch-alias" : {
+			"dev-master" : "1.x.x-dev"
+		}
+	},
+	"support" : {
+		"docs" : "https://github.com/CedrickOka/oka-file/blob/master/Resources/doc/index.md"
+	}
+}

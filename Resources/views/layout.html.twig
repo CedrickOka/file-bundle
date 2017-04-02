@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="fr"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="fr"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
+		<title>{% block title %}File Manager{% endblock %}</title>
+		
+		{% block stylesheets %}
+			<!-- Included CSS Files, use foundation.css if you do not want minified code -->
+			<link rel="stylesheet" href="{{ asset('bundles/okafile/foundation/stylesheets/foundation.min.css') }}" type="text/css">
+			<link rel="stylesheet" href="{{ asset('bundles/okafile/foundation/stylesheets/app.css') }}" type="text/css">
+			<link rel="stylesheet" href="{{ asset('bundles/okafile/fonts/awesome/css/font-awesome.css') }}" type="text/css">
+			<link rel="stylesheet" href="{{ asset('bundles/okafile/css/main.css') }}" type="text/css">
+		{% endblock %}
+		
+		<!-- Custom Modernizr for Foundation -->
+		<script src="{{ asset('bundles/okafile/foundation/javascripts/modernizr.foundation.js') }}" type="text/javascript"></script>
+	</head>
+	
+	<body>
+		<!-- Page Layout HTML here -->
+		{% block body %}{% endblock %}
+		
+		{% block footer %}
+			<div id="show-picture-original-modal" class="reveal-modal xlarge">
+				<div class="row">
+					<div class="twelve columns">
+						<img src="#">
+					</div>
+				</div>
+				<a class="close-reveal-modal">&#215;</a>
+			</div>
+		{% endblock %}
+		
+		{% block javascripts %}
+			<script src="{{ asset('bundles/okafile/foundation/javascripts/jquery.js') }}" type="text/javascript"></script>
+			<script src="{{ asset('bundles/okafile/foundation/javascripts/foundation.min.js') }}" type="text/javascript"></script>
+			<script src="{{ asset('bundles/okafile/foundation/javascripts/app.js') }}" type="text/javascript"></script>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$('.show-picture-original').click(function(e){
+						e.preventDefault();
+						var a = $(this);
+						var modal = $('#show-picture-original-modal');
+						
+						modal.find('img').each(function(){
+							$(this).attr('src', a.attr('data-picture-original'));
+						});
+						modal.reveal();
+					});
+				});
+			</script>
+		{% endblock %}
+	</body>
+</html>

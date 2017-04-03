@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * 
  * @author cedrick
  * 
+ * @deprecated Not use.
  */
 class PictureRefactoryCommand extends ContainerAwareCommand
 {

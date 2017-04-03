@@ -12,6 +12,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * 
  * @author cedrick
  * 
+ * @deprecated Not use.
  */
 class GenerateFileSystemCommand extends ContainerAwareCommand
 {

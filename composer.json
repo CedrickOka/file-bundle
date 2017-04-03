@@ -1,5 +1,5 @@
 {
-	"name" : "oka/file-bundle",
+	"name" : "coka/file-bundle",
 	"description" : "Symfony Oka file bundle",
 	"type" : "symfony-bundle",
 	"license" : "MIT",

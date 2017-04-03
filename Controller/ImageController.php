@@ -26,10 +26,6 @@ class ImageController extends Controller
 	 */
 	public function listAction(Request $request)
 	{
-		return $this->redirect($this->generateUrl('oka_file_extra_bot_service_image', [
-				'filename' => '1.jpeg'
-		], UrlGeneratorInterface::ABSOLUTE_PATH), 302);
-		
 		$result = $this->get('oka_pagination.manager')->paginate($this->getParameter('oka_file.image.default_class'), $request, [], ['createdAt' => 'DESC']);
 		
 		return $this->render('OkaFileBundle:Image:list.html.twig', [

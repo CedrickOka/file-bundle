@@ -11,6 +11,7 @@ use Oka\FileBundle\OkaFileEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Oka\FileBundle\Utils\FileUtil;
 
 /**
  * 
@@ -33,6 +34,11 @@ class FileListener implements EventSubscriber
 	 * @var array $dataDirnames
 	 */
 	protected $dataDirnames;
+	
+	/**
+	 * @var array $entityDirnames
+	 */
+	protected $entityDirnames;
 	
 	/**
 	 * @var string $host
@@ -59,16 +65,17 @@ class FileListener implements EventSubscriber
 	 */
 	protected $systemOwner;
 	
-	public function __construct(EventDispatcherInterface $dispatcher, $rootPath, array $dataDirnames, $host, $port, $secure) {
+	public function __construct(EventDispatcherInterface $dispatcher, $rootPath, array $dataDirnames, array $entityDirnames, $host, $port, $secure) {
 		$this->dispatcher = $dispatcher;
 		$this->rootPath = $rootPath;
 		$this->dataDirnames = $dataDirnames;
+		$this->entityDirnames = $entityDirnames;
 		$this->host = $host;
 		$this->port = $port;
 		$this->secure = $secure;
 		
 		$this->fs = new Filesystem();
-		$this->systemOwner = exec('ps axo user,comm | grep -E \'[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]ginx\' | grep -v root | head -1 | cut -d\  -f1');
+		$this->systemOwner = FileUtil::getSystemOwner();
 	}
 	
 	/**
@@ -146,20 +153,28 @@ class FileListener implements EventSubscriber
 	
 	protected function loadContainerConfig(FileInterface $entity) {
 		$entity->setRootPath($this->rootPath);
-		$entity->setSecure($this->secure);
 		$entity->setHost($this->host);
 		$entity->setPort($this->port);
+		$entity->setSecure($this->secure);
 		$entity->setFileSystem($this->fs);
 		$entity->setSystemOwner($this->systemOwner);
 		
-		foreach ($this->dataDirnames as $key => $dirname) {
+		$dirname = null;
+		$entityClass = get_class($entity);
+		
+		foreach ($this->dataDirnames as $key => $value) {
 			$className = 'Oka\FileBundle\Model\\'.ucfirst($key).'Interface';
 			
 			if ($entity instanceof $className) {
-				$entity->setDirname($dirname);
+				$dirname = $value;
 				break;
 			}
 		}
+		
+		if (isset($this->entityDirnames[$entityClass])) {
+			$dirname = $dirname !== null ? $dirname . '/' . $this->entityDirnames[$entityClass] : $this->entityDirnames[$entityClass];
+		}
+		$entity->setDirname($dirname);
 	}
 	
 	public function getSubscribedEvents()

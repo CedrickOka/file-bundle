@@ -1,6 +1,12 @@
 Changelog
 =========
 
+#### 1.0.3 (2017-04-04)
+
+* Allows to specify dirname for file entity.
+* Improve filename detection during an upload.
+* Added Command for configure file container.
+
 #### 1.0.O (2017-04-03)
 
 * Allows to upload files.

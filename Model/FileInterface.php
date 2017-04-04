@@ -111,9 +111,11 @@ interface FileInterface
 	 * 
 	 * @param string $dirs
 	 * @param number $mode
+	 * @param string $owner
+	 * @param string $group
 	 * @param boolean $recursive
 	 */
-	public function mkdir($dirs, $mode = 0755, $recursive = true);
+	public function mkdir($dirs, $mode = 0755, $owner = null, $group = null, $recursive = true);
 	
 	/**
 	 * Move file uploaded in final target

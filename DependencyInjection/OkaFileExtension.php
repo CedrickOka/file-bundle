@@ -44,6 +44,7 @@ class OkaFileExtension extends Extension
 		$container->setParameter('oka_file.container.root_path', $rootPath);
 		
 		$container->setParameter('oka_file.container.data_dirnames', $config['container_config']['data_dirnames']);
+		$container->setParameter('oka_file.container.entity_dirnames', $config['container_config']['entity_dirnames']);
 		foreach ($config['container_config']['data_dirnames'] as $key => $dirname) {
 			$container->setParameter('oka_file.container.data_dirname.'.$key, $dirname);
 		}

@@ -111,6 +111,22 @@ class Configuration implements ConfigurationInterface
 						->append($this->createStorageConfigDataDirnameNodeDefinition('others'))
 					->end()
 				->end()
+				->arrayNode('entity_dirnames')
+					->useAttributeAsKey('name')
+					->treatNullLike([])
+					->prototype('scalar')
+						->validate()
+							->ifTrue(function($value){
+								if ($value) {
+									$i = strlen($value) - 1;
+									return ($value[0] == '/' || $value[0] == '\\') || ($value[$i] == '/' || $value[$i] == '\\');
+								}
+								return false;
+							})
+							->thenInvalid('Invalid dirname "%s". The path should not start and end with "/" or "\"')
+						->end()
+					->end()
+				->end()
 				->arrayNode('web_server')
 					->addDefaultsIfNotSet()
 					->isRequired()

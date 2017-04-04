@@ -433,11 +433,11 @@ abstract class File implements FileInterface
 		return $query;	
 	}
 	
-	public function mkdir($dirs, $mode = 0755, $recursive = true)
+	public function mkdir($dirs, $mode = 0755, $owner = null, $group = null, $recursive = true)
 	{
 		$this->fs->mkdir($dirs, $mode);
-		$this->fs->chown($dirs, $this->systemOwner, $recursive);
-		$this->fs->chgrp($dirs, $this->systemOwner, $recursive);		
+		$this->fs->chown($dirs, $owner ?: $this->systemOwner, $recursive);
+		$this->fs->chgrp($dirs, $group ?: $this->systemOwner, $recursive);
 	}
 	
 	protected function prepareDeletionFileInContainer()
@@ -458,7 +458,7 @@ abstract class File implements FileInterface
 			$this->extension = $this->uploadedFile->getExtension() ?: '';
 		}
 		if ($this->name === null) {
-			$this->name = $this->uploadedFile->getFilename() ?: $this->uploadedFile->getClientOriginalName();
+			$this->name = $this->uploadedFile->getClientOriginalName() ?: $this->uploadedFile->getFilename();
 		}
 		
 		$this->mimetype = $this->uploadedFile->getMimeType();

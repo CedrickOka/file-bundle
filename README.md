@@ -1,5 +1,5 @@
-OkaFileManagerBundle
-====================
+OkaFileBundle
+=============
 
 This bundle allow to manage file.
 

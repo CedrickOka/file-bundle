@@ -42,6 +42,11 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 	 */
 	protected $thumbnailQuality;
 	
+	public function __construct()
+	{
+		$this->dominantColor = 'ffffff';
+	}
+	
 	/**
 	 * @return integer
 	 */

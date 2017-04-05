@@ -32,6 +32,13 @@ interface FileInterface
 	public function getRealPath();
 	
 	/**
+	 * Get the absolutes path of the file
+	 * 
+	 * @return array
+	 */
+	public function getRealPaths();
+	
+	/**
 	 * Get the file URI
 	 * 
 	 * @return string

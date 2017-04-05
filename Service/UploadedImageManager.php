@@ -2,6 +2,8 @@
 namespace Oka\FileBundle\Service;
 
 use Oka\FileBundle\Model\ImageManipulatorInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Oka\FileBundle\Model\ImageInterface;
 
 /**
  * 
@@ -58,7 +60,7 @@ class UploadedImageManager
 	/**
 	 * @param ImageManipulatorInterface $entity
 	 */
-	public function buildThumbnails(ImageManipulatorInterface $entity, $refresh = false)
+	public function buildThumbnails(ImageInterface $entity, $refresh = false)
 	{
 		$className = get_class($entity);
 		
@@ -66,20 +68,23 @@ class UploadedImageManager
 			return false;
 		}
 		
-// 		$fs = new Filesystem();
-
+		$fs = new Filesystem();
+		$thumbnailsBuilded = [];
+		
 		foreach ($this->thumbnailFactory[$className] as $factory) {
 			$mode = $factory['mode'] === null ? $this->thumbnailMode : $factory['mode'];
-			$quality = $factory['quality'] === null ? $this->thumbnailQuality: $factory['quality'];
+			$quality = $factory['quality'] === null ? $this->thumbnailQuality : $factory['quality'];
+			$realPath = $entity->getRealPathFor($factory['width'], $factory['height'], $mode, $quality);
 			
 			// TODO Check if the thumbnails already exists
-// 			if ($fs->exists($entity->getRealPathFor($mode, $quality, $factory['width'], $factory['height']))) {
-// 				continue;
-// 			}
-			
-			$entity->thumbnail($factory['width'], $factory['height'], $mode, $quality);
+			if (!$fs->exists($realPath)) {
+				if ($entity instanceof ImageManipulatorInterface) {
+					$entity->thumbnail($factory['width'], $factory['height'], $mode, $quality);
+					$thumbnailsBuilded[] = $realPath;
+				}
+			}
 		}
 		
-		return true;
+		return $thumbnailsBuilded;
 	}
 }

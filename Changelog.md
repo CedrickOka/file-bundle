@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 1.0.4 (2017-04-05)
+* Added Command for build image thumbnails.
+* Configures the owner of files after upload.
+
 #### 1.0.3 (2017-04-04)
 
 * Allows to specify dirname for file entity.

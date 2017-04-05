@@ -383,10 +383,6 @@ abstract class File implements FileInterface
 			$files[] = $file->getRealPath();
 		}
 		
-		dump($this->getPath());
-		dump($this->getFileName());
-		dump($files);
-		
 		return $files;
 	}
 	

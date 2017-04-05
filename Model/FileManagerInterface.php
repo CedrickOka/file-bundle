@@ -16,6 +16,11 @@ interface FileManagerInterface
 	public function getClass();
 	
 	/**
+	 * @return string
+	 */
+	public function setClass($class);
+	
+	/**
 	 * @return ObjectManager
 	 */
 	public function getObjectManager();

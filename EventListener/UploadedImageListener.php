@@ -54,7 +54,7 @@ class UploadedImageListener implements EventSubscriberInterface
 	{
 		return [
 				OkaFileEvents::UPLOADED_FILE_MOVING => 'onUploadedFileMoving',
-				OkaFileEvents::UPLOADED_FILE_MOVED => 'onUploadedFileMoved'
+				OkaFileEvents::UPLOADED_FILE_MOVED => ['onUploadedFileMoved', 5]
 		];
 	}
 }

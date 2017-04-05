@@ -34,12 +34,17 @@ abstract class FileManager implements FileManagerInterface
 	 */
 	public function __construct(ObjectManager $om, $class) {
 		$this->objectManager = $om;
-		$this->repository = $om->getRepository($class);
-		$this->class = $om->getClassMetadata($class)->getName();
+		$this->setClass($class);
 	}
 	
 	public function getClass() {
 		return $this->class;
+	}
+	
+	public function setClass($class) {
+		$this->repository = $this->objectManager->getRepository($class);
+		$this->class = $this->objectManager->getClassMetadata($class)->getName();
+		return $this;
 	}
 	
 	public function getObjectManager() {

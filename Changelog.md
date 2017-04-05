@@ -1,7 +1,16 @@
 Changelog
 =========
 
+#### 1.0.6 (2017-04-05)
+
+* Added Command for find dominant color of images.
+
+#### 1.0.5 (2017-04-05)
+
+* Fix ext-imagick minimal version.
+
 #### 1.0.4 (2017-04-05)
+
 * Added Command for build image thumbnails.
 * Configures the owner of files after upload.
 

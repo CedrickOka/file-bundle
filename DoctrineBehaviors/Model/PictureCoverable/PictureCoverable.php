@@ -1,7 +1,7 @@
 <?php
 namespace Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverable;
 
-use Oka\FileBundle\Model\ImageInterface;
+use Oka\FileBundle\Model\Image;
 
 /**
  * 
@@ -11,21 +11,21 @@ use Oka\FileBundle\Model\ImageInterface;
 trait PictureCoverable
 {	
 	/**
-	 * @var ImageInterface $pictureCover
+	 * @var Image $pictureCover
 	 */
 	protected $pictureCover;
 	
 	/**
-	 * @return ImageInterface
+	 * @return Image
 	 */
 	public function getPictureCover() {
 		return $this->pictureCover;
 	}
 	
 	/**
-	 * @param ImageInterface $pictureCover
+	 * @param Image $pictureCover
 	 */
-	public function setPictureCover(ImageInterface $pictureCover) {
+	public function setPictureCover(Image $pictureCover) {
 		$this->pictureCover = $pictureCover;
 		return $this;
 	}

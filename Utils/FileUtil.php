@@ -1,8 +1,6 @@
 <?php
 namespace Oka\FileBundle\Utils;
 
-use Imagine\Image\Box;
-use Imagine\Image\ImageInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**

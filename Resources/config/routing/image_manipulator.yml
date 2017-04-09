@@ -1,5 +1,5 @@
 # ImageController
 oka_file_image_crop:
-    pattern:  /image/crop/{id}
+    pattern:  /images/crop/{id}
     defaults: { _controller: 'OkaFileBundle:Image:crop' }
     methods: [GET, POST]

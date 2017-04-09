@@ -1,38 +1,38 @@
 oka_file_image_list:
-    pattern:  /image/list
+    pattern:  /images/list
     defaults: { _controller: 'OkaFileBundle:Image:list' }
     methods: GET
 
 oka_file_image_create:
-    pattern:  /image/create
+    pattern:  /images/create
     defaults: { _controller: 'OkaFileBundle:Image:create' }
     methods: [GET, POST]
 
 oka_file_image_show:
-    pattern:  /image/show/{id}
+    pattern:  /images/show/{id}
     defaults: { _controller: 'OkaFileBundle:Image:show' }
     methods: GET
 
 oka_file_image_update:
-    pattern:  /image/update/{id}
+    pattern:  /images/update/{id}
     defaults: { _controller: 'OkaFileBundle:Image:update' }
     methods: [GET, POST]
 
 oka_file_image_delete:
-    pattern:  /image/delete/{id}
+    pattern:  /images/delete/{id}
     defaults: { _controller: 'OkaFileBundle:Image:delete' }
     methods: [GET, DELETE]
 
 oka_file_image_upload:
-    pattern:  /image/upload
+    pattern:  /images/upload
     defaults: { _controller: 'OkaFileBundle:Image:upload' }
     methods: [GET, POST]
 
 oka_file_image_snapshot:
-    pattern:  /image/snapshot
+    pattern:  /images/snapshot
     defaults: { _controller: 'OkaFileBundle:Image:snapshot' }
 
 oka_file_image_delete_size:
-    pattern:  /image/delete/{id}/size/{width}/{height}
+    pattern:  /images/delete/{id}/size/{width}/{height}
     defaults: { _controller: 'OkaFileBundle:Image:deleteSize' }
     methods: [GET, DELETE]

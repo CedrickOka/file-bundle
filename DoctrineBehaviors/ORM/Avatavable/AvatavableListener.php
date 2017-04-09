@@ -20,25 +20,17 @@ class AvatavableListener extends AbstractListener
 	 */
 	protected $imageDefaultClass;
 	
-	public function __construct(/*ClassAnalyzer $classAnalyser,$isRecursive,  */array $mappings, $imageDefaultClass)
-	{	
+	public function __construct(array $mappings, $imageDefaultClass)
+	{
+		$this->mappings = $mappings;
 		$this->imageDefaultClass = $imageDefaultClass;
 	}
-	
-// 	public function __construct(ClassAnalyzer $classAnalyser, $isRecursive, $pictureDefaultClass, $rootDir, $dataDir, $uploadDir, $domain)
-// 	{
-// 		parent::__construct($classAnalyser, $isRecursive);
-	
-// 		$this->pictureDefaultClass = $pictureDefaultClass;
-// 		$this->uploadRootDir = $rootDir.$dataDir.$uploadDir;
-// 		$this->uploadDir = $uploadDir;
-// 		$this->domain = $domain;
-// 	}
 	
 	public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
 	{
 		$classMetadata = $eventArgs->getClassMetadata();
 		
+		/** @var \ReflectionClass $reflClass */
 		if (null === ($reflClass = $classMetadata->reflClass)) {
 			return;
 		}

@@ -25,7 +25,7 @@ class ImageThumbnailFactoryCommand extends ContainerAwareCommand
 		$this->setName('okafile:image:thumbnail:build')
 		->setDescription('Build thumbnails of images')
 		->setDefinition([
-				new InputArgument('class', InputArgument::OPTIONAL, 'Image class name', null)
+				new InputArgument('imageClass', InputArgument::OPTIONAL, 'Image class name', null)
 		])
 		->setHelp(<<<EOF
 Cette commande permet de minuaturiser les images dans les tailles définies dans le factory.
@@ -46,7 +46,7 @@ EOF
 		/** @var \Oka\FileBundle\Service\UploadedImageManager $uploadedImageManager */
 		$uploadedImageManager = $container->get('oka_file.uploaded_image.manager');
 
-		if ($class = $input->getArgument('class')) {
+		if ($class = $input->getArgument('imageClass')) {
 			$imageManager->setClass($class);
 		}
 
@@ -61,7 +61,7 @@ EOF
 					$output->writeln('No image to build.');
 					break;
 				}
-
+				
 				if (!empty($thumbnailsBuilded)) {
 					if (OutputInterface::VERBOSITY_NORMAL === $output->getVerbosity()) {
 						$output->writeln(sprintf(

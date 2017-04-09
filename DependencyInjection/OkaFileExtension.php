@@ -66,7 +66,7 @@ class OkaFileExtension extends Extension
 			$pictureCoverableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.picturecoverable_listener');
 			
 			// PictureCoverable Behavior Configuration
-			if ($config['behaviors']['picture_coverable']['enabled']) {
+			if ($config['behaviors']['picture_coverable']['enabled'] === true) {
 				$pictureCoverableListenerDefinition->replaceArgument(0, $config['behaviors']['picture_coverable']['mappings']);
 				$pictureCoverableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);				
 			} else {

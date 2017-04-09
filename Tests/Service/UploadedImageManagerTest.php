@@ -1,4 +1,6 @@
 <?php
+namespace Oka\FileBundle\Tests\Service;
+
 use Oka\FileBundle\Service\UploadedImageManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

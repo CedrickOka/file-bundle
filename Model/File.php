@@ -29,10 +29,10 @@ abstract class File implements FileInterface
 	protected $name;
 	
 	/**
-	 * @ORM\Column(type="string", nullable=true)
-	 * @var string $mimetype
+	 * @ORM\Column(name="mime_type", type="string", nullable=true)
+	 * @var string $mimeType
 	 */
-	protected $mimetype;
+	protected $mimeType;
 	
 	/**
 	 * @ORM\Column(type="string", nullable=true)
@@ -141,17 +141,17 @@ abstract class File implements FileInterface
 	/**
 	 * @return string
 	 */
-	public function getMimetype()
+	public function getMimeType()
 	{
-		return $this->mimetype;
+		return $this->mimeType;
 	}
 	
 	/**
-	 * @param string $mimetype
+	 * @param string $mimeType
 	 */
-	public function setMimetype($mimetype)
+	public function setMimeType($mimeType)
 	{
-		$this->mimetype = $mimetype;
+		$this->mimeType = $mimeType;
 		return $this;
 	}
 	
@@ -457,7 +457,7 @@ abstract class File implements FileInterface
 			$this->name = $this->uploadedFile->getClientOriginalName() ?: $this->uploadedFile->getFilename();
 		}
 		
-		$this->mimetype = $this->uploadedFile->getMimeType();
+		$this->mimeType = $this->uploadedFile->getMimeType();
 		$this->size = $this->uploadedFile->getSize();
 	}
 	

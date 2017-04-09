@@ -13,21 +13,15 @@ use Oka\FileBundle\DoctrineBehaviors\ORM\AbstractListener;
  * 
  */
 class PictureCoverableListener extends AbstractListener
-{
-	/**
-	 * @var array $mappings
-	 */
-	protected $mappings;
-	
+{	
 	/**
 	 * @var string $imageDefaultClass
 	 */
 	protected $imageDefaultClass;
 	
-	public function __construct(/*ClassAnalyzer $classAnalyser,$isRecursive,  */array $mappings, $imageDefaultClass)
+	public function __construct(array $mappings, $imageDefaultClass)
 	{
-// 		parent::__construct($classAnalyser, $isRecursive);
-		
+		$this->mappings = $mappings;
 		$this->imageDefaultClass = $imageDefaultClass;
 	}
 	
@@ -35,6 +29,7 @@ class PictureCoverableListener extends AbstractListener
 	{
 		$classMetadata = $eventArgs->getClassMetadata();
 		
+		/** @var \ReflectionClass $reflClass */
 		if (null === ($reflClass = $classMetadata->reflClass)) {
 			return;
 		}

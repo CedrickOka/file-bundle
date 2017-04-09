@@ -1,6 +1,16 @@
 Changelog
 =========
 
+#### 1.0.8 (2017-04-09)
+
+* Modify image routing
+* Added new `ImageUtils` class.
+* Fixed not mappings use in behaviors.
+
+#### 1.0.7 (2017-04-05)
+
+* Added default value for dominant color of image.
+
 #### 1.0.6 (2017-04-05)
 
 * Added Command for find dominant color of images.

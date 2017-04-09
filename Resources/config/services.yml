@@ -12,6 +12,12 @@ services:
         tags:
           - { name: form.type }
 
+#    oka_file.video.form_type:
+#        class: Oka\FileBundle\Form\Type\VideoFormType
+#        arguments: [ "%oka_file.video.default_class%" ]
+#        tags:
+#          - { name: form.type }
+
 # Services
     oka_file.uploaded_image.manager:
         class: Oka\FileBundle\Service\UploadedImageManager
@@ -31,21 +37,3 @@ services:
         public: false
         tags:
           - { name: routing.loader }
-
-#    oka_file.image_upload.form_type:
-#        class: Oka\FileBundle\Form\Type\UploadImageFormType
-#        arguments: [ "%oka_file.image.default_class%" ]
-#        tags:
-#          - { name: form.type }
-#
-#    oka_file.video.form_type:
-#        class: Oka\FileBundle\Form\Type\VideoFormType
-#        arguments: [ "%oka_file.video.default_class%" ]
-#        tags:
-#          - { name: form.type }
-#
-#    oka_file.video_upload.form_type:
-#        class: Oka\FileBundle\Form\Type\UploadVideoFormType
-#        arguments: [ "%oka_file.video.default_class%" ]
-#        tags:
-#          - { name: form.type }

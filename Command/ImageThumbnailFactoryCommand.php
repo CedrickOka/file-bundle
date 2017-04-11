@@ -68,7 +68,7 @@ EOF
 								'[<comment>%s</comment>] Image with path <info>%s</info>, <comment>%s</comment> thumbnails were created.',
 								date('H:i:s'),
 								$image->getRealPath(),
-								counnt($thumbnailsBuilded)
+								count($thumbnailsBuilded)
 								));
 					}
 				}

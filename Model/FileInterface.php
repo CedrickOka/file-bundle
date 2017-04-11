@@ -72,6 +72,12 @@ interface FileInterface
 	public function setLastModified();
 	
 	/**
+	 * Get the version of the file according to the update date
+	 * @return integer
+	 */
+	public function getVersion();
+	
+	/**
 	 * @param string $rootPath
 	 */
 	public function setRootPath($rootPath);

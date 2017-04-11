@@ -269,6 +269,15 @@ abstract class File implements FileInterface
 	
 	/**
 	 * {@inheritDoc}
+	 * @see \Oka\FileBundle\Model\FileInterface::getVersion()
+	 */
+	public function getVersion()
+	{
+		return $this->updatedAt instanceof \DateTime ? $this->updatedAt->getTimestamp() : null;
+	}
+	
+	/**
+	 * {@inheritDoc}
 	 * @see \Oka\FileBundle\Model\FileInterface::getUri()
 	 */
 	public function getUri()

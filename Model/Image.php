@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\Box;
 use Imagine\Image\Point;
 use Symfony\Component\Finder\Finder;
+use Oka\FileBundle\Utils\ImageUtils;
 
 /**
  *
@@ -263,25 +264,7 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 	
 	public function getPlaceholder()
 	{
-		$header                    = '474946383961';
-		$logical_screen_descriptor = '01000100800100';
-		$image_descriptor          = '2c000000000100010000';
-		$image_data                = '0202440100';
-		$trailer                   = '3b';
-		
-		$gif = implode([
-				$header,
-				$logical_screen_descriptor,
-				$this->dominantColor,
-				'000000',
-				$image_descriptor,
-				$image_data,
-				$trailer
-		]);
-		
-		$placeholder = 'data:image/gif;base64,' . base64_encode(hex2bin($gif));
-		
-		return $placeholder;
+		return ImageUtils::getImageGIFPlaceholder($this->dominantColor);
 	}
 	
 // 	public function getWebPathOfAllSize($type = null) {

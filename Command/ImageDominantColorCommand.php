@@ -48,10 +48,10 @@ EOF
 		if ($class = $input->getArgument('class')) {
 			$imageManager->setClass($class);
 		}
+
+		$output->writeln('Finding dominant color of images...');
 		
 		while ($images = $imageManager->findFilesBy(['dominantColor' => null], [], 100)) {
-			$output->writeln('Finding dominant color of images...');
-			
 			/** @var \Oka\FileBundle\Model\ImageInterface $image */
 			foreach ($images as $image) {
 				$colorRGB = $uploadedImageManager->findImageDominantColor($image->getRealPath());

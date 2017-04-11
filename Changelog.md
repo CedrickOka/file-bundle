@@ -1,6 +1,15 @@
 Changelog
 =========
 
+#### 1.0.9
+
+* Fixed bad function name in `ImageDominantColorCommand` class.
+* Added new method `File::getVersion()`.
+* Added new method `ImageUtils::getImageGIFPlaceholder()`.
+* Modify routing path.
+* Replaced deprecated routing option `_method` by `methods`.
+* Replaced deprecated routing option `pattern` by `path`.
+
 #### 1.0.8 (2017-04-09)
 
 * Modify image routing

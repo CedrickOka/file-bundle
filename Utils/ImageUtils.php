@@ -48,4 +48,25 @@ final class ImageUtils
 		
 		return self::getImageFromUploadedFile($file, $class);
 	}
+	
+	public static function getImageGIFPlaceholder($color)
+	{
+		$header 					= '474946383961';
+		$logicalScreenDescriptor 	= '01000100800100';
+		$imageDescriptor 			= '2c000000000100010000';
+		$imageData 					= '0202440100';
+		$trailer 					= '3b';
+		
+		$gif = implode([
+				$header,
+				$logicalScreenDescriptor,
+				$color,
+				'000000',
+				$imageDescriptor,
+				$imageData,
+				$trailer
+		]);
+		
+		return 'data:image/gif;base64,' . base64_encode(hex2bin($gif));
+	}
 }

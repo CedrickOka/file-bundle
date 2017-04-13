@@ -64,7 +64,7 @@ final class ImageUtils
 				'000000',
 				$imageDescriptor,
 				$imageData,
-				$trailer
+// 				$trailer
 		]);
 		
 		return 'data:image/gif;base64,' . base64_encode(hex2bin($gif));

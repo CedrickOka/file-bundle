@@ -1,7 +1,11 @@
 Changelog
 =========
 
-#### 1.0.9
+#### 1.1.0 (2017-04-13)
+
+* Added command `okafile:upgrade:image [<class>]` for upgrade old library version.
+
+#### 1.0.9 (2017-04-11)
 
 * Fixed bad function name in `ImageDominantColorCommand` class.
 * Added new method `File::getVersion()`.

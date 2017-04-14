@@ -23,14 +23,11 @@ class ImageThumbnailFactoryCommand extends ContainerAwareCommand
 	protected function configure()
 	{
 		$this->setName('okafile:image:thumbnail:build')
-		->setDescription('Build thumbnails of images')
-		->setDefinition([
-				new InputArgument('imageClass', InputArgument::OPTIONAL, 'Image class name', null)
-		])
-		->setHelp(<<<EOF
-Cette commande permet de minuaturiser les images dans les tailles définies dans le factory.
-EOF
-				);
+			 ->setDescription('Build thumbnails of images')
+			 ->setDefinition([
+			 		new InputArgument('imageClass', InputArgument::OPTIONAL, 'Image class name', null)
+			 ])
+			 ->setHelp('Cette commande permet de minuaturiser les images dans les tailles définies dans le factory.');
 	}
 	
 	/**
@@ -38,25 +35,26 @@ EOF
 	 *
 	 * @see \Symfony\Component\Console\Command\Command::execute()
 	 */
-	public function execute(InputInterface $input, OutputInterface $output) {
+	public function execute(InputInterface $input, OutputInterface $output)
+	{
 		/** @var \Symfony\Component\DependencyInjection\Container $container */
 		$container = $this->getContainer();
 		/** @var \Oka\FileBundle\Model\FileManagerInterface $imageManager */
 		$imageManager = $container->get('oka_file.image_manager');
 		/** @var \Oka\FileBundle\Service\UploadedImageManager $uploadedImageManager */
 		$uploadedImageManager = $container->get('oka_file.uploaded_image.manager');
-
+		
 		if ($class = $input->getArgument('imageClass')) {
 			$imageManager->setClass($class);
 		}
-
+		
 		if ($images = $imageManager->findFiles()) {
 			$output->writeln('Building of thumbnails of images...');
-				
+			
 			/** @var \Oka\FileBundle\Model\FileInterface $image */
 			foreach ($images as $image) {
 				$thumbnailsBuilded = $uploadedImageManager->buildThumbnails($image);
-
+				
 				if ($thumbnailsBuilded === false) {
 					$output->writeln('No image to build.');
 					break;
@@ -69,16 +67,15 @@ EOF
 								date('H:i:s'),
 								$image->getRealPath(),
 								count($thumbnailsBuilded)
-								));
+						));
 					}
 				}
 			}
-				
+			
 			if (isset($image)) {
-				$fs = new Filesystem();
 				$user = FileUtil::getSystemOwner();
-				$fs->chown($image->getPath(), $user, true);
-				$fs->chgrp($image->getPath(), $user, true);
+				FileUtil::getFs()->chown($image->getPath(), $user, true);
+				FileUtil::getFs()->chgrp($image->getPath(), $user, true);
 			}
 		}
 	}

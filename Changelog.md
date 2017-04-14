@@ -1,6 +1,14 @@
 Changelog
 =========
 
+#### 1.1.2 (2017-04-14)
+
+* Improve All Command class.
+
+#### 1.1.1 (2017-04-13)
+
+* Deleted trailer in gif.
+
 #### 1.1.0 (2017-04-13)
 
 * Added command `okafile:upgrade:image [<class>]` for upgrade old library version.

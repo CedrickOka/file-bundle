@@ -23,16 +23,15 @@ class ConfigureContainerCommand extends ContainerAwareCommand
 	 */
 	protected function configure()
 	{
+		$owner = FileUtil::getSystemOwner();
+		
 		$this->setName('okafile:configure:container')
 			 ->setDescription('Configure file container')
 			 ->setDefinition([
-			 		new InputOption('user', null, InputOption::VALUE_OPTIONAL, 'Owner of files', null),
-			 		new InputOption('group', null, InputOption::VALUE_OPTIONAL, 'Group of files', null)
+			 		new InputOption('user', null, InputOption::VALUE_OPTIONAL, 'Owner of files', $owner),
+			 		new InputOption('group', null, InputOption::VALUE_OPTIONAL, 'Group of files', $owner)
 			 ])
-			 ->setHelp(<<<EOF
-Cette commande permet de generer le systeme de fichier.
-EOF
-				);
+			 ->setHelp('Cette commande permet de generer le systeme de fichier.');
 	}
 	
 	/**

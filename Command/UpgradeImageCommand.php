@@ -5,6 +5,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Oka\FileBundle\Utils\FileUtil;
 
 /**
  * 
@@ -21,14 +22,11 @@ class UpgradeImageCommand extends ContainerAwareCommand
 	protected function configure()
 	{
 		$this->setName('okafile:upgrade:image')
-		->setDescription('Upgrade images')
-		->setDefinition([
-				new InputArgument('class', InputArgument::OPTIONAL, 'Image class name', null)
-		])
-		->setHelp(<<<EOF
-Upgrade images.
-EOF
-				);
+			 ->setDescription('Upgrade images')
+			 ->setDefinition([
+			 		new InputArgument('class', InputArgument::OPTIONAL, 'Image class name', null)
+			 ])
+			 ->setHelp('Upgrade images.');
 	}
 	
 	/**
@@ -36,7 +34,8 @@ EOF
 	 * 
 	 * @see \Symfony\Component\Console\Command\Command::execute()
 	 */
-	public function execute(InputInterface $input, OutputInterface $output) {
+	public function execute(InputInterface $input, OutputInterface $output)
+	{
 		/** @var \Symfony\Component\DependencyInjection\Container $container */
 		$container = $this->getContainer();
 		/** @var \Oka\FileBundle\Model\FileManagerInterface $imageManager */
@@ -50,13 +49,14 @@ EOF
 		}
 		
 		$offset = 0;
+		$path = null;
+		$thumbnailsBuilded = true;
 		$output->writeln('Upgrading images...');
 		
 		while ($images = $imageManager->findFilesBy([], [], 100, $offset)) {
 			/** @var \Oka\FileBundle\Model\Image $image */
 			foreach ($images as $image) {
-				$colorRGB = $uploadedImageManager->findImageDominantColor($image->getRealPath());
-				$image->setDominantColor($colorRGB);
+				$image->setDominantColor($uploadedImageManager->findImageDominantColor($image->getRealPath()));
 				$image->setSize(filesize($image->getRealPath()));
 				
 				if (OutputInterface::VERBOSITY_NORMAL === $output->getVerbosity()) {
@@ -65,13 +65,38 @@ EOF
 							date('H:i:s'),
 							$image->getRealPath(),
 							round($image->getSize() / 1048576, 2),
-							$colorRGB
+							$image->getDominantColor()
 					));
+				}
+				
+				if ($thumbnailsBuilded === true) {
+					$thumbnailsBuilded = $uploadedImageManager->buildThumbnails($image);
+					
+					if (!empty($thumbnailsBuilded)) {
+						if (OutputInterface::VERBOSITY_NORMAL === $output->getVerbosity()) {
+							$output->writeln(sprintf(
+									'[<comment>%s</comment>] Image with path <info>%s</info>, <comment>%s</comment> thumbnails were created.',
+									date('H:i:s'),
+									$image->getRealPath(),
+									count($thumbnailsBuilded)
+							));
+						}
+					}
+				}
+				
+				if ($path === null) {
+					$path = $image->getPath();
 				}
 			}
 			
 			$objectManager->flush();
 			$offset += 100;
+		}
+		
+		if ($path !== null) {
+			$user = FileUtil::getSystemOwner();
+			FileUtil::getFs()->chown($path, $user, true);
+			FileUtil::getFs()->chgrp($path, $user, true);
 		}
 	}
 }

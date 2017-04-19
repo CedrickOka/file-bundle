@@ -26,5 +26,8 @@ class UploadedImageManagerTest extends KernelTestCase
 	{
 		$colorRGB = $this->uploadedImageManager->findImageDominantColor(__DIR__.'/../Resources/images/test_dominant_color.jpg');
 		$this->assertEquals('ead087', $colorRGB);
+		
+		$colorRGB = $this->uploadedImageManager->findImageDominantColor(__DIR__.'/../Resources/images/coke-can.jpg', UploadedImageManager::DOMINANT_COLOR_METHOD_KMEANS);
+		$this->assertEquals('b21812', $colorRGB);
 	}
 }

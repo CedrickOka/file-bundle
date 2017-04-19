@@ -55,7 +55,7 @@ final class ImageUtils
 		$logicalScreenDescriptor 	= '01000100800100';
 		$imageDescriptor 			= '2c000000000100010000';
 		$imageData 					= '0202440100';
-		$trailer 					= '3b';
+// 		$trailer 					= '3b';
 		
 		$gif = implode([
 				$header,

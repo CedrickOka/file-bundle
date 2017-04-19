@@ -1,9 +1,10 @@
 <?php
 namespace Oka\FileBundle\Service;
 
-use Oka\FileBundle\Model\ImageManipulatorInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Oka\FileBundle\Model\ImageInterface;
+use Oka\FileBundle\Model\ImageManipulatorInterface;
+use Oka\FileBundle\Utils\KmeansImage;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * 
@@ -12,6 +13,9 @@ use Oka\FileBundle\Model\ImageInterface;
  */
 class UploadedImageManager
 {
+	const DOMINANT_COLOR_METHOD_KMEANS = 'k-means';
+	const DOMINANT_COLOR_METHOD_QUANTIZE = 'quantize';
+	
 	/**
 	 * @var array $thumbnailFactory
 	 */
@@ -38,25 +42,21 @@ class UploadedImageManager
 	 * Find the dominant color of image
 	 *
 	 * @param string $path
+	 * @param string $method
 	 * @param boolean $optimize
 	 * @return string The dominant color of image in RGB
 	 */
-	public function findImageDominantColor($path, $optimize = true)
+	public function findImageDominantColor($path, $method = null, $optimize = true)
 	{
-		$image = new \Imagick($path);
-		
-		if ($optimize) {
-			if ($image->getImageHeight() > 250 && $image->getImageWidth() > 250) {
-				$image->resizeImage(250, 250, \Imagick::FILTER_GAUSSIAN, 1);
-			}
+		if ($method !== null && !in_array($method, [self::DOMINANT_COLOR_METHOD_KMEANS, self::DOMINANT_COLOR_METHOD_QUANTIZE])) {
+			throw new \InvalidArgumentException(sprintf('Arguments "$method" have not valid value "%s"', $method));
 		}
 		
-		$image->quantizeImage(1, \Imagick::COLORSPACE_RGB, 0, false, false);
-		$image->setFormat('RGB');
-		
-		return substr(bin2hex($image), 0, 6);
+		return self::DOMINANT_COLOR_METHOD_KMEANS === $method ? 
+				$this->getDominantColorWithKmeans($path, $optimize) : 
+				$this->getDominantColorWithQuantize($path, $optimize);
 	}
-
+	
 	/**
 	 * @param ImageManipulatorInterface $entity
 	 */
@@ -86,5 +86,39 @@ class UploadedImageManager
 		}
 		
 		return $thumbnailsBuilded;
+	}
+	
+	private function getDominantColorWithQuantize($path, $optimize = true)
+	{
+		$image = new \Imagick($path);
+		
+		if ($optimize) {
+			if ($image->getImageHeight() > 250 && $image->getImageWidth() > 250) {
+				$image->resizeImage(250, 250, \Imagick::FILTER_GAUSSIAN, 1);
+			}
+		}
+		
+		$image->quantizeImage(1, \Imagick::COLORSPACE_RGB, 0, false, false);
+		$image->setFormat('RGB');
+		
+		return substr(bin2hex($image), 0, 6);
+	}
+	
+	private function getDominantColorWithKmeans($path, $optimize = true)
+	{
+		$image = new \Imagick($path);
+		
+		if ($optimize) {
+			if ($image->getImageHeight() > 100 && $image->getImageWidth() > 100) {
+				$image->resizeImage(100, 100, \Imagick::FILTER_GAUSSIAN, 1);
+			}
+		}
+		
+		$kmeans = new KmeansImage($image);
+		$kmeans->ignoreExtremity(true);
+		$kmeans->execute();
+		$centroid = $kmeans->getDominantCentroid();
+		
+		return $centroid['hex'];
 	}
 }

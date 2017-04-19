@@ -5,6 +5,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * 
@@ -23,6 +24,7 @@ class ImageDominantColorCommand extends ContainerAwareCommand
 		$this->setName('okafile:image:find:dominant-color')
 		->setDescription('Find dominant color of images')
 		->setDefinition([
+				new InputOption('method', 'm', InputOption::VALUE_OPTIONAL, 'Find dominant color of image with this method.', null),
 				new InputArgument('class', InputArgument::OPTIONAL, 'Image class name', null)
 		])
 		->setHelp(<<<EOF
@@ -45,16 +47,21 @@ EOF
 		$uploadedImageManager = $container->get('oka_file.uploaded_image.manager');
 		$objectManager = $imageManager->getObjectManager();
 		
+		if (!$dominantColorMethod = $input->getOption('method')) {
+			$detectDominantColor = $container->getParameter('oka_file.image.uploaded.detect_dominant_color');
+			$dominantColorMethod = $detectDominantColor['method'];
+		}
+		
 		if ($class = $input->getArgument('class')) {
 			$imageManager->setClass($class);
 		}
-
-		$output->writeln('Finding dominant color of images...');
+		
+		$output->writeln(sprintf('Finding dominant color of images with method <comment>%s</comment>...', $dominantColorMethod));
 		
 		while ($images = $imageManager->findFilesBy(['dominantColor' => null], [], 100)) {
 			/** @var \Oka\FileBundle\Model\ImageInterface $image */
 			foreach ($images as $image) {
-				$colorRGB = $uploadedImageManager->findImageDominantColor($image->getRealPath());
+				$colorRGB = $uploadedImageManager->findImageDominantColor($image->getRealPath(), $dominantColorMethod);
 				$image->setDominantColor($colorRGB);
 				
 				if (OutputInterface::VERBOSITY_NORMAL === $output->getVerbosity()) {

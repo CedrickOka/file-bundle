@@ -1,6 +1,11 @@
 Changelog
 =========
 
+#### 1.1.3 (2017-04-16)
+
+* Implements `k-means` algorithm for find dominant color of images.
+* Added config for selecting dominant color method detection between `quantize` and `k-means`.
+
 #### 1.1.2 (2017-04-14)
 
 * Improve All Command class.

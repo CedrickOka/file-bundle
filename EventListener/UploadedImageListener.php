@@ -21,11 +21,11 @@ class UploadedImageListener implements EventSubscriberInterface
 	protected $uploadedImageManager;
 	
 	/**
-	 * @var boolean $detectDominantColor
+	 * @var array $detectDominantColor
 	 */
 	protected $detectDominantColor;
 	
-	public function __construct(UploadedImageManager $uploadedImageManager, $detectDominantColor)
+	public function __construct(UploadedImageManager $uploadedImageManager, array $detectDominantColor)
 	{
 		$this->uploadedImageManager = $uploadedImageManager;
 		$this->detectDominantColor = $detectDominantColor;
@@ -35,9 +35,9 @@ class UploadedImageListener implements EventSubscriberInterface
 	{
 		$entity = $event->getEntity();
 		
-		if ($entity instanceof ImageInterface && true === $this->detectDominantColor) {
+		if ($entity instanceof ImageInterface && true === $this->detectDominantColor['enabled']) {
 			$realPath = $event->getUploadedFile()->getRealPath();
-			$entity->setDominantColor($this->uploadedImageManager->findImageDominantColor($realPath));
+			$entity->setDominantColor($this->uploadedImageManager->findImageDominantColor($realPath, $this->detectDominantColor['method']));
 		}
 	}
 	

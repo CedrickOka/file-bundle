@@ -25,6 +25,7 @@ class ImageDominantColorCommand extends ContainerAwareCommand
 		->setDescription('Find dominant color of images')
 		->setDefinition([
 				new InputOption('method', 'm', InputOption::VALUE_OPTIONAL, 'Find dominant color of image with this method.', null),
+				new InputOption('findAll', 'f', InputOption::VALUE_NONE, 'Find dominant color of all images.'),
 				new InputArgument('class', InputArgument::OPTIONAL, 'Image class name', null)
 		])
 		->setHelp(<<<EOF
@@ -45,23 +46,26 @@ EOF
 		$imageManager = $container->get('oka_file.image_manager');
 		/** @var \Oka\FileBundle\Service\UploadedImageManager $uploadedImageManager */
 		$uploadedImageManager = $container->get('oka_file.uploaded_image.manager');
-		$objectManager = $imageManager->getObjectManager();
-		
-		if (!$dominantColorMethod = $input->getOption('method')) {
-			$detectDominantColor = $container->getParameter('oka_file.image.uploaded.detect_dominant_color');
-			$dominantColorMethod = $detectDominantColor['method'];
-		}
 		
 		if ($class = $input->getArgument('class')) {
 			$imageManager->setClass($class);
 		}
 		
+		$objectManager = $imageManager->getObjectManager();
+		$detectDominantColor = $container->getParameter('oka_file.image.uploaded.detect_dominant_color');
+		
+		if (!$dominantColorMethod = $input->getOption('method')) {
+			$dominantColorMethod = $detectDominantColor['method'];
+		}
+		
+		$offset = 0;
+		$criteria = ($findAll = $input->getOption('findAll')) === true ? [] : ['dominantColor' => null];
 		$output->writeln(sprintf('Finding dominant color of images with method <comment>%s</comment>...', $dominantColorMethod));
 		
-		while ($images = $imageManager->findFilesBy(['dominantColor' => null], [], 100)) {
+		while ($images = $imageManager->findFilesBy($criteria, ['createdAt' => 'DESC'], 100, $offset)) {
 			/** @var \Oka\FileBundle\Model\ImageInterface $image */
 			foreach ($images as $image) {
-				$colorRGB = $uploadedImageManager->findImageDominantColor($image->getRealPath(), $dominantColorMethod);
+				$colorRGB = $uploadedImageManager->findImageDominantColor($image->getRealPath(), $dominantColorMethod, $detectDominantColor['options']);
 				$image->setDominantColor($colorRGB);
 				
 				if (OutputInterface::VERBOSITY_NORMAL === $output->getVerbosity()) {
@@ -70,10 +74,14 @@ EOF
 							date('H:i:s'),
 							$image->getRealPath(),
 							$colorRGB
-							));
+					));
 				}
 			}
+			
 			$objectManager->flush();
+			if ($findAll === true) {
+				$offset += 100;
+			}
 		}
 	}
 }

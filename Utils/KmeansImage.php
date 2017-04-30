@@ -395,7 +395,6 @@ class KmeansImage
      * Modify by @author Cedrick Oka
      * 
      * @param $image
-     * @return array
      */
     private function generateRGBPointsFromImage($image)
     {
@@ -412,7 +411,6 @@ class KmeansImage
     		foreach ($pixels as $col => $pixel) {
     			$rgb = $pixel->getColor();
     			unset($rgb['a']);
-    			
     			$points[] = [
     					'xCoord' 	=> $row,
     					'yCoord' 	=> $col,

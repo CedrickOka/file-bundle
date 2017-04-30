@@ -46,15 +46,15 @@ class UploadedImageManager
 	 * @param boolean $optimize
 	 * @return string The dominant color of image in RGB
 	 */
-	public function findImageDominantColor($path, $method = null, $optimize = true)
+	public function findImageDominantColor($path, $method = null, array $options = [], $optimize = true)
 	{
 		if ($method !== null && !in_array($method, [self::DOMINANT_COLOR_METHOD_KMEANS, self::DOMINANT_COLOR_METHOD_QUANTIZE])) {
 			throw new \InvalidArgumentException(sprintf('Arguments "$method" have not valid value "%s"', $method));
 		}
 		
 		return self::DOMINANT_COLOR_METHOD_KMEANS === $method ? 
-				$this->getDominantColorWithKmeans($path, $optimize) : 
-				$this->getDominantColorWithQuantize($path, $optimize);
+				$this->findDominantColorWithKmeans($path, $options, $optimize) : 
+				$this->findDominantColorWithQuantize($path, $options, $optimize);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ class UploadedImageManager
 		return $thumbnailsBuilded;
 	}
 	
-	private function getDominantColorWithQuantize($path, $optimize = true)
+	private function findDominantColorWithQuantize($path, array $options = [], $optimize = true)
 	{
 		$image = new \Imagick($path);
 		
@@ -104,7 +104,7 @@ class UploadedImageManager
 		return substr(bin2hex($image), 0, 6);
 	}
 	
-	private function getDominantColorWithKmeans($path, $optimize = true)
+	private function findDominantColorWithKmeans($path, array $options = [], $optimize = true)
 	{
 		$image = new \Imagick($path);
 		
@@ -115,7 +115,25 @@ class UploadedImageManager
 		}
 		
 		$kmeans = new KmeansImage($image);
-		$kmeans->ignoreExtremity(true);
+		
+		if (!empty($options)) {
+			if (isset($options['ignoreExtremity']) && $options['ignoreExtremity']) {
+				$kmeans->ignoreExtremity(true);
+			}
+			
+			if (isset($options['ignoreExtremity']) && $options['ignoreExtremity']) {
+				$kmeans->ignoreExtremity(true);
+			}
+			
+			if (isset($options['blackLevel'])) {
+				$kmeans->setBlackLevel($options['blackLevel']);
+			}
+			
+			if (isset($options['whiteLevel'])) {
+				$kmeans->setWhiteLevel($options['whiteLevel']);
+			}
+		}
+		
 		$kmeans->execute();
 		$centroid = $kmeans->getDominantCentroid();
 		

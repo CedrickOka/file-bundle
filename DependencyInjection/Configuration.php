@@ -172,9 +172,9 @@ class Configuration implements ConfigurationInterface
 					->addDefaultsIfNotSet()
 					->children()
 						->arrayNode('detect_dominant_color')
-							->treatNullLike(['enabled' => false, 'method' => 'k-means'])
-							->treatFalseLike(['enabled' => false, 'method' => 'k-means'])
-							->treatTrueLike(['enabled' => true, 'method' => 'k-means'])
+							->treatNullLike(['enabled' => false, 'method' => 'quantize'])
+							->treatFalseLike(['enabled' => false, 'method' => 'quantize'])
+							->treatTrueLike(['enabled' => true, 'method' => 'quantize'])
 							->addDefaultsIfNotSet()
 							->canBeDisabled()
 							->children()
@@ -184,6 +184,17 @@ class Configuration implements ConfigurationInterface
 										->ifNotInArray(['k-means', 'quantize'])
 										->thenInvalid('Dominant color detection method "%s" is not valid. Valid methods are "'.implode(', ', ['k-means', 'quantize']).'".')
 									->end()
+								->end()
+								->arrayNode('options')
+// 									->validate()
+// 										->ifTrue(function($value){
+// 											if (array_key_exists($key, $array)) {
+												
+// 											}
+// 										})
+// 										->thenInvalid('')
+// 									->end()
+									->prototype('variable')->end()
 								->end()
 							->end()
 						->end()

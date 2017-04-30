@@ -42,13 +42,13 @@ class UpgradeImageCommand extends ContainerAwareCommand
 		$imageManager = $container->get('oka_file.image_manager');
 		/** @var \Oka\FileBundle\Service\UploadedImageManager $uploadedImageManager */
 		$uploadedImageManager = $container->get('oka_file.uploaded_image.manager');
-		$objectManager = $imageManager->getObjectManager();
-		
-		$detectDominantColor = $container->getParameter('oka_file.image.uploaded.detect_dominant_color');
 		
 		if ($class = $input->getArgument('class')) {
 			$imageManager->setClass($class);
 		}
+		
+		$objectManager = $imageManager->getObjectManager();
+		$detectDominantColor = $container->getParameter('oka_file.image.uploaded.detect_dominant_color');
 		
 		$offset = 0;
 		$path = null;
@@ -58,7 +58,7 @@ class UpgradeImageCommand extends ContainerAwareCommand
 		while ($images = $imageManager->findFilesBy([], [], 100, $offset)) {
 			/** @var \Oka\FileBundle\Model\Image $image */
 			foreach ($images as $image) {
-				$image->setDominantColor($uploadedImageManager->findImageDominantColor($image->getRealPath(), $detectDominantColor['method']));
+				$image->setDominantColor($uploadedImageManager->findImageDominantColor($image->getRealPath(), $detectDominantColor['method'], $detectDominantColor['options']));
 				$image->setSize(filesize($image->getRealPath()));
 				
 				if (OutputInterface::VERBOSITY_NORMAL === $output->getVerbosity()) {

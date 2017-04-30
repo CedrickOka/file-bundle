@@ -37,7 +37,7 @@ class UploadedImageListener implements EventSubscriberInterface
 		
 		if ($entity instanceof ImageInterface && true === $this->detectDominantColor['enabled']) {
 			$realPath = $event->getUploadedFile()->getRealPath();
-			$entity->setDominantColor($this->uploadedImageManager->findImageDominantColor($realPath, $this->detectDominantColor['method']));
+			$entity->setDominantColor($this->uploadedImageManager->findImageDominantColor($realPath, $this->detectDominantColor['method'], $this->detectDominantColor['options']));
 		}
 	}
 	

@@ -1,6 +1,12 @@
 Changelog
 =========
 
+#### 1.1.4 (2017-04-30)
+
+* Added new option in ImageDominantColorCommand class.
+* Added new node `options` in node `detect_dominant_color` in bundle config.
+* Modify method signature `UploadedImageManager::findImageDominantColor($path, $method = null, array $options = [], $optimize = true)`
+
 #### 1.1.3 (2017-04-16)
 
 * Implements `k-means` algorithm for find dominant color of images.

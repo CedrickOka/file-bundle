@@ -175,19 +175,13 @@ Add the following configuration to your `config.yml`.
 ``` yaml
 # app/config/config.yml
 oka_file:
-    model_manager_name: default
-    object_default_class:
+    model\_manager\_name: default
+    object\_default\_class:
         image: Acme\FileBundle\Entity\Image
-#        video: 
-#        audio: 
-#        others:
     container_config:
         root_path: /var/www/container
         data_dirnames:
-#            image: image
-#            video: video
-#            audio: audio
-#            others: others
+            image: images
         web_server:
             host: aystorage
             port: ~
@@ -209,14 +203,15 @@ oka_file:
                         fecth_mode: EAGER
     image:
         uploaded:
-            detect_dominant_color: true
+            detect\_dominant\_color:
+                method: k-means			#Available methods are k-means and quantize
             thumbnail_factory:
                 Acme\FileBundle\Entity\Image: [{ width: 100, height: 100 }, { width: 200, height: 200 }]
         thumbnail:
             quality: 100
             mode: ratio
     routing:
-        bot_service_image:
+        bot\_service\_image:
             file_class: Acme\FileBundle\Entity\Image
             host: aystorage
             scheme: ~

@@ -473,24 +473,27 @@ class KmeansImage
         $hex = '';
         if($rgb != null)
         {
-            foreach($rgb as $color => $value)
+            foreach($rgb as $value)
             {
+            	$char = [];
+            	
                 // Find first character in the chunk
                 $char[1] = floor($value / 16);
 
                 // Now find the second character in the chunk
                 $char[2] = floor($value % 16);
 
-                foreach($char as $character => $base_10)
+                foreach($char as $base_10)
                 {
                     $hex .= strval(base_convert($base_10, 10, 16));
                 }
             }
         }
         // They gave us null, so return black...
-        else
+        else {
             $hex = '000000';
-
+        }
+        
         return $hex;
     }
 }

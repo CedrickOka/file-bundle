@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 1.1.5 (2017-06-04)
+
+* Does not use the `exec` function to determine the current user.
+
 #### 1.1.4 (2017-04-30)
 
 * Added new option in ImageDominantColorCommand class.

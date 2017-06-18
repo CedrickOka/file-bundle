@@ -24,12 +24,19 @@ class ImageListener implements EventSubscriber
 	 */
 	protected $thumbnailQuality;
 	
+	/**
+	 * @param string $thumbnailMode
+	 * @param integer $thumbnailQuality
+	 */
 	public function __construct($thumbnailMode, $thumbnailQuality)
 	{
 		$this->thumbnailMode = $thumbnailMode;
 		$this->thumbnailQuality = $thumbnailQuality;
 	}
 	
+	/**
+	 * @param LifecycleEventArgs $arg
+	 */
 	public function prePersist(LifecycleEventArgs $arg)
 	{
 		$entity = $arg->getEntity();
@@ -42,6 +49,9 @@ class ImageListener implements EventSubscriber
 		
 	}
 	
+	/**
+	 * @param PreUpdateEventArgs $arg
+	 */
 	public function preUpdate(PreUpdateEventArgs $arg)
 	{
 		$entity = $arg->getEntity();
@@ -51,6 +61,9 @@ class ImageListener implements EventSubscriber
 		}		
 	}
 	
+	/**
+	 * @param LifecycleEventArgs $arg
+	 */
 	public function postLoad(LifecycleEventArgs $arg)
 	{
 		$entity = $arg->getEntity();
@@ -70,7 +83,10 @@ class ImageListener implements EventSubscriber
 		];
 	}
 	
-	private function handleUploadedImage($entity)
+	/**
+	 * @param ImageInterface $entity
+	 */
+	private function handleUploadedImage(ImageInterface $entity)
 	{
 		if (true === $entity->hasUploadedFile()) {
 			list($width, $height) = getimagesize($entity->getUploadedFile()->getRealPath());

@@ -2,16 +2,18 @@
 namespace Oka\FileBundle\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Oka\FileBundle\Event\UploadedFileEvent;
 use Oka\FileBundle\Model\FileInterface;
 use Oka\FileBundle\OkaFileEvents;
+use Oka\FileBundle\Utils\FileUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Oka\FileBundle\Utils\FileUtil;
 
 /**
  * 
@@ -65,6 +67,15 @@ class FileListener implements EventSubscriber
 	 */
 	protected $systemOwner;
 	
+	/**
+	 * @param EventDispatcherInterface $dispatcher
+	 * @param string $rootPath
+	 * @param array $dataDirnames
+	 * @param array $entityDirnames
+	 * @param string $host
+	 * @param integer $port
+	 * @param boolean $secure
+	 */
 	public function __construct(EventDispatcherInterface $dispatcher, $rootPath, array $dataDirnames, array $entityDirnames, $host, $port, $secure) {
 		$this->dispatcher = $dispatcher;
 		$this->rootPath = $rootPath;
@@ -73,7 +84,6 @@ class FileListener implements EventSubscriber
 		$this->host = $host;
 		$this->port = $port;
 		$this->secure = $secure;
-		
 		$this->fs = new Filesystem();
 		$this->systemOwner = FileUtil::getSystemOwner();
 	}
@@ -90,7 +100,7 @@ class FileListener implements EventSubscriber
 				throw new \LogicException('It is not possible to persist a file entity without attaching it to an UploadedFile object.');
 			}
 			
-			$this->loadContainerConfig($entity);
+			$this->loadContainerConfig($arg->getEntityManager(), $entity);
 			
 			if (!is_writable($entity->getPath())) {
 				throw new FileException(sprintf('Unable to write in the "%s" directory', $entity->getPath()));
@@ -101,6 +111,9 @@ class FileListener implements EventSubscriber
 		}
 	}
 	
+	/**
+	 * @param LifecycleEventArgs $arg
+	 */
 	public function postPersist(LifecycleEventArgs $arg)
 	{
 		$entity = $arg->getEntity();
@@ -110,6 +123,9 @@ class FileListener implements EventSubscriber
 		}
 	}
 	
+	/**
+	 * @param PreUpdateEventArgs $arg
+	 */
 	public function preUpdate(PreUpdateEventArgs $arg)
 	{
 		$entity = $arg->getEntity();
@@ -122,6 +138,9 @@ class FileListener implements EventSubscriber
 		}
 	}
 	
+	/**
+	 * @param LifecycleEventArgs $arg
+	 */
 	public function postUpdate(LifecycleEventArgs $arg)
 	{
 		$entity = $arg->getEntity();
@@ -133,6 +152,9 @@ class FileListener implements EventSubscriber
 		}
 	}
 	
+	/**
+	 * @param LifecycleEventArgs $arg
+	 */
 	public function preRemove(LifecycleEventArgs $arg)
 	{
 		$entity = $arg->getEntity();
@@ -142,25 +164,46 @@ class FileListener implements EventSubscriber
 		}
 	}
 	
+	/**
+	 * @param LifecycleEventArgs $arg
+	 */
 	public function postLoad(LifecycleEventArgs $arg)
 	{
 		$entity = $arg->getEntity();
 		
 		if ($entity instanceof FileInterface) {
-			$this->loadContainerConfig($entity);
+			$this->loadContainerConfig($arg->getEntityManager(), $entity);
 		}
 	}
 	
-	protected function loadContainerConfig(FileInterface $entity) {
+	public function getSubscribedEvents()
+	{
+		return [
+				Events::prePersist,
+				Events::postPersist,
+				Events::preUpdate,
+				Events::postUpdate,
+				Events::preRemove,
+				Events::postLoad
+		];
+	}
+	
+	/**
+	 * @param EntityManagerInterface $entityManager
+	 * @param FileInterface $entity
+	 */
+	protected function loadContainerConfig(EntityManagerInterface $entityManager, FileInterface $entity)
+	{
+		$classMetadata = $entityManager->getClassMetadata(get_class($entity));
+		$entityClass = $classMetadata->getName();
+		$dirname = null;
+		
 		$entity->setRootPath($this->rootPath);
 		$entity->setHost($this->host);
 		$entity->setPort($this->port);
 		$entity->setSecure($this->secure);
 		$entity->setFileSystem($this->fs);
 		$entity->setSystemOwner($this->systemOwner);
-		
-		$dirname = null;
-		$entityClass = get_class($entity);
 		
 		foreach ($this->dataDirnames as $key => $value) {
 			$className = 'Oka\FileBundle\Model\\'.ucfirst($key).'Interface';
@@ -177,18 +220,9 @@ class FileListener implements EventSubscriber
 		$entity->setDirname($dirname);
 	}
 	
-	public function getSubscribedEvents()
-	{
-		return [
-				Events::prePersist,
-				Events::postPersist,
-				Events::preUpdate,
-				Events::postUpdate,
-				Events::preRemove,
-				Events::postLoad
-		];
-	}
-	
+	/**
+	 * @param FileInterface $entity
+	 */
 	protected function handleMoveFile(FileInterface $entity)
 	{
 		$uploadedFile = $entity->moveFile();

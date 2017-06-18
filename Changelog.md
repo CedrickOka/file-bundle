@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 1.1.7 (2017-06-18)
+
+* Improve laoding container config in entity.
+
 #### 1.1.6 (2017-06-18)
 
 * Fixed bug in mappings behaviors.

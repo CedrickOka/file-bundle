@@ -26,17 +26,13 @@ abstract class AbstractListener implements EventSubscriber
 	 */
 	protected $mappings;
     
-//     public function __construct(ClassAnalyzer $classAnalyser, $isRecursive)
-//     {
-//         $this->classAnalyser = $classAnalyser;
-//         $this->isRecursive   = (bool) $isRecursive;
-//     }
-    
-    public function setClassAnalyzer(ClassAnalyzer $classAnalyser) {
+    public function setClassAnalyzer(ClassAnalyzer $classAnalyser)
+    {
     	$this->classAnalyser = $classAnalyser;
     }
     
-    public function setRecursive($recursive) {
+    public function setRecursive($recursive)
+    {
     	$this->isRecursive = $recursive;
     }
     

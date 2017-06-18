@@ -40,9 +40,10 @@ class AvatavableListener extends AbstractListener
 				if ($this->getClassAnalyzer()->hasMethod($reflClass, 'getAvatar')  AND $this->getClassAnalyzer()->hasMethod($reflClass, 'setAvatar')) {
 					$class = $reflClass->getName();
 					
-					if (in_array($class, $this->mappings)) {
-						$imageClass = isset($this->mappings['image_class']) ? $this->mappings['image_class'] : $this->imageDefaultClass;
-						$fetchMode = $this->mappings['propertie']['fecth_mode'];
+					if (isset($this->mappings[$class])) {
+						$mapping = $this->mappings[$class];
+						$fetchMode = $mapping['propertie']['fecth_mode'];
+						$imageClass = isset($mapping['image_class']) ? $mapping['image_class'] : $this->imageDefaultClass;
 						
 						switch (strtoupper($fetchMode)) {
 							case 'EAGER':
@@ -80,6 +81,7 @@ class AvatavableListener extends AbstractListener
 	{
 		$entity = $arg->getEntity();
 		$reflClass = new \ReflectionClass($entity);
+		
 		if ($this->isEntitySupported($reflClass)) {
 			if ($this->getClassAnalyzer()->hasProperty($reflClass, 'domain') AND $this->getClassAnalyzer()->hasProperty($reflClass, 'uploadDir') AND $this->getClassAnalyzer()->hasProperty($reflClass, 'uploadRootDir')) {
 				$entity->domain = $this->domain;

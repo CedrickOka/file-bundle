@@ -1,32 +1,16 @@
 <?php
 namespace Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverable;
 
-use Oka\FileBundle\Model\Image;
+use Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverizable\PictureCoverizable;
 
 /**
  * 
  * @author cedrick
  * 
+ * @deprecated This class is deprecated since version 1.1.7 and will be removed in 1.2.0. 
+ * 			   Use instead the class Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverizable\PictureCoverizable
  */
 trait PictureCoverable
-{	
-	/**
-	 * @var Image $pictureCover
-	 */
-	protected $pictureCover;
-	
-	/**
-	 * @return Image
-	 */
-	public function getPictureCover() {
-		return $this->pictureCover;
-	}
-	
-	/**
-	 * @param Image $pictureCover
-	 */
-	public function setPictureCover(Image $pictureCover) {
-		$this->pictureCover = $pictureCover;
-		return $this;
-	}
+{
+	use PictureCoverizable;
 }

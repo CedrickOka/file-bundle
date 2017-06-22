@@ -6,25 +6,23 @@ services:
 
 # Doctrine behaviors
     oka_file.doctrine_behaviors.abstract_listener:
+        public: false
+        abstract: true
         class:  Oka\FileBundle\DoctrineBehaviors\ORM\AbstractListener
+        arguments: [ [], '' ]
+#        arguments: [ '@oka_file.doctrine_behaviors.reflection.class_analyzer', '%oka_file.doctrine_behaviors.reflection.is_recursive%' ]
         calls:
           - [ setClassAnalyzer, [ '@oka_file.doctrine_behaviors.reflection.class_analyzer' ] ]
           - [ setRecursive, [ '%oka_file.doctrine_behaviors.reflection.is_recursive%' ] ]
-#        arguments: [ '@oka_file.doctrine_behaviors.reflection.class_analyzer', '%oka_file.doctrine_behaviors.reflection.is_recursive%' ]
-        abstract: true
 
-    oka_file.doctrine_behaviors.picturecoverable_listener:
-        class:  Oka\FileBundle\DoctrineBehaviors\ORM\PictureCoverable\PictureCoverableListener
+    oka_file.doctrine_behaviors.picturecoverizable_listener:
+        class:  Oka\FileBundle\DoctrineBehaviors\ORM\PictureCoverizable\PictureCoverizableListener
         parent: oka_file.doctrine_behaviors.abstract_listener
-        arguments: [ [], '' ]
-        public: false
         tags:
             - { name: doctrine.event_subscriber }
 
-#    oka_file.doctrine_behaviors.avatavable_listener:
-#        class:  Oka\FileBundle\DoctrineBehaviors\ORM\Avatavable\AvatavableListener
-#        parent: oka_file.doctrine_behaviors.abstract_listener
-#        arguments: [ '%oka_file.picture.default_class%', '%oka_file.root_dir%', '%oka_file.data_dir%', '%oka_file.upload_dir.picture%', '%oka_file.domain%' ]
-#        public: false
-#        tags:
-#            - { name: doctrine.event_subscriber }
+    oka_file.doctrine_behaviors.avatarizable_listener:
+        class:  Oka\FileBundle\DoctrineBehaviors\ORM\Avatarizable\AvatarizableListener
+        parent: oka_file.doctrine_behaviors.abstract_listener
+        tags:
+            - { name: doctrine.event_subscriber }

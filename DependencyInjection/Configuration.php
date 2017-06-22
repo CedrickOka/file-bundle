@@ -162,6 +162,28 @@ class Configuration implements ConfigurationInterface
 		return $node;
 	}
 	
+	private function createStorageConfigDataDirnameNodeDefinition($name)
+	{
+		$node = new ScalarNodeDefinition($name);
+		$node
+			->defaultValue($name)
+			->treatNullLike('')
+			->validate()
+				->ifTrue(function($value){
+					if ($value) {
+						$i = strlen($value) - 1;
+						return ($value[0] == '/' || $value[0] == '\\') || ($value[$i] == '/' || $value[$i] == '\\');
+					}
+					return false;
+				})
+				->thenInvalid('Invalid dirname "%s". The path should not start and end with "/" or "\"')
+			->end()
+			->info('The name of the folder where the resource will be stored if null then in the root dir.')
+		->end();
+		
+		return $node;
+	}
+	
 	private function imageNodeDefinition()
 	{
 		$node = new ArrayNodeDefinition('image');
@@ -263,67 +285,60 @@ class Configuration implements ConfigurationInterface
 						->booleanNode('enable_recursive')->defaultTrue()->end()
 					->end()
 				->end()
-				->append($this->createBehaviorsNodeDefinition('picture_coverable'))
-				->append($this->createBehaviorsNodeDefinition('avatable'))
+				->arrayNode('picture_coverizable')
+					->addDefaultsIfNotSet()
+					->canBeDisabled()
+					->children()
+						->append($this->createBehaviorMappingNodeDefinition())
+					->end()
+				->end()
+				->arrayNode('picture_coverable')
+					->addDefaultsIfNotSet()
+					->canBeDisabled()
+					->info('@deprecated use instead `picture_coverizable`.')
+					->children()
+						->append($this->createBehaviorMappingNodeDefinition())
+					->end()
+				->end()
+				->arrayNode('avatarizable')
+					->addDefaultsIfNotSet()
+					->canBeDisabled()
+					->children()
+						->append($this->createBehaviorMappingNodeDefinition())
+						->arrayNode('default_avatar_url')->end()
+					->end()
+				->end()
 			->end()
 		->end();
 		
 		return $node;
 	}
 	
-	private function createStorageConfigDataDirnameNodeDefinition($name)
+	private function createBehaviorMappingNodeDefinition()
 	{
-		$node = new ScalarNodeDefinition($name);
+		$node = new ArrayNodeDefinition('mappings');
 		$node
-			->defaultValue($name)
-			->treatNullLike('')
-			->validate()
-				->ifTrue(function($value){
-					if ($value) {
-						$i = strlen($value) - 1;
-						return ($value[0] == '/' || $value[0] == '\\') || ($value[$i] == '/' || $value[$i] == '\\');
-					}
-					return false;
-				})
-				->thenInvalid('Invalid dirname "%s". The path should not start and end with "/" or "\"')
-			->end()
-			->info('The name of the folder where the resource will be stored if null then in the root dir.')
-		->end();
-			
-		return $node;
-	}
-	
-	private function createBehaviorsNodeDefinition($name)
-	{
-		$node = new ArrayNodeDefinition($name);
-		$node
-			->addDefaultsIfNotSet()
-			->canBeDisabled()
-			->children()
-				->arrayNode('mappings')
-					->useAttributeAsKey('name')
-					->prototype('array')
-						->children()
-							->scalarNode('image_class')->defaultNull()->end()
-							->arrayNode('propertie')
-								->addDefaultsIfNotSet()
-								->children()
-									->scalarNode('fecth_mode')
-										->defaultValue('EAGER')
-										->validate()
-										->ifTrue(function($value){
-											return !in_array(strtoupper($value), ['EAGER', 'LAZY', 'EXTRA_LAZY']);
-										})
-										->thenInvalid('Invalid fecth mode "%s"! The fecth mode must be EAGER, LAZY or EXTRA_LAZY.')
-									->end()
-								->end()
-							->end()
+			->useAttributeAsKey('name')
+			->prototype('array')
+				->children()
+					->scalarNode('target_entity')->cannotBeEmpty()->end()
+					->scalarNode('fetch')
+						->defaultValue('EAGER')
+						->validate()
+							->ifTrue(function($value){
+								return !in_array(strtoupper($value), ['EAGER', 'LAZY', 'EXTRA_LAZY']);
+							})
+							->thenInvalid('Invalid fetch mode "%s"! The fetch mode must be EAGER, LAZY or EXTRA_LAZY.')
 						->end()
+					->end()
+					->arrayNode('options')
+						->treatNullLike([])
+						->prototype('scalar')->end()
 					->end()
 				->end()
 			->end()
 		->end();
-				
+		
 		return $node;
 	}
 }

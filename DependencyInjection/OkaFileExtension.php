@@ -42,9 +42,9 @@ class OkaFileExtension extends Extension
 		// Store configuration
 		$rootPath = realpath($config['container_config']['root_path']);
 		$container->setParameter('oka_file.container.root_path', $rootPath);
-		
 		$container->setParameter('oka_file.container.data_dirnames', $config['container_config']['data_dirnames']);
 		$container->setParameter('oka_file.container.entity_dirnames', $config['container_config']['entity_dirnames']);
+		
 		foreach ($config['container_config']['data_dirnames'] as $key => $dirname) {
 			$container->setParameter('oka_file.container.data_dirname.'.$key, $dirname);
 		}
@@ -62,15 +62,33 @@ class OkaFileExtension extends Extension
 		if ($config['behaviors']['enabled'] === true) {
 			$loader->load('behaviors.yml');
 			
+			$avatarizableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.avatarizable_listener');
+			$pictureCoverizableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.picturecoverizable_listener');
 			$container->setParameter('oka_file.doctrine_behaviors.reflection.is_recursive', $config['behaviors']['reflection']['enable_recursive']);
-			$pictureCoverableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.picturecoverable_listener');
 			
-			// PictureCoverable Behavior Configuration
-			if ($config['behaviors']['picture_coverable']['enabled'] === true) {
-				$pictureCoverableListenerDefinition->replaceArgument(0, $config['behaviors']['picture_coverable']['mappings']);
-				$pictureCoverableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);				
+			// PictureCoverizable Behavior Configuration
+			if ($config['behaviors']['picture_coverable']['enabled'] === true || $config['behaviors']['picture_coverizable']['enabled'] === true) {
+				$pictureCoverizableConfig = [];
+				
+				if ($config['behaviors']['picture_coverable']['enabled'] === true) {
+					$pictureCoverizableConfig = $config['behaviors']['picture_coverable'];
+				}
+				if ($config['behaviors']['picture_coverizable']['enabled'] === true) {
+					$pictureCoverizableConfig = array_merge($pictureCoverizableConfig, $config['behaviors']['picture_coverizable']);
+				}
+				
+				$pictureCoverizableListenerDefinition->replaceArgument(0, $pictureCoverizableConfig['mappings']);
+				$pictureCoverizableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);
 			} else {
-				$pictureCoverableListenerDefinition->clearTags();
+				$pictureCoverizableListenerDefinition->clearTags();
+			}
+			
+			// Avatarizable Behavior Configuration
+			if ($config['behaviors']['avatarizable']['enabled'] === true) {
+				$avatarizableListenerDefinition->replaceArgument(0, $config['behaviors']['avatarizable']['mappings']);
+				$avatarizableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);
+			} else {
+				$avatarizableListenerDefinition->clearTags();
 			}
 		}
 

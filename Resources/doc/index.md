@@ -189,18 +189,18 @@ oka_file:
     behaviors:
         reflection:
             enable_recursive: true
-        picture_coverable:
+        picture_coverizable:
             mappings:
                 Acme\FileBundle\Entity\User:
-                    Acme\FileBundle\Entity\Image
-                    propertie:
-                        fecth_mode: EAGER
-        avatable:
+                    target_entity: Acme\FileBundle\Entity\Image
+                    fetch: EAGER
+        avatarizable:
             mappings:
                 Acme\FileBundle\Entity\User:
-                    image_class: Acme\FileBundle\Entity\Image
-                    propertie:
-                        fecth_mode: EAGER
+                    target_entity: Acme\FileBundle\Entity\Image
+                    fetch: EAGER
+                    options:
+                        default\_avatar\_uri: 'http://acme.com/images/default-avatar.png'
     image:
         uploaded:
             detect\_dominant\_color:

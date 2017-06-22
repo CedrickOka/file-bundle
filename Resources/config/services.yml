@@ -2,19 +2,25 @@ services:
 # Factory
     oka_file.object_manager:
         class: Doctrine\Common\Persistence\ObjectManager
-        arguments: ['']
+        arguments: [ '' ]
         public: false
 
 # Form
+    oka_file.upload_file.form_type:
+        class: Oka\FileBundle\Form\Type\UploadFileFormType
+        arguments: [ '' ]
+        tags:
+          - { name: form.type }
+
     oka_file.image.form_type:
         class: Oka\FileBundle\Form\Type\ImageFormType
-        arguments: [ "%oka_file.image.default_class%" ]
+        arguments: [ '%oka_file.image.default_class%' ]
         tags:
           - { name: form.type }
 
 #    oka_file.video.form_type:
 #        class: Oka\FileBundle\Form\Type\VideoFormType
-#        arguments: [ "%oka_file.video.default_class%" ]
+#        arguments: [ '%oka_file.video.default_class%' ]
 #        tags:
 #          - { name: form.type }
 

@@ -1,6 +1,17 @@
 Changelog
 =========
 
+#### 1.1.8 (2017-06-22)
+
+* Added `Avatarizable` trait behaviors.
+* Added `oka_file.behaviors.avatarizable` configuration values.
+* Added `PictureCoverizable` trait behaviors.
+* Added `oka_file.behaviors.picture_coverizable` configuration values.
+* Deprecated `PictureCoverable` trait behaviors.
+* Deprecated `oka_file.behaviors.picture_coverable` configuration values.
+* Removed `Pictable` trait.
+* Improved documentation.
+
 #### 1.1.7 (2017-06-18)
 
 * Improve laoding container config in entity.

@@ -105,10 +105,10 @@ class Configuration implements ConfigurationInterface
 				->arrayNode('data_dirnames')
 					->addDefaultsIfNotSet()
 					->children()
-						->append($this->createStorageConfigDataDirnameNodeDefinition('image'))
-						->append($this->createStorageConfigDataDirnameNodeDefinition('video'))
-						->append($this->createStorageConfigDataDirnameNodeDefinition('audio'))
-						->append($this->createStorageConfigDataDirnameNodeDefinition('others'))
+						->append($this->createStorageConfigDataDirnameNodeDefinition('image', 'images'))
+						->append($this->createStorageConfigDataDirnameNodeDefinition('video', 'videos'))
+						->append($this->createStorageConfigDataDirnameNodeDefinition('audio', 'audios'))
+						->append($this->createStorageConfigDataDirnameNodeDefinition('other', 'others'))
 					->end()
 				->end()
 				->arrayNode('entity_dirnames')
@@ -162,11 +162,11 @@ class Configuration implements ConfigurationInterface
 		return $node;
 	}
 	
-	private function createStorageConfigDataDirnameNodeDefinition($name)
+	private function createStorageConfigDataDirnameNodeDefinition($name, $defaultValue)
 	{
 		$node = new ScalarNodeDefinition($name);
 		$node
-			->defaultValue($name)
+			->defaultValue($defaultValue)
 			->treatNullLike('')
 			->validate()
 				->ifTrue(function($value){

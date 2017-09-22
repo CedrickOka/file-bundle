@@ -7,7 +7,7 @@ use Oka\FileBundle\DoctrineBehaviors\Reflection\ClassAnalyzer;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 abstract class AbstractListener implements EventSubscriber

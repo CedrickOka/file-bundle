@@ -1,6 +1,15 @@
 Changelog
 =========
 
+#### 1.1.9 (2017-09-22)
+
+* Renamed file from `Changelog.mg` to `CHANGELOG.mg`.
+* Updated `CHANGELOG`.
+* Updated `READMED`.
+* Updated `LICENCE`.
+* Updated documentation.
+* Sanitize all project with SensioLabsInsight recommendation.
+
 #### 1.1.8 (2017-06-22)
 
 * Added `Avatarizable` trait behaviors.

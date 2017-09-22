@@ -3,7 +3,8 @@ Getting Started With OkaFileBundle
 
 This bundle provides a flexible management of the media.
 
-## Prerequisites
+Prerequisites
+=============
 
 The OkaFileBundle has the following requirements:
 
@@ -12,7 +13,8 @@ The OkaFileBundle has the following requirements:
  - Imagine library
  - OkaPaginationBundle
 
-## Installation
+Installation
+============
 
 Installation is a quick (I promise!) 6 step process:
 
@@ -23,41 +25,50 @@ Installation is a quick (I promise!) 6 step process:
 5. Import OkaFileBundle routing
 6. Update your database schema
 
-### Step 1: Download OkaApiBundle
+Step 1: Download the Bundle
+---------------------------
 
-Add coka/file-bundle to your composer.json file:
+Open a command console, enter your project directory and execute the
+following command to download the latest stable version of this bundle:
 
+```bash
+$ composer require coka/file-bundle
 ```
-php composer.phar require "coka/file-bundle"
-```
 
-### Step 2: Enable the Bundle
+This command requires you to have Composer installed globally, as explained
+in the [installation chapter](https://getcomposer.org/doc/00-intro.md)
+of the Composer documentation.
 
-Register the bundle in `app/AppKernel.php`:
+Step 2: Enable the Bundle
+-------------------------
+
+Then, enable the bundle by adding it to the list of registered bundles
+in the `app/AppKernel.php` file of your project:
 
 ```php
 <?php
-// ...
+// app/AppKernel.php
 
+// ...
 class AppKernel extends Kernel
 {
 	public function registerBundles()
 	{
 		$bundles = array(
 			// ...
-			new Oka\FileBundle\OkaFileBundle(),
+			
+			new Oka\ApiBundle\OkaFileBundle(),
 		);
 		
 		// ...
-		
-		return $bundles;
 	}
 	
 	// ...
 }
 ```
 
-### Step 3: Create your Image class
+Step 3: Create your Image class
+-------------------------------
 
 The goal of this bundle is to  persist some 'Image' or 'Video' or 'Document' class to a database (MySql). 
 Your first job, then, is to create the `Image` class for you application. 
@@ -102,7 +113,7 @@ start:
 
 ##### Annotations
 
-``` php
+```php
 <?php
 // src/Acme/FileBundle/Entity/User.php
 
@@ -127,6 +138,7 @@ class Image extends BaseImage
     public function __construct()
     {
         parent::__construct();
+        
         // your own logic
     }
 }
@@ -151,6 +163,7 @@ class Image extends BaseImage
 	public function __construct()
 	{
 		parent::__construct();
+		
 		// your own logic
 	}
 }
@@ -168,7 +181,8 @@ Acme\FileBundle\Entity\Image:
                 strategy: AUTO
 ```
 
-### Step 4: Configure the OkaFileBundle
+Step 4: Configure the OkaFileBundle
+-----------------------------------
 
 Add the following configuration to your `config.yml`.
 
@@ -204,7 +218,7 @@ oka_file:
     image:
         uploaded:
             detect\_dominant\_color:
-                method: k-means			#Available methods are k-means and quantize
+                method: k-means																				#Available methods are 'k-means' and 'quantize'
             thumbnail_factory:
                 Acme\FileBundle\Entity\Image: [{ width: 100, height: 100 }, { width: 200, height: 200 }]
         thumbnail:
@@ -219,7 +233,8 @@ oka_file:
             defaults: { mode: 'ratio', quality: 100, size: '100x100' }
 ```
 
-### Step 5: Import OkaFileBundle routing
+Step 5: Import OkaFileBundle routing
+------------------------------------
 
 Now that you have activated and configured the bundle, all that is left to do is
 import the OkaFileBundle routing files.
@@ -246,7 +261,8 @@ oka_file_image_manipulator:
     resource: "@OkaFileBundle/Resources/config/routing/image_manipulator.yml"
 ```
 
-### Step 6: Update your database schema
+Step 6: Update your database schema
+-----------------------------------
 
 Now that the bundle is configured, the last thing you need to do is update your
 database schema because you have added a new entity, the `Image` class which you
@@ -254,7 +270,7 @@ created in Step 4.
 
 Run the following command.
 
-``` bash
+```bash
 $ php app/console doctrine:schema:update --force
 ```
 

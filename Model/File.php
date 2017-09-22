@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  * @ORM\MappedSuperclass()
  * @ORM\HasLifecycleCallbacks()
@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 abstract class File implements FileInterface
 {
 	/**
-	 * @var mixed
+	 * @var mixed $id
 	 */
 	protected $id;
 	

@@ -10,7 +10,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class UploadedImageListener implements EventSubscriberInterface

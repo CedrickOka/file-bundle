@@ -1,5 +1,5 @@
 <?php
-namespace Oka\FileBundle\Form\Model;
+namespace Oka\FileBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -7,6 +7,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * 
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
+ * 
+ */
 abstract class FileFormType extends AbstractType
 {
 	/**

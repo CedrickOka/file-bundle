@@ -4,16 +4,29 @@ namespace Oka\FileBundle\Event;
 use Oka\FileBundle\Model\FileInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class FileEvent extends Event
 {
+	/**
+	 * @var FileInterface $file
+	 */
 	protected $file;
+
+	/**
+	 * @var Request $request
+	 */
 	protected $request;
+    
+    /**
+     * @var Response $response
+     */
+    protected $response;
 	
 	/**
 	 * @param FileInterface $file
@@ -39,4 +52,16 @@ class FileEvent extends Event
 	{
 		return $this->request;
 	}
+
+    public function setResponse(Response $response) {
+        $this->response = $response;
+        return $this;
+    }
+    
+    /**
+     * @return Response|null
+     */
+    public function getResponse() {
+        return $this->response;
+    }
 }

@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class CropImageFormType extends AbstractType

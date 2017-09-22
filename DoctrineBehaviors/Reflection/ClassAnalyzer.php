@@ -3,7 +3,7 @@ namespace Oka\FileBundle\DoctrineBehaviors\Reflection;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class ClassAnalyzer

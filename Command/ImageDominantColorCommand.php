@@ -4,12 +4,12 @@ namespace Oka\FileBundle\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class ImageDominantColorCommand extends ContainerAwareCommand
@@ -22,16 +22,13 @@ class ImageDominantColorCommand extends ContainerAwareCommand
 	protected function configure()
 	{
 		$this->setName('okafile:image:find:dominant-color')
-		->setDescription('Find dominant color of images')
-		->setDefinition([
-				new InputOption('method', 'm', InputOption::VALUE_OPTIONAL, 'Find dominant color of image with this method.', null),
-				new InputOption('findAll', 'f', InputOption::VALUE_NONE, 'Find dominant color of all images.'),
-				new InputArgument('class', InputArgument::OPTIONAL, 'Image class name', null)
-		])
-		->setHelp(<<<EOF
-Allows to find dominant color of images.
-EOF
-				);
+			 ->setDescription('Find dominant color of images')
+			 ->setDefinition([
+			 		new InputOption('method', 'm', InputOption::VALUE_OPTIONAL, 'Find dominant color of image with this method.', null),
+			 		new InputOption('findAll', 'f', InputOption::VALUE_NONE, 'Find dominant color of all images.'),
+			 		new InputArgument('class', InputArgument::OPTIONAL, 'Image class name', null)
+			 ])
+			 ->setHelp('Allows to find dominant color of images.');
 	}
 	
 	/**

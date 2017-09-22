@@ -11,7 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class ConfigureContainerCommand extends ContainerAwareCommand

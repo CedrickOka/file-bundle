@@ -1,15 +1,15 @@
 <?php
 namespace Oka\FileBundle\Command;
 
+use Oka\FileBundle\Utils\FileUtil;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Oka\FileBundle\Utils\FileUtil;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class UpgradeImageCommand extends ContainerAwareCommand

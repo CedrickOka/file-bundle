@@ -4,12 +4,12 @@ namespace Oka\FileBundle\Model;
 use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\Box;
 use Imagine\Image\Point;
-use Symfony\Component\Finder\Finder;
 use Oka\FileBundle\Utils\ImageUtils;
+use Symfony\Component\Finder\Finder;
 
 /**
  *
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  * @ORM\MappedSuperclass()
  */
@@ -221,7 +221,7 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 		} elseif ($height === null && $width !== null && $box->getWidth() > $width) {
 			$image->resize($box->widen($width));
 				
-		} elseif ($height !== null && $width == null && $box->getHeight() > $height) {
+		} elseif ($height !== null && $width === null && $box->getHeight() > $height) {
 			$image->resize($box->heighten($height));
 		}
 		
@@ -240,7 +240,7 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 	 */
 	public function crop($x0, $y0, $x1, $y1, $destination = null, $format = null)
 	{
-		if ($x1 < $x0 OR $y1 < $y0) {
+		if ($x1 < $x0 || $y1 < $y0) {
 			throw new \LogicException('Les coordonnées "x1" et "y1" doivent être respectivement supérieures à "x0" et "y0".');
 		}
 		
@@ -266,18 +266,4 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 	{
 		return ImageUtils::getImageGIFPlaceholder($this->dominantColor);
 	}
-	
-// 	public function getWebPathOfAllSize($type = null) {
-// 		$paths = [];
-		
-// 		if ($files = $this->getAbsolutePathOfAllSize($type, false)) {
-// 			$pattern = '#^'.$this->getUploadRootDir().'(.*)$#';
-// 			$replace = $this->getDomain().$this->getUploadDir().'$1';
-			
-// 			foreach ($files as $file) {
-// 				$paths[] = preg_replace($pattern, $replace, preg_replace('#\\\\#', '/', $file)).$this->getversion();
-// 			}
-// 		}
-// 		return $paths;
-// 	}
 }

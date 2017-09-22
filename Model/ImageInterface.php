@@ -3,7 +3,7 @@ namespace Oka\FileBundle\Model;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 interface ImageInterface

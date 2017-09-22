@@ -2,11 +2,11 @@
 namespace Oka\FileBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -28,7 +28,6 @@ class OkaFileExtension extends Extension
 		$loader->load('doctrine.yml');
 		
 		// Entity and Object Manager Configuration
-// 		$container->setParameter('oka_file.model_manager_name', $config['model_manager_name']);
 		$container->setAlias('oka_file.doctrine_registry', new Alias('doctrine', false));
 		$objectManagerDefintion = $container->getDefinition('oka_file.object_manager');
 		$objectManagerDefintion->replaceArgument(0, $config['model_manager_name']);

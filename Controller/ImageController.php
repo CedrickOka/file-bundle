@@ -10,12 +10,18 @@ use Oka\FileBundle\Model\ImageInterface;
 use Oka\FileBundle\Model\ImageManipulatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ *
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
+ *
+ */
 class ImageController extends Controller
 {
 	/**
@@ -74,7 +80,7 @@ class ImageController extends Controller
 		]);
 		$form->add('save', SubmitType::class, ['label' => 'Enregistrer']);
 
-		if ($request->getMethod() === 'POST') {
+		if (true === $request->isMethod('POST')) {
 			$form->handleRequest($request);
 			
 			if ($form->isValid()) {
@@ -107,7 +113,7 @@ class ImageController extends Controller
 			]);
 			$form->add('save', SubmitType::class, ['label' => 'Modifier']);
 			
-			if ($request->getMethod() === 'POST') {
+			if (true === $request->isMethod('POST')) {
 				$form->handleRequest($request);
 				
 				if ($form->isValid()) {
@@ -162,7 +168,7 @@ class ImageController extends Controller
 		]);
 		$form->add('upload', SubmitType::class, ['label' => 'Télécharger']);
 		
-		if ($request->getMethod() === 'POST') {
+		if (true === $request->isMethod('POST')) {
 			$form->handleRequest($request);
 			
 			if ($form->isValid()) {
@@ -225,7 +231,7 @@ class ImageController extends Controller
 			]);
 			$form->add('save', SubmitType::class, ['label' => 'Enregistrer']);
 			
-			if ($request->getMethod() === 'POST') {
+			if (true === $request->isMethod('POST')) {
 				$form->handleRequest($request);
 				
 				if ($form->isValid()) {
@@ -246,16 +252,10 @@ class ImageController extends Controller
 	
 	public function snapshotAction(Request $request)
 	{
-//	 	$name = date('YmdHis');
-//	 	$newname = "images/".$name.".jpg";
-//	 	$file = file_put_contents('/tmp/upload.jpg', file_get_contents('php://input'));
-	
-		$str = file_get_contents("php://input");
-		file_put_contents("/tmp/upload.jpg", pack("H*", $str));
-	
-		return new  Response('ok');
-	
-//	 	$file = new UploadedFile($path, 'upload.png', 'image/png', 123, UPLOAD_ERR_OK);
-//	 	($path, $originalName, $mimeType = null, $size = null, $error = null, $test = false);
+		$str = file_get_contents('php://input');
+		$path = sys_get_temp_dir() . '/upload.jpg';
+		file_put_contents($path, pack('H*', $str));
+		
+		return new  BinaryFileResponse($str);
 	}
 }

@@ -5,7 +5,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 interface FileManagerInterface
@@ -60,7 +60,7 @@ interface FileManagerInterface
 	 * @param integer $offset
 	 * @return array
 	 */
-	public function findFilesBy(array $criteria, array $order = array(), $limit = null, $offset = null);
+	public function findFilesBy(array $criteria, array $order = [], $limit = null, $offset = null);
 	
 	/**
 	 * @return array

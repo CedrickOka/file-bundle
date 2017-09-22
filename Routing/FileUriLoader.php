@@ -9,7 +9,7 @@ use Symfony\Component\Routing\RouteCollection;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class FileUriLoader implements LoaderInterface
@@ -47,21 +47,31 @@ class FileUriLoader implements LoaderInterface
 		$this->thumbnailQuality = $thumbnailQuality;
 	}
 	
-	public function setResolver(LoaderResolverInterface $resolver)
-	{
-		// TODO Auto-generated method stub
-	}
+	/**
+	 * {@inheritDoc}
+	 * @see \Symfony\Component\Config\Loader\LoaderInterface::setResolver()
+	 */
+	public function setResolver(LoaderResolverInterface $resolver) {}
+
+	/**
+	 * {@inheritDoc}
+	 * @see \Symfony\Component\Config\Loader\LoaderInterface::getResolver()
+	 */
+	public function getResolver() {}
 	
-	public function getResolver()
-	{
-		// TODO Auto-generated method stub
-	}
-	
+	/**
+	 * {@inheritDoc}
+	 * @see \Symfony\Component\Config\Loader\LoaderInterface::supports()
+	 */
 	public function supports($resource, $type = null)
 	{
 		return 'file' === $type;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \Symfony\Component\Config\Loader\LoaderInterface::load()
+	 */
 	public function load($resource, $type = null)
 	{
 		if (true === $this->loaded) {
@@ -69,7 +79,7 @@ class FileUriLoader implements LoaderInterface
 		}
 		
 		$routes = new RouteCollection();		
-		$prefix = $this->environment == 'dev' ? '/..' : '';
+		$prefix = $this->environment === 'dev' ? '/..' : '';
 		
 		foreach ($this->routesDefinition as $name => $route) {
 			$class = $route['file_class'];

@@ -4,17 +4,18 @@ namespace Oka\FileBundle\Event;
 use Oka\FileBundle\Model\FileInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class FormEvent extends FileEvent
 {
+	/**
+	 * @var FormInterface $form
+	 */
     protected $form;
-    protected $response;
     
     /**
      * @param FormInterface $form
@@ -33,17 +34,5 @@ class FormEvent extends FileEvent
      */
     public function getForm() {
         return $this->form;
-    }
-
-    public function setResponse(Response $response) {
-        $this->response = $response;
-        return $this;
-    }
-    
-    /**
-     * @return Response|null
-     */
-    public function getResponse() {
-        return $this->response;
     }
 }

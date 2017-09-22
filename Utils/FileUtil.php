@@ -5,7 +5,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 final class FileUtil
@@ -15,11 +15,17 @@ final class FileUtil
 	 */
 	private static $fs;
 	
+	/**
+	 * @return mixed
+	 */
 	public static function getSystemOwner()
 	{
 		return posix_getpwuid(posix_geteuid())['name'];
 	}
 	
+	/**
+	 * @return \Symfony\Component\Filesystem\Filesystem
+	 */
 	public static function getFs()
 	{
 		static::$fs = static::$fs ?: new Filesystem();
@@ -27,6 +33,13 @@ final class FileUtil
 		return static::$fs;
 	}
 	
+	/**
+	 * @param string $dirs
+	 * @param integer $mode
+	 * @param string $owner
+	 * @param string $group
+	 * @param string $recursive
+	 */
 	public static function mkdir($dirs, $mode = 0755, $owner = null, $group = null, $recursive = true)
 	{
 		$owner = $owner ?: self::getSystemOwner();

@@ -6,7 +6,7 @@ use Oka\FileBundle\Model\FileManagerInterface;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 abstract class FileManager implements FileManagerInterface
@@ -81,7 +81,7 @@ abstract class FileManager implements FileManagerInterface
 		return $this->repository->findOneBy($criteria);
 	}
 	
-	public function findFilesBy(array $criteria, array $order = array(), $limit = null, $offset = null) {
+	public function findFilesBy(array $criteria, array $order = [], $limit = null, $offset = null) {
 		return $this->repository->findBy($criteria, $order, $limit, $offset);
 	}
 	

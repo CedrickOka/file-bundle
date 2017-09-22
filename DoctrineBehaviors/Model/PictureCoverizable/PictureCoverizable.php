@@ -5,7 +5,7 @@ use Oka\FileBundle\Model\ImageInterface;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 trait PictureCoverizable
@@ -35,7 +35,7 @@ trait PictureCoverizable
 	/**
 	 * @param ImageInterface $pictureCover
 	 */
-	public function removePictureCover(ImageInterface $pictureCover)
+	public function removePictureCover()
 	{
 		$this->pictureCover = null;
 		return $this;

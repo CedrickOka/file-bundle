@@ -9,7 +9,7 @@ use Oka\FileBundle\Utils\FileUtil;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class UploadedFileListener implements EventSubscriberInterface

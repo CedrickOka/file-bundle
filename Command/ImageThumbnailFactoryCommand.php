@@ -6,11 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  *
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  *
  */
 class ImageThumbnailFactoryCommand extends ContainerAwareCommand

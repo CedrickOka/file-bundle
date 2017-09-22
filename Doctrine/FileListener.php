@@ -2,11 +2,10 @@
 namespace Oka\FileBundle\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Metadata\ClassMetadata;
 use Oka\FileBundle\Event\UploadedFileEvent;
 use Oka\FileBundle\Model\FileInterface;
 use Oka\FileBundle\OkaFileEvents;
@@ -17,7 +16,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class FileListener implements EventSubscriber
@@ -96,11 +95,12 @@ class FileListener implements EventSubscriber
 		$entity = $arg->getEntity();
 		
 		if ($entity instanceof FileInterface) {
-			if (false == $entity->hasUploadedFile()) {
+			if (false === $entity->hasUploadedFile()) {
 				throw new \LogicException('It is not possible to persist a file entity without attaching it to an UploadedFile object.');
 			}
 			
-			$this->loadContainerConfig($arg->getEntityManager(), $entity);
+			$classMetadata = $arg->getEntityManager()->getClassMetadata(get_class($entity));
+			$this->loadContainerConfig($entity, $classMetadata);
 			
 			if (!is_writable($entity->getPath())) {
 				throw new FileException(sprintf('Unable to write in the "%s" directory', $entity->getPath()));
@@ -172,7 +172,8 @@ class FileListener implements EventSubscriber
 		$entity = $arg->getEntity();
 		
 		if ($entity instanceof FileInterface) {
-			$this->loadContainerConfig($arg->getEntityManager(), $entity);
+			$classMetadata = $arg->getEntityManager()->getClassMetadata(get_class($entity));
+			$this->loadContainerConfig($entity, $classMetadata);
 		}
 	}
 	
@@ -189,21 +190,20 @@ class FileListener implements EventSubscriber
 	}
 	
 	/**
-	 * @param EntityManagerInterface $entityManager
 	 * @param FileInterface $entity
+	 * @param ClassMetadata $classMetadata
 	 */
-	protected function loadContainerConfig(EntityManagerInterface $entityManager, FileInterface $entity)
+	private function loadContainerConfig(FileInterface $entity, ClassMetadata $classMetadata)
 	{
-		$classMetadata = $entityManager->getClassMetadata(get_class($entity));
-		$entityClass = $classMetadata->getName();
-		$dirname = null;
-		
 		$entity->setRootPath($this->rootPath);
 		$entity->setHost($this->host);
 		$entity->setPort($this->port);
 		$entity->setSecure($this->secure);
 		$entity->setFileSystem($this->fs);
 		$entity->setSystemOwner($this->systemOwner);
+		
+		$dirname = null;
+		$entityClass = $classMetadata->getName();
 		
 		foreach ($this->dataDirnames as $key => $value) {
 			$className = 'Oka\FileBundle\Model\\'.ucfirst($key).'Interface';
@@ -223,7 +223,7 @@ class FileListener implements EventSubscriber
 	/**
 	 * @param FileInterface $entity
 	 */
-	protected function handleMoveFile(FileInterface $entity)
+	private function handleMoveFile(FileInterface $entity)
 	{
 		$uploadedFile = $entity->moveFile();
 		$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVED, new UploadedFileEvent($entity, $uploadedFile));

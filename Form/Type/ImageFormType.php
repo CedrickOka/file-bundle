@@ -1,8 +1,11 @@
 <?php
 namespace Oka\FileBundle\Form\Type;
 
-use Oka\FileBundle\Form\Model\FileFormType;
-
+/**
+ *
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
+ *
+ */
 class ImageFormType extends FileFormType
 {
 	public function getBlockPrefix()

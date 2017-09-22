@@ -8,7 +8,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class UploadedImageManager
@@ -54,7 +54,7 @@ class UploadedImageManager
 		
 		return self::DOMINANT_COLOR_METHOD_KMEANS === $method ? 
 				$this->findDominantColorWithKmeans($path, $options, $optimize) : 
-				$this->findDominantColorWithQuantize($path, $options, $optimize);
+				$this->findDominantColorWithQuantize($path, $optimize);
 	}
 	
 	/**
@@ -76,8 +76,8 @@ class UploadedImageManager
 			$quality = $factory['quality'] === null ? $this->thumbnailQuality : $factory['quality'];
 			$realPath = $entity->getRealPathFor($factory['width'], $factory['height'], $mode, $quality);
 			
-			// TODO Check if the thumbnails already exists
-			if (!$fs->exists($realPath)) {
+			// Check if the thumbnails already exists
+			if (!$fs->exists($realPath) || true === $refresh) {
 				if ($entity instanceof ImageManipulatorInterface) {
 					$entity->thumbnail($factory['width'], $factory['height'], $mode, $quality);
 					$thumbnailsBuilded[] = $realPath;
@@ -88,7 +88,7 @@ class UploadedImageManager
 		return $thumbnailsBuilded;
 	}
 	
-	private function findDominantColorWithQuantize($path, array $options = [], $optimize = true)
+	private function findDominantColorWithQuantize($path, $optimize = true)
 	{
 		$image = new \Imagick($path);
 		

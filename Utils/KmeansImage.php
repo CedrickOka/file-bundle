@@ -243,7 +243,7 @@ class KmeansImage
      * @param mixed $image Path to the image
      * @param int $k Number of color groups to form
      */
-    function __construct($image, $k = 3) {
+    public function __construct($image, $k = 3) {
         $this->k = $k;
 
         $this->generateRGBPointsFromImage($image);
@@ -353,7 +353,7 @@ class KmeansImage
                 }
 
                 // Add the cluster average rgb to the array
-                $clusters[$key]['hex'] = $this->RGBtoHex($clusters[$key]['rgb']);
+                $clusters[$key]['hex'] = $this->rgbToHex($clusters[$key]['rgb']);
             }
 
 
@@ -383,7 +383,7 @@ class KmeansImage
         $this->dominantCentroid = array(
             'cluster_key' => $mainCentroidKey,
             'rgb' => $mainCentroid,
-            'hex' => $this->RGBtoHex($mainCentroid),
+            'hex' => $this->rgbToHex($mainCentroid),
         );
 
         $this->staleData = false;
@@ -415,7 +415,7 @@ class KmeansImage
     					'xCoord' 	=> $row,
     					'yCoord' 	=> $col,
     					'rgb' 		=> $rgb,
-    					'hex' 		=> $this->RGBtoHex($rgb)
+    					'hex' 		=> $this->rgbToHex($rgb)
     			];
     		}
     	}
@@ -467,11 +467,11 @@ class KmeansImage
      * @param $rgb
      * @return string
      */
-    private function RGBtoHex($rgb)
+    private function rgbToHex($rgb)
     {
         // Convert to Hex
         $hex = '';
-        if($rgb != null)
+        if($rgb !== null)
         {
             foreach($rgb as $value)
             {

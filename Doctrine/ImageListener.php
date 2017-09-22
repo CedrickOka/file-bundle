@@ -9,7 +9,7 @@ use Oka\FileBundle\Model\ImageInterface;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class ImageListener implements EventSubscriber

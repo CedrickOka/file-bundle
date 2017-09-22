@@ -6,6 +6,11 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ *
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
+ *
+ */
 class UploadFileFormType extends AbstractType
 {
 	/**

@@ -4,7 +4,7 @@ namespace Oka\FileBundle;
 /**
  * Contains all events thrown in the OkaFileBundle
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  */
 final class OkaFileEvents
 {

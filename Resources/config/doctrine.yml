@@ -1,11 +1,5 @@
 services:
 # Services
-#    oka_file.file_manager.default:
-#        class: Oka\FileBundle\Model\FileManager
-#        arguments: [ '@oka_file.object_manager' ]
-#        public: false
-#        lazy: true
-
     oka_file.image_manager:
         class: Oka\FileBundle\Doctrine\ImageManager
         arguments: [ '@oka_file.object_manager', '%oka_file.image.default_class%' ]

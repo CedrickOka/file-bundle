@@ -5,7 +5,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 interface FileInterface

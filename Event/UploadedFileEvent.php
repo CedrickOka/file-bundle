@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class UploadedFileEvent extends Event
@@ -28,11 +28,17 @@ class UploadedFileEvent extends Event
 		$this->uploadedFile = $uploadedFile;
 	}
 	
+	/**
+	 * @return \Oka\FileBundle\Model\FileInterface
+	 */
 	public function getEntity()
 	{
 		return $this->entity;
 	}
 	
+	/**
+	 * @return \Symfony\Component\HttpFoundation\File\UploadedFile
+	 */
 	public function getUploadedFile()
 	{
 		return $this->uploadedFile;

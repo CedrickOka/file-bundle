@@ -6,7 +6,7 @@ use Oka\FileBundle\Model\FileManager;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class ImageManager extends FileManager

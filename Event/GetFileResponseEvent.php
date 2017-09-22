@@ -1,25 +1,9 @@
 <?php
 namespace Oka\FileBundle\Event;
 
-use Symfony\Component\HttpFoundation\Response;
-
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
-class GetFileResponseEvent extends FileEvent
-{
-	protected $response;
-
-	public function setResponse(Response $response) {
-		$this->response = $response;
-	}
-
-	/**
-	 * @return Response|null
-	 */
-	public function getResponse() {
-		return $this->response;
-	}
-}
+class GetFileResponseEvent extends FileEvent {}

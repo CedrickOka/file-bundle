@@ -7,13 +7,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * 
- * @author cedrick
+ * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 class FilterFileResponseEvent extends FileEvent
 {
-	protected $response;
-	
 	/**
 	 * @param FileInterface $file
 	 * @param Request $request
@@ -24,12 +22,5 @@ class FilterFileResponseEvent extends FileEvent
 		parent::__construct($file, $request);
 		
 		$this->response = $response;
-	}
-	
-	/**
-	 * @return Response
-	 */
-	public function getResponse() {
-		return $this->response;
 	}
 }

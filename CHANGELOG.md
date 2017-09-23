@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 1.1.12 (2017-09-23)
+
+* Fixed bad argument passed to `FileListener::loadContainerConfig()` method.
+
 #### 1.1.11 (2017-09-22)
 
 * Text files should end with a newline character.

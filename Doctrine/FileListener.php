@@ -5,7 +5,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
-use Metadata\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Oka\FileBundle\Event\UploadedFileEvent;
 use Oka\FileBundle\Model\FileInterface;
 use Oka\FileBundle\OkaFileEvents;

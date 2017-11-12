@@ -15,4 +15,9 @@ class FileUtilTest extends KernelTestCase
 	{
 		$this->assertEquals('cedrick', FileUtil::getSystemOwner());
 	}
+	
+	public function testFindParentDirectoyThatExists()
+	{
+		$this->assertEquals('/home/cedrick', FileUtil::findParentDirectoyThatExists('/home/cedrick/poaoao/aiaio'));
+	}
 }

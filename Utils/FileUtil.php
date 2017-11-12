@@ -23,6 +23,17 @@ final class FileUtil
 		return posix_getpwuid(posix_geteuid())['name'];
 	}
 	
+	public static function findParentDirectoyThatExists($path)
+	{
+		$fs = static::getFs();
+		
+		while (!$fs->exists($path)) {
+			$path = dirname($path);
+		}
+		
+		return $path;
+	}
+	
 	/**
 	 * @return \Symfony\Component\Filesystem\Filesystem
 	 */

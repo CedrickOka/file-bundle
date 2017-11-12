@@ -101,9 +101,10 @@ class FileListener implements EventSubscriber
 			
 			$classMetadata = $arg->getEntityManager()->getClassMetadata(get_class($entity));
 			$this->loadContainerConfig($entity, $classMetadata);
+			$path = FileUtil::findParentDirectoyThatExists($entity->getPath());
 			
-			if (!is_writable($entity->getPath())) {
-				throw new FileException(sprintf('Unable to write in the "%s" directory', $entity->getPath()));
+			if (!is_writable($path)) {
+				throw new FileException(sprintf('Unable to write in the "%s" directory', $path));
 			}
 			
 			$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVING, new UploadedFileEvent($entity, $entity->getUploadedFile()));

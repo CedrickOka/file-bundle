@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 1.1.13 (2017-11-12)
+
+* Improve uploaded file life cycle handling.
+
 #### 1.1.12 (2017-09-23)
 
 * Fixed bad argument passed to `FileListener::loadContainerConfig()` method.

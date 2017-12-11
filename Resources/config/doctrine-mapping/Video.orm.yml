@@ -1,0 +1,6 @@
+Oka\FileBundle\Model\Video:
+    type: mappedSuperclass
+    fields:
+        duration:
+            type: integer
+            nullable: true

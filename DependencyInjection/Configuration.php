@@ -14,6 +14,11 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
 	/**
+	 * @var array $supportedDrivers
+	 */
+	protected static $supportedDrivers = ['orm', 'mongodb'];
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	public function getConfigTreeBuilder()
@@ -24,6 +29,14 @@ class Configuration implements ConfigurationInterface
 		$rootNode
 			->addDefaultsIfNotSet()
 			->children()
+				->scalarNode('db_driver')
+					->cannotBeEmpty()
+					->defaultValue('orm')
+					->validate()
+						->ifNotInArray(self::$supportedDrivers)
+						->thenInvalid('The driver %s is not supported. Please choose one of '.json_encode(self::$supportedDrivers))
+					->end()
+				->end()
 				->scalarNode('model_manager_name')->defaultNull()->end()
 				->append($this->objectClassNodeDefinition())
 				->append($this->containerConfigNodeDefinition())
@@ -138,7 +151,7 @@ class Configuration implements ConfigurationInterface
 						->scalarNode('host')
 							->defaultValue('localhost')
 							->treatNullLike('localhost')
-							->info('Server host.')
+							->info('File storage server host.')
 						->end()
 						->scalarNode('port')->defaultNull()->end()
 						->scalarNode('path')
@@ -208,14 +221,6 @@ class Configuration implements ConfigurationInterface
 									->end()
 								->end()
 								->arrayNode('options')
-// 									->validate()
-// 										->ifTrue(function($value){
-// 											if (array_key_exists($key, $array)) {
-												
-// 											}
-// 										})
-// 										->thenInvalid('')
-// 									->end()
 									->prototype('variable')->end()
 								->end()
 							->end()
@@ -292,14 +297,6 @@ class Configuration implements ConfigurationInterface
 						->append($this->createBehaviorMappingNodeDefinition())
 					->end()
 				->end()
-				->arrayNode('picture_coverable')
-					->addDefaultsIfNotSet()
-					->canBeDisabled()
-					->info('@deprecated use instead `picture_coverizable`.')
-					->children()
-						->append($this->createBehaviorMappingNodeDefinition())
-					->end()
-				->end()
 				->arrayNode('avatarizable')
 					->addDefaultsIfNotSet()
 					->canBeDisabled()
@@ -321,7 +318,15 @@ class Configuration implements ConfigurationInterface
 			->useAttributeAsKey('name')
 			->prototype('array')
 				->children()
-					->scalarNode('target_entity')->cannotBeEmpty()->end()
+					->scalarNode('target_entity')
+						->info('This configuration value is deprecated since version `1.2.0`. Use instead `oka_pagination.behaviors.[*].mappings.target_object`.')
+						->cannotBeEmpty()
+					->end()
+					->scalarNode('target_object')->cannotBeEmpty()->end()
+					->booleanNode('embedded')
+						->defaultTrue()
+						->info('Used only with the database driver `mongodb`.')
+					->end()
 					->scalarNode('fetch')
 						->defaultValue('EAGER')
 						->validate()

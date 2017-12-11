@@ -33,20 +33,20 @@ class UploadedImageListener implements EventSubscriberInterface
 	
 	public function onUploadedFileMoving(UploadedFileEvent $event)
 	{
-		$entity = $event->getEntity();
+		$object = $event->getObject();
 		
-		if ($entity instanceof ImageInterface && true === $this->detectDominantColor['enabled']) {
+		if ($object instanceof ImageInterface && true === $this->detectDominantColor['enabled']) {
 			$realPath = $event->getUploadedFile()->getRealPath();
-			$entity->setDominantColor($this->uploadedImageManager->findImageDominantColor($realPath, $this->detectDominantColor['method'], $this->detectDominantColor['options']));
+			$object->setDominantColor($this->uploadedImageManager->findImageDominantColor($realPath, $this->detectDominantColor['method'], $this->detectDominantColor['options']));
 		}
 	}
 	
 	public function onUploadedFileMoved(UploadedFileEvent $event)
 	{
-		$entity = $event->getEntity();
+		$object = $event->getObject();
 		
-		if ($entity instanceof ImageManipulatorInterface) {
-			$this->uploadedImageManager->buildThumbnails($entity);
+		if ($object instanceof ImageManipulatorInterface) {
+			$this->uploadedImageManager->buildThumbnails($object);
 		}
 	}
 	

@@ -2,9 +2,7 @@
 namespace Oka\FileBundle\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\ORM\Events;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Oka\FileBundle\Model\ImageInterface;
 
 /**
@@ -39,25 +37,25 @@ class ImageListener implements EventSubscriber
 	 */
 	public function prePersist(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
+		$object = $arg->getObject();
 		
-		if ($entity instanceof ImageInterface) {
-			$entity->setThumbnailMode($this->thumbnailMode);
-			$entity->setThumbnailQuality($this->thumbnailQuality);
-			$this->handleUploadedImage($entity);
+		if ($object instanceof ImageInterface) {
+			$object->setThumbnailMode($this->thumbnailMode);
+			$object->setThumbnailQuality($this->thumbnailQuality);
+			$this->handleUploadedImage($object);
 		}
 		
 	}
 	
 	/**
-	 * @param PreUpdateEventArgs $arg
+	 * @param LifecycleEventArgs $arg
 	 */
-	public function preUpdate(PreUpdateEventArgs $arg)
+	public function preUpdate(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
+		$object = $arg->getObject();
 		
-		if ($entity instanceof ImageInterface) {
-			$this->handleUploadedImage($entity);
+		if ($object instanceof ImageInterface) {
+			$this->handleUploadedImage($object);
 		}		
 	}
 	
@@ -66,32 +64,32 @@ class ImageListener implements EventSubscriber
 	 */
 	public function postLoad(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
+		$object = $arg->getObject();
 		
-		if ($entity instanceof ImageInterface) {
-			$entity->setThumbnailMode($this->thumbnailMode);
-			$entity->setThumbnailQuality($this->thumbnailQuality);
+		if ($object instanceof ImageInterface) {
+			$object->setThumbnailMode($this->thumbnailMode);
+			$object->setThumbnailQuality($this->thumbnailQuality);
 		}
 	}
 	
 	public function getSubscribedEvents()
 	{
 		return [
-				Events::prePersist,
-				Events::preUpdate,
-				Events::postLoad
+				'prePersist',
+				'preUpdate',
+				'postLoad'
 		];
 	}
 	
 	/**
-	 * @param ImageInterface $entity
+	 * @param ImageInterface $object
 	 */
-	private function handleUploadedImage(ImageInterface $entity)
+	private function handleUploadedImage(ImageInterface $object)
 	{
-		if (true === $entity->hasUploadedFile()) {
-			list($width, $height) = getimagesize($entity->getUploadedFile()->getRealPath());
-			$entity->setHeight($height);
-			$entity->setWidth($width);
+		if (true === $object->hasUploadedFile()) {
+			list($width, $height) = getimagesize($object->getUploadedFile()->getRealPath());
+			$object->setHeight($height);
+			$object->setWidth($width);
 		}
 	}
 }

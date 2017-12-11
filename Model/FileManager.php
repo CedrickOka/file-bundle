@@ -22,7 +22,7 @@ abstract class FileManager implements FileManagerInterface
 	protected $objectManager;
 	
 	/**
-	 * @var \Doctrine\ORM\EntityRepository
+	 * @var \Doctrine\Common\Persistence\ObjectRepository
 	 */
 	protected $repository;
 	
@@ -32,33 +32,39 @@ abstract class FileManager implements FileManagerInterface
 	 * @param ObjectManager	$om
 	 * @param string		$class
 	 */
-	public function __construct(ObjectManager $om, $class) {
+	public function __construct(ObjectManager $om, $class)
+	{
 		$this->objectManager = $om;
 		$this->setClass($class);
 	}
 	
-	public function getClass() {
+	public function getClass()
+	{
 		return $this->class;
 	}
 	
-	public function setClass($class) {
+	public function setClass($class)
+	{
 		$this->repository = $this->objectManager->getRepository($class);
 		$this->class = $this->objectManager->getClassMetadata($class)->getName();
 		return $this;
 	}
 	
-	public function getObjectManager() {
+	public function getObjectManager()
+	{
 		return $this->objectManager;
 	}
 	
-	public function createFile() {
+	public function createFile()
+	{
 		$class = $this->getClass();
 		$file = new $class();
 		
 		return $file;
 	}
 	
-	public function updateFile(FileInterface $file, $andFlush = true) {
+	public function updateFile(FileInterface $file, $andFlush = true)
+	{
 		if (!$this->objectManager->contains($file)) {
 			$this->objectManager->persist($file);
 		}
@@ -68,24 +74,29 @@ abstract class FileManager implements FileManagerInterface
 		}
 	}
 	
-	public function deleteFile(FileInterface $file) {
+	public function deleteFile(FileInterface $file)
+	{
 		$this->objectManager->remove($file);
 		$this->objectManager->flush($file);
 	}
 	
-	public function findFile($id) {
+	public function findFile($id)
+	{
 		return $this->repository->find($id);
 	}
 	
-	public function findFileBy(array $criteria) {
+	public function findFileBy(array $criteria)
+	{
 		return $this->repository->findOneBy($criteria);
 	}
 	
-	public function findFilesBy(array $criteria, array $order = [], $limit = null, $offset = null) {
+	public function findFilesBy(array $criteria, array $order = [], $limit = null, $offset = null)
+	{
 		return $this->repository->findBy($criteria, $order, $limit, $offset);
 	}
 	
-	public function findFiles() {
+	public function findFiles()
+	{
 		return $this->repository->findAll();
 	}
 }

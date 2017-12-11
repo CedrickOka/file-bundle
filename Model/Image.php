@@ -1,7 +1,6 @@
 <?php
 namespace Oka\FileBundle\Model;
 
-use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\Box;
 use Imagine\Image\Point;
 use Oka\FileBundle\Utils\ImageUtils;
@@ -11,24 +10,20 @@ use Symfony\Component\Finder\Finder;
  *
  * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
- * @ORM\MappedSuperclass()
  */
 abstract class Image extends File implements ImageInterface, ImageManipulatorInterface
 {
 	/**
-	 * @ORM\Column(type="smallint")
 	 * @var integer $width
 	 */
 	protected $width;
 	
 	/**
-	 * @ORM\Column(type="smallint")
 	 * @var integer $height
 	 */
 	protected $height;
 	
 	/**
-	 * @ORM\Column(name="dominant_color", type="string", length=6, nullable=true)
 	 * @var string $dominantColor
 	 */
 	protected $dominantColor;
@@ -45,6 +40,10 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 	
 	public function __construct()
 	{
+		parent::__construct();
+		
+		$this->width = 0;
+		$this->height = 0;
 		$this->dominantColor = 'ffffff';
 	}
 	

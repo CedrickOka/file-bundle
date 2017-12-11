@@ -1,12 +1,12 @@
 <?php
-namespace Oka\FileBundle\DoctrineBehaviors\ORM\Avatarizable;
+namespace Oka\FileBundle\DoctrineBehaviors\ODM\Avatarizable;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Doctrine\ORM\Events;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Oka\FileBundle\DoctrineBehaviors\Model\Avatarizable\Avatarizable;
-use Oka\FileBundle\DoctrineBehaviors\ORM\AbstractListener;
+use Oka\FileBundle\DoctrineBehaviors\ODM\AbstractListener;
+use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Doctrine\ODM\MongoDB\Events;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 
 /**
  * 
@@ -17,6 +17,7 @@ class AvatarizableListener extends AbstractListener
 {
 	public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
 	{
+		/** @var \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $classMetadata */
 		$classMetadata = $eventArgs->getClassMetadata();
 		
 		/** @var \ReflectionClass $reflClass */
@@ -27,17 +28,19 @@ class AvatarizableListener extends AbstractListener
 		if ($this->isEntitySupported($reflClass)) {
 			if ($this->getClassAnalyzer()->hasProperty($reflClass, 'avatar')) {
 				if ($this->getClassAnalyzer()->hasMethod($reflClass, 'getAvatar') && $this->getClassAnalyzer()->hasMethod($reflClass, 'setAvatar')) {
-					$mapOneToOne = $this->handleEntityMapping($reflClass->getName(), [
-							'fieldName' 	=> 'avatar',
-							'targetEntity' 	=> $this->defaultTargetObject,
-							'cascade' 		=> ['all'],
-							'fetch' 		=> ClassMetadata::FETCH_EAGER,
-							'joinColumns' 	=> [
-									['name' => 'avatar_id', 'referencedColumnName' => 'id']
-							]
+					$map = $this->handleEntityMapping($reflClass->getName(), [
+							'fieldName' 		=> 'avatar',
+							'targetDocument' 	=> $this->defaultTargetObject,
+							'storeAs' 			=> ClassMetadata::REFERENCE_STORE_AS_DB_REF_WITH_DB,
+							'cascade' 			=> ['all'],
+							'orphanRemoval' 	=> true
 					]);
 					
-					$classMetadata->mapOneToOne($mapOneToOne);
+					if (isset($this->mappings[$reflClass->getName()]['embedded']) && true === $this->mappings[$reflClass->getName()]['embedded']) {
+						$classMetadata->mapOneEmbedded($map);
+					} else {
+						$classMetadata->mapOneReference($map);
+					}
 				}
 			}
 		}
@@ -45,12 +48,12 @@ class AvatarizableListener extends AbstractListener
 	
 	public function prePersist(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
-		$reflClass = new \ReflectionClass($entity);
+		$document = $arg->getDocument();
+		$reflClass = new \ReflectionClass($document);
 		
 		if ($this->isEntitySupported($reflClass)) {
 			if ($this->getClassAnalyzer()->hasProperty($reflClass, 'defaultUri') && $this->getClassAnalyzer()->hasMethod($reflClass, 'setDefaultUri')) {
-				$entity->setDefaultUri(isset($this->mappings[$reflClass->getName()]['options']['default_avatar_uri']) ? $this->mappings[$reflClass->getName()]['options']['default_avatar_uri'] : '');
+				$document->setDefaultUri(isset($this->mappings[$reflClass->getName()]['options']['default_avatar_uri']) ? $this->mappings[$reflClass->getName()]['options']['default_avatar_uri'] : '');
 			}
 		}
 	}
@@ -71,7 +74,7 @@ class AvatarizableListener extends AbstractListener
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \Oka\FileBundle\DoctrineBehaviors\ORM\AbstractListener::isEntitySupported()
+	 * @see \Oka\FileBundle\DoctrineBehaviors\AbstractListener::isEntitySupported()
 	 */
 	protected function isEntitySupported(\ReflectionClass $reflClass)
 	{

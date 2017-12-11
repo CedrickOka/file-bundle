@@ -22,12 +22,8 @@ services:
         class: Oka\FileBundle\Doctrine\FileListener
         arguments: [ '@event_dispatcher', '%oka_file.container.root_path%', '%oka_file.container.data_dirnames%', '%oka_file.container.entity_dirnames%', '%oka_file.container.web_server.host%', '%oka_file.container.web_server.port%', '%oka_file.container.web_server.secure%' ]
         public: false
-        tags:
-          - { name: doctrine.event_subscriber }
 
     oka_file.image.doctrine_listener:
         class: Oka\FileBundle\Doctrine\ImageListener
         arguments: [ '%oka_file.image.thumbnail.mode%', '%oka_file.image.thumbnail.quality%' ]
         public: false
-        tags:
-          - { name: doctrine.event_subscriber }

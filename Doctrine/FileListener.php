@@ -2,10 +2,8 @@
 namespace Oka\FileBundle\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\ORM\Events;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Oka\FileBundle\Event\UploadedFileEvent;
 use Oka\FileBundle\Model\FileInterface;
 use Oka\FileBundle\OkaFileEvents;
@@ -37,9 +35,9 @@ class FileListener implements EventSubscriber
 	protected $dataDirnames;
 	
 	/**
-	 * @var array $entityDirnames
+	 * @var array $objectDirnames
 	 */
-	protected $entityDirnames;
+	protected $objectDirnames;
 	
 	/**
 	 * @var string $host
@@ -70,16 +68,16 @@ class FileListener implements EventSubscriber
 	 * @param EventDispatcherInterface $dispatcher
 	 * @param string $rootPath
 	 * @param array $dataDirnames
-	 * @param array $entityDirnames
+	 * @param array $objectDirnames
 	 * @param string $host
 	 * @param integer $port
 	 * @param boolean $secure
 	 */
-	public function __construct(EventDispatcherInterface $dispatcher, $rootPath, array $dataDirnames, array $entityDirnames, $host, $port, $secure) {
+	public function __construct(EventDispatcherInterface $dispatcher, $rootPath, array $dataDirnames, array $objectDirnames, $host, $port, $secure) {
 		$this->dispatcher = $dispatcher;
 		$this->rootPath = $rootPath;
 		$this->dataDirnames = $dataDirnames;
-		$this->entityDirnames = $entityDirnames;
+		$this->objectDirnames = $objectDirnames;
 		$this->host = $host;
 		$this->port = $port;
 		$this->secure = $secure;
@@ -92,23 +90,24 @@ class FileListener implements EventSubscriber
 	 */
 	public function prePersist(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
+		$object = $arg->getObject();
 		
-		if ($entity instanceof FileInterface) {
-			if (false === $entity->hasUploadedFile()) {
-				throw new \LogicException('It is not possible to persist a file entity without attaching it to an UploadedFile object.');
+		if ($object instanceof FileInterface) {
+			if (false === $object->hasUploadedFile()) {
+				throw new \LogicException('It is not possible to persist a file object without attaching it to an UploadedFile object.');
 			}
 			
-			$classMetadata = $arg->getEntityManager()->getClassMetadata(get_class($entity));
-			$this->loadContainerConfig($entity, $classMetadata);
-			$path = FileUtil::findParentDirectoyThatExists($entity->getPath());
+			$classMetadata = $arg->getObjectManager()->getClassMetadata(get_class($object));
+			$this->loadContainerConfig($object, $classMetadata);
+			
+			$path = FileUtil::findParentDirectoyThatExists($object->getPath());
 			
 			if (!is_writable($path)) {
 				throw new FileException(sprintf('Unable to write in the "%s" directory', $path));
 			}
 			
-			$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVING, new UploadedFileEvent($entity, $entity->getUploadedFile()));
-			$entity->setLastModified();
+			$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVING, new UploadedFileEvent($object, $object->getUploadedFile()));
+			$object->setLastModified();
 		}
 	}
 	
@@ -117,24 +116,24 @@ class FileListener implements EventSubscriber
 	 */
 	public function postPersist(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
+		$object = $arg->getObject();
 		
-		if ($entity instanceof FileInterface) {
-			$this->handleMoveFile($entity);
+		if ($object instanceof FileInterface) {
+			$this->handleMoveFile($object);
 		}
 	}
 	
 	/**
-	 * @param PreUpdateEventArgs $arg
+	 * @param LifecycleEventArgs $arg
 	 */
-	public function preUpdate(PreUpdateEventArgs $arg)
+	public function preUpdate(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
+		$object = $arg->getObject();
 		
-		if ($entity instanceof FileInterface) {
-			if (true === $entity->hasUploadedFile()) {
-				$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVING, new UploadedFileEvent($entity, $entity->getUploadedFile()));
-				$entity->setLastModified();
+		if ($object instanceof FileInterface) {
+			if (true === $object->hasUploadedFile()) {
+				$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVING, new UploadedFileEvent($object, $object->getUploadedFile()));
+				$object->setLastModified();
 			}
 		}
 	}
@@ -144,11 +143,11 @@ class FileListener implements EventSubscriber
 	 */
 	public function postUpdate(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
+		$object = $arg->getObject();
 		
-		if ($entity instanceof FileInterface) {
-			if (true === $entity->hasUploadedFile()) {
-				$this->handleMoveFile($entity);
+		if ($object instanceof FileInterface) {
+			if (true === $object->hasUploadedFile()) {
+				$this->handleMoveFile($object);
 			}
 		}
 	}
@@ -158,10 +157,10 @@ class FileListener implements EventSubscriber
 	 */
 	public function preRemove(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
+		$object = $arg->getObject();
 		
-		if ($entity instanceof FileInterface) {
-			$entity->removeFile();
+		if ($object instanceof FileInterface) {
+			$object->removeFile();
 		}
 	}
 	
@@ -170,63 +169,64 @@ class FileListener implements EventSubscriber
 	 */
 	public function postLoad(LifecycleEventArgs $arg)
 	{
-		$entity = $arg->getEntity();
+		$object = $arg->getObject();
 		
-		if ($entity instanceof FileInterface) {
-			$classMetadata = $arg->getEntityManager()->getClassMetadata(get_class($entity));
-			$this->loadContainerConfig($entity, $classMetadata);
+		if ($object instanceof FileInterface) {
+			$classMetadata = $arg->getObjectManager()->getClassMetadata(get_class($object));
+			$this->loadContainerConfig($object, $classMetadata);
 		}
 	}
 	
 	public function getSubscribedEvents()
 	{
 		return [
-				Events::prePersist,
-				Events::postPersist,
-				Events::preUpdate,
-				Events::postUpdate,
-				Events::preRemove,
-				Events::postLoad
+				'prePersist',
+				'postPersist',
+				'preUpdate',
+				'postUpdate',
+				'preRemove',
+				'postLoad'
 		];
 	}
 	
 	/**
-	 * @param FileInterface $entity
+	 * @param FileInterface $object
 	 * @param ClassMetadata $classMetadata
 	 */
-	private function loadContainerConfig(FileInterface $entity, ClassMetadata $classMetadata)
+	private function loadContainerConfig(FileInterface $object, ClassMetadata $classMetadata)
 	{
-		$entity->setRootPath($this->rootPath);
-		$entity->setHost($this->host);
-		$entity->setPort($this->port);
-		$entity->setSecure($this->secure);
-		$entity->setFileSystem($this->fs);
-		$entity->setSystemOwner($this->systemOwner);
+		$object->setRootPath($this->rootPath);
+		$object->setHost($this->host);
+		$object->setPort($this->port);
+		$object->setSecure($this->secure);
+		$object->setFileSystem($this->fs);
+		$object->setSystemOwner($this->systemOwner);
 		
 		$dirname = null;
-		$entityClass = $classMetadata->getName();
+		$objectClass = $classMetadata->getName();
 		
 		foreach ($this->dataDirnames as $key => $value) {
 			$className = 'Oka\FileBundle\Model\\'.ucfirst($key).'Interface';
 			
-			if ($entity instanceof $className) {
+			if ($object instanceof $className) {
 				$dirname = $value;
 				break;
 			}
 		}
 		
-		if (isset($this->entityDirnames[$entityClass])) {
-			$dirname = $dirname !== null ? $dirname . '/' . $this->entityDirnames[$entityClass] : $this->entityDirnames[$entityClass];
+		if (isset($this->objectDirnames[$objectClass])) {
+			$dirname = $dirname !== null ? $dirname . '/' . $this->objectDirnames[$objectClass] : $this->objectDirnames[$objectClass];
 		}
-		$entity->setDirname($dirname);
+		
+		$object->setDirname($dirname);
 	}
 	
 	/**
-	 * @param FileInterface $entity
+	 * @param FileInterface $object
 	 */
-	private function handleMoveFile(FileInterface $entity)
+	private function handleMoveFile(FileInterface $object)
 	{
-		$uploadedFile = $entity->moveFile();
-		$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVED, new UploadedFileEvent($entity, $uploadedFile));
+		$uploadedFile = $object->moveFile();
+		$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVED, new UploadedFileEvent($object, $uploadedFile));
 	}
 }

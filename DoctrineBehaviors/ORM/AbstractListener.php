@@ -1,71 +1,16 @@
 <?php
 namespace Oka\FileBundle\DoctrineBehaviors\ORM;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Oka\FileBundle\DoctrineBehaviors\Reflection\ClassAnalyzer;
+use Oka\FileBundle\DoctrineBehaviors\Common\AbstractListener as BaseAbstractListener;
 
 /**
  * 
- * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
+ * @author Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
-abstract class AbstractListener implements EventSubscriber
+abstract class AbstractListener extends BaseAbstractListener
 {
-	/**
-	 * @var ClassAnalyzer $classAnalyser
-	 */
-	private $classAnalyser;
-	
-	/**
-	 * @var boolean $isRecursive
-	 */
-	protected $isRecursive;
-	
-	/**
-	 * @var array $mappings
-	 */
-	protected $mappings;
-	
-	/**
-	 * @var string $defaultTargetEntity
-	 */
-	protected $defaultTargetEntity;
-	
-	/**
-	 * @param array $mappings
-	 * @param string $defaultClass
-	 */
-	public function __construct(array $mappings, $defaultClass)
-	{
-		$this->mappings = $mappings;
-		$this->defaultTargetEntity = $defaultClass;
-	}
-	
-	/**
-	 * @param ClassAnalyzer $classAnalyser
-	 */
-	public function setClassAnalyzer(ClassAnalyzer $classAnalyser)
-	{
-		$this->classAnalyser = $classAnalyser;
-	}
-	
-	/**
-	 * @param boolean $recursive
-	 */
-	public function setRecursive($recursive)
-	{
-		$this->isRecursive = $recursive;
-	}
-	
-	/**
-	 * @return \Oka\FileBundle\DoctrineBehaviors\Reflection\ClassAnalyzer
-	 */
-	protected function getClassAnalyzer()
-	{
-		return $this->classAnalyser;
-	}
-	
 	/**
 	 * @param string $class
 	 * @param array $mapping
@@ -74,8 +19,8 @@ abstract class AbstractListener implements EventSubscriber
 	protected function handleEntityMapping($class, $mapping)
 	{
 		if (isset($this->mappings[$class])) {
-			$mapping['targetEntity'] = isset($this->mappings[$class]['target_entity']) ? 
-										$this->mappings[$class]['target_entity'] : $this->defaultTargetEntity;
+			$mapping['targetEntity'] = isset($this->mappings[$class]['target_object']) ? $this->mappings[$class]['target_object'] : 
+					(isset($this->mappings[$class]['target_entity']) ? $this->mappings[$class]['target_entity'] : $this->defaultTargetObject);
 			
 			switch (strtoupper($this->mappings[$class]['fetch'])) {
 				case 'EAGER':
@@ -92,13 +37,4 @@ abstract class AbstractListener implements EventSubscriber
 		
 		return $mapping;
 	}
-	
-	/**
-	 * Checks whether provided entity is supported.
-	 *
-	 * @param \ReflectionClass $reflClass The reflection class
-	 *
-	 * @return Boolean
-	 */
-	protected abstract function isEntitySupported(\ReflectionClass $reflClass);
 }

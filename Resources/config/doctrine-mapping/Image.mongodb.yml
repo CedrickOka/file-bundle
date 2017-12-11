@@ -1,0 +1,10 @@
+Oka\FileBundle\Model\Image:
+    type: mappedSuperclass
+    fields:
+        width:
+            type: int
+        height:
+            type: int
+        dominantColor:
+            name: dominant_color
+            type: string

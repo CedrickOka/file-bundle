@@ -1,0 +1,12 @@
+Oka\FileBundle\Model\Image:
+    type: mappedSuperclass
+    fields:
+        width:
+            type: smallint
+        height:
+            type: smallint
+        dominantColor:
+            column: dominant_color
+            type: string
+            length: 6
+            nullable: true

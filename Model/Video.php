@@ -1,23 +1,21 @@
 <?php
 namespace Oka\FileBundle\Model;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  *
  * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
- * @ORM\MappedSuperclass()
  */
 abstract class Video extends File
 {
 	/**
-	 * @ORM\Column(type="integer", nullable=true)
+	 * Video duration in seconds
+	 * @var int $duration
 	 */
 	protected $duration;
 	
 	/**
-	 * @return the \DateTime
+	 * @return int
 	 */
 	public function getDuration()
 	{
@@ -25,11 +23,18 @@ abstract class Video extends File
 	}
 	
 	/**
-	 * @param \DateTime $duration
+	 * @param int $duration
 	 */
 	public function setDuration($duration)
 	{
 		$this->duration = $duration;
 		return $this;
+	}
+	
+	public function __construct()
+	{
+		parent::__construct();
+		
+		$this->duration = 0;
 	}
 }

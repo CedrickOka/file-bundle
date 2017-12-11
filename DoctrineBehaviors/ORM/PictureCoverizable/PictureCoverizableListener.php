@@ -4,7 +4,6 @@ namespace Oka\FileBundle\DoctrineBehaviors\ORM\PictureCoverizable;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverable\PictureCoverable;
 use Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverizable\PictureCoverizable;
 use Oka\FileBundle\DoctrineBehaviors\ORM\AbstractListener;
 
@@ -30,12 +29,12 @@ class PictureCoverizableListener extends AbstractListener
 				if ($this->getClassAnalyzer()->hasMethod($reflClass, 'getPictureCover') && $this->getClassAnalyzer()->hasMethod($reflClass, 'setPictureCover')) {
 					$mapOneToOne = $this->handleEntityMapping($reflClass->getName(), [
 							'fieldName' 	=> 'pictureCover',
-							'targetEntity' 	=> $this->defaultTargetEntity,
+							'targetEntity' 	=> $this->defaultTargetObject,
 							'cascade' 		=> ['all'],
 							'fetch' 		=> ClassMetadata::FETCH_EAGER,
 							'joinColumns' 	=> [
 									['name' => 'picture_cover_id', 'referencedColumnName' => 'id']
-							],
+							]
 					]);
 					
 					$classMetadata->mapOneToOne($mapOneToOne);
@@ -57,7 +56,6 @@ class PictureCoverizableListener extends AbstractListener
 	 */
 	protected function isEntitySupported(\ReflectionClass $reflClass)
 	{
-		return $this->getClassAnalyzer()->hasTrait($reflClass, PictureCoverizable::class, $this->isRecursive) || 
-				$this->getClassAnalyzer()->hasTrait($reflClass, PictureCoverable::class, $this->isRecursive);
+		return $this->getClassAnalyzer()->hasTrait($reflClass, PictureCoverizable::class, $this->isRecursive);
 	}
 }

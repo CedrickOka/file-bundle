@@ -1,7 +1,6 @@
 <?php
 namespace Oka\FileBundle\Model;
 
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -12,8 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * 
  * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
- * @ORM\MappedSuperclass()
- * @ORM\HasLifecycleCallbacks()
  */
 abstract class File implements FileInterface
 {
@@ -23,37 +20,31 @@ abstract class File implements FileInterface
 	protected $id;
 	
 	/**
-	 * @ORM\Column(type="string", nullable=true)
 	 * @var string $name
 	 */
 	protected $name;
 	
 	/**
-	 * @ORM\Column(name="mime_type", type="string", nullable=true)
 	 * @var string $mimeType
 	 */
 	protected $mimeType;
 	
 	/**
-	 * @ORM\Column(type="string", nullable=true)
 	 * @var string $extension
 	 */
 	protected $extension;
 	
 	/**
-	 * @ORM\Column(type="bigint", options={"unsigned": true})
 	 * @var integer $size
 	 */
 	protected $size;
 	
 	/**
-	 * @ORM\Column(name="created_at", type="datetime")
 	 * @var \DateTime $createdAt
 	 */
 	protected $createdAt;
 	
 	/**
-	 * @ORM\Column(name="updated_at", type="datetime", nullable=true)
 	 * @var \DateTime $updatedAt
 	 */
 	protected $updatedAt;
@@ -103,6 +94,11 @@ abstract class File implements FileInterface
 	 * @var mixed $tmp
 	 */
 	private $tmp;
+	
+	public function __construct()
+	{
+		$this->size = 0;
+	}
 	
 	/**
 	 * @return mixed
@@ -264,7 +260,11 @@ abstract class File implements FileInterface
 	 */
 	public function setLastModified() 
 	{
-		return $this->createdAt === null ? $this->setCreatedAt() : $this->setUpdatedAt();
+		if (null === $this->createdAt) {
+			$this->setCreatedAt();
+		}
+		
+		return $this->setUpdatedAt();
 	}
 	
 	/**
@@ -462,6 +462,7 @@ abstract class File implements FileInterface
 		if (null === ($this->extension = $this->uploadedFile->guessExtension())) {
 			$this->extension = $this->uploadedFile->getExtension() ?: '';
 		}
+		
 		if ($this->name === null) {
 			$this->name = $this->uploadedFile->getClientOriginalName() ?: $this->uploadedFile->getFilename();
 		}

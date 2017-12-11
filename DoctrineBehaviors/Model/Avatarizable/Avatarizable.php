@@ -5,7 +5,7 @@ use Oka\FileBundle\Model\ImageInterface;
 
 /**
  * 
- * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
+ * @author Cedrick Oka Baidai <okacedrick@gmail.com>
  * 
  */
 trait Avatarizable

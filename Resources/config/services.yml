@@ -2,7 +2,7 @@ services:
 # Factory
     oka_file.object_manager:
         class: Doctrine\Common\Persistence\ObjectManager
-        arguments: [ '' ]
+        arguments: [ '%oka_file.model_manager_name%' ]
         public: false
 
 # Form

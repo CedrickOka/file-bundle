@@ -189,6 +189,7 @@ Add the following configuration to your `config.yml`.
 ``` yaml
 # app/config/config.yml
 oka_file:
+    db_driver: orm
     model\_manager\_name: default
     object\_default\_class:
         image: Acme\FileBundle\Entity\Image
@@ -206,12 +207,12 @@ oka_file:
         picture_coverizable:
             mappings:
                 Acme\FileBundle\Entity\User:
-                    target_entity: Acme\FileBundle\Entity\Image
+                    target_object: Acme\FileBundle\Entity\Image
                     fetch: EAGER
         avatarizable:
             mappings:
                 Acme\FileBundle\Entity\User:
-                    target_entity: Acme\FileBundle\Entity\Image
+                    target_object: Acme\FileBundle\Entity\Image
                     fetch: EAGER
                     options:
                         default\_avatar\_uri: 'http://acme.com/images/default-avatar.png'

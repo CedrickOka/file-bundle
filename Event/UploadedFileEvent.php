@@ -13,27 +13,36 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class UploadedFileEvent extends Event
 {
 	/**
-	 * @var FileInterface $entity
+	 * @var FileInterface $object
 	 */
-	protected $entity;
+	protected $object;
 	
 	/**
 	 * @var UploadedFile $uploadedFile
 	 */
 	protected $uploadedFile;
 	
-	public function __construct(FileInterface $entity, UploadedFile $uploadedFile)
+	public function __construct(FileInterface $object, UploadedFile $uploadedFile)
 	{
-		$this->entity = $entity;
+		$this->object = $object;
 		$this->uploadedFile = $uploadedFile;
 	}
 	
 	/**
 	 * @return \Oka\FileBundle\Model\FileInterface
 	 */
+	public function getObject()
+	{
+		return $this->object;
+	}
+	
+	/**
+	 * @deprecated Use instead UploadedFileEvent::getObject().
+	 * @return \Oka\FileBundle\Model\FileInterface
+	 */
 	public function getEntity()
 	{
-		return $this->entity;
+		return $this->getObject();
 	}
 	
 	/**

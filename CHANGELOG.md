@@ -1,6 +1,17 @@
 Changelog
 =========
 
+#### 1.2.0 (2017-12-11)
+
+* [BC Break] Removed `oka_file.behaviors.picture_coverable` deprecated configuration values.
+* Fixed unexcepted mappings given has doctrine behavior `PictureCoverizableListener` configuration.
+* Deprecated `oka_file.behaviors.[behaviorName].mappings.[className].target_entity` configuration values.
+* Added support for database driver `mongodb`.
+* Added `oka_file.db_driver` configuration values.
+* Added `oka_file.behaviors.[behaviorName].mappings.[className].embedded` configuration values.
+* Added `oka_file.behaviors.[behaviorName].mappings.[className].target_object` configuration values.
+* Updated documentation.
+
 #### 1.1.13 (2017-11-12)
 
 * Improve uploaded file life cycle handling.

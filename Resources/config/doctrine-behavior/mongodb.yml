@@ -1,0 +1,26 @@
+imports:
+    - { resource: behaviors.yml }
+
+services:
+# Doctrine ODM behaviors
+    oka_file.doctrine_mongodb_behaviors.abstract_listener:
+        public: false
+        abstract: true
+        parent: oka_file.doctrine_behaviors.abstract_listener
+        class:  Oka\FileBundle\DoctrineBehaviors\ODM\AbstractListener
+        arguments: [ [], '' ]
+        calls:
+          - [ setClassAnalyzer, [ '@oka_file.doctrine_behaviors.reflection.class_analyzer' ] ]
+          - [ setRecursive, [ '%oka_file.doctrine_behaviors.reflection.is_recursive%' ] ]
+
+    oka_file.doctrine_behaviors.picturecoverizable_listener:
+        class:  Oka\FileBundle\DoctrineBehaviors\ODM\PictureCoverizable\PictureCoverizableListener
+        parent: oka_file.doctrine_mongodb_behaviors.abstract_listener
+        tags:
+            - { name: doctrine_mongodb.odm.event_subscriber }
+
+    oka_file.doctrine_behaviors.avatarizable_listener:
+        class:  Oka\FileBundle\DoctrineBehaviors\ODM\Avatarizable\AvatarizableListener
+        parent: oka_file.doctrine_mongodb_behaviors.abstract_listener
+        tags:
+            - { name: doctrine_mongodb.odm.event_subscriber }

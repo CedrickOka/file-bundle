@@ -1,0 +1,21 @@
+Oka\FileBundle\Model\File:
+    type: mappedSuperclass
+    fields:
+        name:
+            type: string
+        mimeType:
+            column: mime_type
+            type: string
+        extension:
+            type: string
+            nullable: true
+        size:
+            type: bigint
+            options:
+                unsigned: true
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime

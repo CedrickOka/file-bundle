@@ -1,28 +1,26 @@
-services:
-# Utils
-    oka_file.doctrine_behaviors.reflection.class_analyzer:
-        class:  Oka\FileBundle\DoctrineBehaviors\Reflection\ClassAnalyzer
-        public: false
+imports:
+    - { resource: behaviors.yml }
 
-# Doctrine behaviors
-    oka_file.doctrine_behaviors.abstract_listener:
+services:
+# Doctrine ORM behaviors
+    oka_file.doctrine_orm_behaviors.abstract_listener:
         public: false
         abstract: true
+        parent: oka_file.doctrine_behaviors.abstract_listener
         class:  Oka\FileBundle\DoctrineBehaviors\ORM\AbstractListener
         arguments: [ [], '' ]
-#        arguments: [ '@oka_file.doctrine_behaviors.reflection.class_analyzer', '%oka_file.doctrine_behaviors.reflection.is_recursive%' ]
         calls:
           - [ setClassAnalyzer, [ '@oka_file.doctrine_behaviors.reflection.class_analyzer' ] ]
           - [ setRecursive, [ '%oka_file.doctrine_behaviors.reflection.is_recursive%' ] ]
 
     oka_file.doctrine_behaviors.picturecoverizable_listener:
         class:  Oka\FileBundle\DoctrineBehaviors\ORM\PictureCoverizable\PictureCoverizableListener
-        parent: oka_file.doctrine_behaviors.abstract_listener
+        parent: oka_file.doctrine_orm_behaviors.abstract_listener
         tags:
             - { name: doctrine.event_subscriber }
 
     oka_file.doctrine_behaviors.avatarizable_listener:
         class:  Oka\FileBundle\DoctrineBehaviors\ORM\Avatarizable\AvatarizableListener
-        parent: oka_file.doctrine_behaviors.abstract_listener
+        parent: oka_file.doctrine_orm_behaviors.abstract_listener
         tags:
             - { name: doctrine.event_subscriber }

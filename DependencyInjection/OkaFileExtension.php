@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Definition;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -15,6 +16,20 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class OkaFileExtension extends Extension
 {
+	/**
+	 * @var array $doctrineDrivers
+	 */
+	public static $doctrineDrivers = [
+			'orm' => [
+					'registry' => 'doctrine',
+					'tag' => 'doctrine.event_subscriber',
+			],
+			'mongodb' => [
+					'registry' => 'doctrine_mongodb',
+					'tag' => 'doctrine_mongodb.odm.event_subscriber',
+			]
+	];
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -25,20 +40,74 @@ class OkaFileExtension extends Extension
 		
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 		$loader->load('services.yml');
-		$loader->load('doctrine.yml');
 		
-		// Entity and Object Manager Configuration
-		$container->setAlias('oka_file.doctrine_registry', new Alias('doctrine', false));
-		$objectManagerDefintion = $container->getDefinition('oka_file.object_manager');
-		$objectManagerDefintion->replaceArgument(0, $config['model_manager_name']);
-		$objectManagerDefintion->setFactory([new Reference('oka_file.doctrine_registry'), 'getManager']);
+		// Object manager configuration
+		$container->setAlias('oka_file.default.doctrine_registry', new Alias(self::$doctrineDrivers[$config['db_driver']]['registry'], false));
+		$container->setParameter('oka_file.model_manager_name', $config['model_manager_name']);
+		$container->setParameter('oka_file.backend_type_'.$config['db_driver'], true);
+		
+		$definition = $container->getDefinition('oka_file.object_manager');
+		$definition->setFactory([new Reference('oka_file.default.doctrine_registry'), 'getManager']);
 		
 		$container->setParameter('oka_file.image.default_class', $config['object_default_class']['image']);
 		$container->setParameter('oka_file.video.default_class', $config['object_default_class']['video']);
 		$container->setParameter('oka_file.audio.default_class', $config['object_default_class']['audio']);
 		$container->setParameter('oka_file.others.default_class', $config['object_default_class']['others']);
 		
-		// Store configuration
+		// Doctrine listeners configuration
+		$this->loadDoctrineListenerConfiguration($config, $container, $loader);
+		
+		// Doctrine behaviors configuation
+		if (true === $config['behaviors']['enabled']) {
+			$this->loadDoctrineBehaviorsConfiguration($config, $container, $loader);
+		}
+		
+		// File storage configuration
+		$this->loadFileStorageConfiguration($config, $container);
+		
+		// File Routing configuration
+		$this->loadRoutingConfiguration($config, $container);
+	}
+	
+	protected function loadDoctrineListenerConfiguration(array $config, ContainerBuilder $container, Loader\YamlFileLoader $loader)
+	{
+		$loader->load('doctrine.yml');
+		
+		$fileListenerDefinition = $container->getDefinition('oka_file.file.doctrine_listener');
+		$fileListenerDefinition->addTag(self::$doctrineDrivers[$config['db_driver']]['tag']);
+		
+		$ImageListenerDefinition = $container->getDefinition('oka_file.image.doctrine_listener');
+		$ImageListenerDefinition->addTag(self::$doctrineDrivers[$config['db_driver']]['tag']);
+	}
+	
+	protected function loadDoctrineBehaviorsConfiguration(array $config, ContainerBuilder $container, Loader\YamlFileLoader $loader)
+	{
+		$loader->load(sprintf('doctrine-behavior/%s.yml', $config['db_driver']));
+		$container->setParameter('oka_file.doctrine_behaviors.reflection.is_recursive', $config['behaviors']['reflection']['enable_recursive']);
+		
+		// PictureCoverizable behavior configuration
+		$pictureCoverizableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.picturecoverizable_listener');
+		
+		if ($config['behaviors']['picture_coverizable']['enabled'] === true) {
+			$pictureCoverizableListenerDefinition->replaceArgument(0, $config['behaviors']['picture_coverizable']['mappings']);
+			$pictureCoverizableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);
+		} else {
+			$pictureCoverizableListenerDefinition->clearTags();
+		}
+		
+		// Avatarizable behavior configuration
+		$avatarizableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.avatarizable_listener');
+		
+		if ($config['behaviors']['avatarizable']['enabled'] === true) {
+			$avatarizableListenerDefinition->replaceArgument(0, $config['behaviors']['avatarizable']['mappings']);
+			$avatarizableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);
+		} else {
+			$avatarizableListenerDefinition->clearTags();
+		}
+	}
+	
+	protected function loadFileStorageConfiguration(array $config, ContainerBuilder $container)
+	{
 		$rootPath = realpath($config['container_config']['root_path']);
 		$container->setParameter('oka_file.container.root_path', $rootPath);
 		$container->setParameter('oka_file.container.data_dirnames', $config['container_config']['data_dirnames']);
@@ -52,46 +121,14 @@ class OkaFileExtension extends Extension
 		$container->setParameter('oka_file.container.web_server.port', $config['container_config']['web_server']['port']);
 		$container->setParameter('oka_file.container.web_server.secure', $config['container_config']['web_server']['secure']);
 		
-		// Image configuration
 		$container->setParameter('oka_file.image.uploaded.detect_dominant_color', $config['image']['uploaded']['detect_dominant_color']);
 		$container->setParameter('oka_file.image.uploaded.thumbnail_factory', $config['image']['uploaded']['thumbnail_factory']);
 		$container->setParameter('oka_file.image.thumbnail.quality', $config['image']['thumbnail']['quality']);
 		$container->setParameter('oka_file.image.thumbnail.mode', $config['image']['thumbnail']['mode']);
-		
-		if ($config['behaviors']['enabled'] === true) {
-			$loader->load('behaviors.yml');
-			
-			$avatarizableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.avatarizable_listener');
-			$pictureCoverizableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.picturecoverizable_listener');
-			$container->setParameter('oka_file.doctrine_behaviors.reflection.is_recursive', $config['behaviors']['reflection']['enable_recursive']);
-			
-			// PictureCoverizable Behavior Configuration
-			if ($config['behaviors']['picture_coverable']['enabled'] === true || $config['behaviors']['picture_coverizable']['enabled'] === true) {
-				$pictureCoverizableConfig = [];
-				
-				if ($config['behaviors']['picture_coverable']['enabled'] === true) {
-					$pictureCoverizableConfig = $config['behaviors']['picture_coverable'];
-				}
-				if ($config['behaviors']['picture_coverizable']['enabled'] === true) {
-					$pictureCoverizableConfig = array_merge($pictureCoverizableConfig, $config['behaviors']['picture_coverizable']);
-				}
-				
-				$pictureCoverizableListenerDefinition->replaceArgument(0, $pictureCoverizableConfig['mappings']);
-				$pictureCoverizableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);
-			} else {
-				$pictureCoverizableListenerDefinition->clearTags();
-			}
-			
-			// Avatarizable Behavior Configuration
-			if ($config['behaviors']['avatarizable']['enabled'] === true) {
-				$avatarizableListenerDefinition->replaceArgument(0, $config['behaviors']['avatarizable']['mappings']);
-				$avatarizableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);
-			} else {
-				$avatarizableListenerDefinition->clearTags();
-			}
-		}
-
-		// File Routing Configuration
+	}
+	
+	protected function loadRoutingConfiguration(array $config, ContainerBuilder $container)
+	{
 		$fileUriLoaderDefinition = $container->getDefinition('oka_file.file_uri.routing_loader');
 		
 		if (!empty($config['routing'])) {

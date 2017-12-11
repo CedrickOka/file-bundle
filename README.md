@@ -40,4 +40,5 @@ Contributions
 -------------
 
 This is an [open source project](LICENSE). Please contribute by forking this repo and issueing a pull request.
+
 You can also contribute by filing bugs or new features please issue. Or improve the documentation. Please update this README when you do a pull request of proposed changes in base functionality.

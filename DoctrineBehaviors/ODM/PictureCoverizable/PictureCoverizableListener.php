@@ -27,18 +27,18 @@ class PictureCoverizableListener extends AbstractListener
 		if ($this->isEntitySupported($reflClass)) {
 			if ($this->getClassAnalyzer()->hasProperty($reflClass, 'pictureCover')) {
 				if ($this->getClassAnalyzer()->hasMethod($reflClass, 'getPictureCover') && $this->getClassAnalyzer()->hasMethod($reflClass, 'setPictureCover')) {
-					$map = $this->handleEntityMapping($reflClass->getName(), [
+					$map = $this->handleDocumentMapping($reflClass->getName(), [
 							'name' 				=> 'picture_cover',
 							'fieldName' 		=> 'pictureCover',
-							'targetDocument' 	=> $this->defaultTargetObject,
-							'storeAs' 			=> ClassMetadata::REFERENCE_STORE_AS_DB_REF_WITH_DB,
-							'cascade' 			=> ['all'],
-							'orphanRemoval' 	=> true
+							'targetDocument' 	=> $this->defaultTargetObject
 					]);
 					
 					if (isset($this->mappings[$reflClass->getName()]['embedded']) && true === $this->mappings[$reflClass->getName()]['embedded']) {
 						$classMetadata->mapOneEmbedded($map);
 					} else {
+						$map['storeAs'] = ClassMetadata::REFERENCE_STORE_AS_DB_REF_WITH_DB;
+						$map['orphanRemoval'] = true;
+						$map['cascade'] = ['all'];
 						$classMetadata->mapOneReference($map);
 					}
 				}
@@ -59,6 +59,6 @@ class PictureCoverizableListener extends AbstractListener
 	 */
 	protected function isEntitySupported(\ReflectionClass $reflClass)
 	{
-		return $this->getClassAnalyzer()->hasTrait($reflClass, PictureCoverizable::class, $this->isRecursive);
+		return $this->getClassAnalyzer()->hasTrait($reflClass, 'Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverizable\PictureCoverizable', $this->isRecursive);
 	}
 }

@@ -56,6 +56,6 @@ class PictureCoverizableListener extends AbstractListener
 	 */
 	protected function isEntitySupported(\ReflectionClass $reflClass)
 	{
-		return $this->getClassAnalyzer()->hasTrait($reflClass, PictureCoverizable::class, $this->isRecursive);
+		return $this->getClassAnalyzer()->hasTrait($reflClass, 'Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverizable\PictureCoverizable', $this->isRecursive);
 	}
 }

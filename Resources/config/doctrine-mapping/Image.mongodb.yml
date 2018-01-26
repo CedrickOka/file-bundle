@@ -8,3 +8,4 @@ Oka\FileBundle\Model\Image:
         dominantColor:
             name: dominant_color
             type: string
+            nullable: true

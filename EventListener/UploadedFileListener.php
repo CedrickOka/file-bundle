@@ -26,7 +26,8 @@ class UploadedFileListener implements EventSubscriberInterface
 	
 	public function __construct($owner, $group)
 	{
-		
+		$this->owner = $owner;
+		$this->group = $group;
 	}
 	
 	public function onUploadedFileMoved(UploadedFileEvent $event)

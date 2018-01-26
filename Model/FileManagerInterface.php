@@ -33,6 +33,7 @@ interface FileManagerInterface
 	/**
 	 * @param FileInterface $file
 	 * @param boolean $andFlush
+	 * @return FileInterface
 	 */
 	public function updateFile(FileInterface $file, $andFlush = true);
 	

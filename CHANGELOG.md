@@ -1,6 +1,13 @@
 Changelog
 =========
 
+#### 1.3.0 (2018-01-26)
+
+* Fixed bad support for php ^5.5 version.
+* Renamed method of `Oka\FileBundle\DoctrineBehaviors\ODM\AbstractListener` class from `handleEntityMapping` to `handleDocumentMapping`.
+* Added `embedded` options mappings.
+* Adds Symfony 3 support.
+
 #### 1.2.0 (2017-12-11)
 
 * [BC Break] Removed `oka_file.behaviors.picture_coverable` deprecated configuration values.

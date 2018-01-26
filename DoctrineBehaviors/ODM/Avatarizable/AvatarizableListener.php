@@ -28,17 +28,18 @@ class AvatarizableListener extends AbstractListener
 		if ($this->isEntitySupported($reflClass)) {
 			if ($this->getClassAnalyzer()->hasProperty($reflClass, 'avatar')) {
 				if ($this->getClassAnalyzer()->hasMethod($reflClass, 'getAvatar') && $this->getClassAnalyzer()->hasMethod($reflClass, 'setAvatar')) {
-					$map = $this->handleEntityMapping($reflClass->getName(), [
+					$map = $this->handleDocumentMapping($reflClass->getName(), [
+							'name' 				=> 'avatar',
 							'fieldName' 		=> 'avatar',
-							'targetDocument' 	=> $this->defaultTargetObject,
-							'storeAs' 			=> ClassMetadata::REFERENCE_STORE_AS_DB_REF_WITH_DB,
-							'cascade' 			=> ['all'],
-							'orphanRemoval' 	=> true
+							'targetDocument' 	=> $this->defaultTargetObject
 					]);
 					
 					if (isset($this->mappings[$reflClass->getName()]['embedded']) && true === $this->mappings[$reflClass->getName()]['embedded']) {
 						$classMetadata->mapOneEmbedded($map);
 					} else {
+						$map['storeAs'] = ClassMetadata::REFERENCE_STORE_AS_DB_REF_WITH_DB;
+						$map['orphanRemoval'] = true;
+						$map['cascade'] = ['all'];
 						$classMetadata->mapOneReference($map);
 					}
 				}
@@ -78,6 +79,6 @@ class AvatarizableListener extends AbstractListener
 	 */
 	protected function isEntitySupported(\ReflectionClass $reflClass)
 	{
-		return $this->getClassAnalyzer()->hasTrait($reflClass, Avatarizable::class, $this->isRecursive);
+		return $this->getClassAnalyzer()->hasTrait($reflClass, 'Oka\FileBundle\DoctrineBehaviors\Model\Avatarizable\Avatarizable', $this->isRecursive);
 	}
 }

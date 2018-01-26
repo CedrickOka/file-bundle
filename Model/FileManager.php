@@ -69,9 +69,11 @@ abstract class FileManager implements FileManagerInterface
 			$this->objectManager->persist($file);
 		}
 		
-		if ($andFlush) {
+		if (true === $andFlush) {
 			$this->objectManager->flush();
 		}
+		
+		return $file;
 	}
 	
 	public function deleteFile(FileInterface $file)

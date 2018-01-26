@@ -75,6 +75,6 @@ class AvatarizableListener extends AbstractListener
 	 */
 	protected function isEntitySupported(\ReflectionClass $reflClass)
 	{
-		return $this->getClassAnalyzer()->hasTrait($reflClass, Avatarizable::class, $this->isRecursive);
+		return $this->getClassAnalyzer()->hasTrait($reflClass, 'Oka\FileBundle\DoctrineBehaviors\Model\Avatarizable\Avatarizable', $this->isRecursive);
 	}
 }

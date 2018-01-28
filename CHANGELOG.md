@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 1.4.0 (2018-01-28)
+
+* Changed `coka/pagination-bundle` library version support from `^1.0` to `^2.0`.
+
 #### 1.3.0 (2018-01-26)
 
 * Fixed bad support for php ^5.5 version.

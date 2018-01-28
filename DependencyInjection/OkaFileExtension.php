@@ -99,26 +99,6 @@ class OkaFileExtension extends Extension
 				$behaviorListenerDefinition->clearTags();
 			}
 		}
-
-// 		// PictureCoverizable behavior configuration
-// 		$pictureCoverizableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.picturecoverizable_listener');
-		
-// 		if ($config['behaviors']['picture_coverizable']['enabled'] === true) {
-// 			$pictureCoverizableListenerDefinition->replaceArgument(0, $config['behaviors']['picture_coverizable']['mappings']);
-// 			$pictureCoverizableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);
-// 		} else {
-// 			$pictureCoverizableListenerDefinition->clearTags();
-// 		}
-		
-// 		// Avatarizable behavior configuration
-// 		$avatarizableListenerDefinition = $container->getDefinition('oka_file.doctrine_behaviors.avatarizable_listener');
-		
-// 		if ($config['behaviors']['avatarizable']['enabled'] === true) {
-// 			$avatarizableListenerDefinition->replaceArgument(0, $config['behaviors']['avatarizable']['mappings']);
-// 			$avatarizableListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);
-// 		} else {
-// 			$avatarizableListenerDefinition->clearTags();
-// 		}
 	}
 	
 	protected function loadFileStorageConfiguration(array $config, ContainerBuilder $container)

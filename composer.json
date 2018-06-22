@@ -45,7 +45,7 @@
 			"Oka\\FileBundle\\Tests\\" : "tests"
 		}
 	},
-	"prefer-stable" : "true",
+	"prefer-stable" : true,
 	"minimum-stability" : "dev",
 	"extra" : {
 		"branch-alias" : {
@@ -56,3 +56,4 @@
 		"docs" : "https://github.com/CedrickOka/oka-file/blob/master/Resources/doc/index.md"
 	}
 }
+

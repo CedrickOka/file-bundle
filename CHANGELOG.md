@@ -1,6 +1,11 @@
 Changelog
 =========
 
+#### 1.5.0 (2018-06-22)
+
+* Changed project folders structure.
+* Added `.gitignore` file.
+
 #### 1.4.0 (2018-01-28)
 
 * Changed `coka/pagination-bundle` library version support from `^1.0` to `^2.0`.

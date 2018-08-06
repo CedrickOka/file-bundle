@@ -4,13 +4,11 @@ namespace Oka\FileBundle\Doctrine;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Oka\FileBundle\OkaFileEvents;
 use Oka\FileBundle\Event\UploadedFileEvent;
 use Oka\FileBundle\Model\FileInterface;
-use Oka\FileBundle\OkaFileEvents;
-use Oka\FileBundle\Utils\FileUtil;
+use Oka\FileBundle\Model\FileStorageHandlerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 /**
  * 
@@ -19,6 +17,11 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
  */
 class FileListener implements EventSubscriber
 {
+	/**
+	 * @var FileStorageHandlerInterface $fileStorageHandler
+	 */
+	protected $fileStorageHandler;
+	
 	/**
 	 * @var EventDispatcherInterface $dispatcher
 	 */
@@ -40,6 +43,11 @@ class FileListener implements EventSubscriber
 	protected $objectDirnames;
 	
 	/**
+	 * @var boolean $secure
+	 */
+	protected $secure;
+	
+	/**
 	 * @var string $host
 	 */
 	protected $host;
@@ -50,21 +58,7 @@ class FileListener implements EventSubscriber
 	protected $port;
 	
 	/**
-	 * @var boolean $secure
-	 */
-	protected $secure;
-	
-	/**
-	 * @var Filesystem $fs
-	 */
-	protected $fs;
-	
-	/**
-	 * @var string $systemOwner
-	 */
-	protected $systemOwner;
-	
-	/**
+	 * @param FileStorageHandlerInterface $fileStorageHandler
 	 * @param EventDispatcherInterface $dispatcher
 	 * @param string $rootPath
 	 * @param array $dataDirnames
@@ -73,16 +67,15 @@ class FileListener implements EventSubscriber
 	 * @param integer $port
 	 * @param boolean $secure
 	 */
-	public function __construct(EventDispatcherInterface $dispatcher, $rootPath, array $dataDirnames, array $objectDirnames, $host, $port, $secure) {
+	public function __construct(FileStorageHandlerInterface $fileStorageHandler, EventDispatcherInterface $dispatcher, $rootPath, array $dataDirnames, array $objectDirnames, $secure, $host, $port) {
+		$this->fileStorageHandler = $fileStorageHandler;
 		$this->dispatcher = $dispatcher;
 		$this->rootPath = $rootPath;
 		$this->dataDirnames = $dataDirnames;
 		$this->objectDirnames = $objectDirnames;
+		$this->secure = $secure;
 		$this->host = $host;
 		$this->port = $port;
-		$this->secure = $secure;
-		$this->fs = new Filesystem();
-		$this->systemOwner = FileUtil::getSystemOwner();
 	}
 	
 	/**
@@ -97,16 +90,11 @@ class FileListener implements EventSubscriber
 				throw new \LogicException('It is not possible to persist a file object without attaching it to an UploadedFile object.');
 			}
 			
-			$classMetadata = $arg->getObjectManager()->getClassMetadata(get_class($object));
-			$this->loadContainerConfig($object, $classMetadata);
+			$this->loadContainerConfig($object, $arg->getObjectManager()->getClassMetadata(get_class($object)));
 			
-			$path = FileUtil::findParentDirectoyThatExists($object->getPath());
-			
-			if (!is_writable($path)) {
-				throw new FileException(sprintf('Unable to write in the "%s" directory', $path));
-			}
-			
+			$this->fileStorageHandler->checkAccess($object);
 			$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVING, new UploadedFileEvent($object, $object->getUploadedFile()));
+			
 			$object->setLastModified();
 		}
 	}
@@ -172,8 +160,7 @@ class FileListener implements EventSubscriber
 		$object = $arg->getObject();
 		
 		if ($object instanceof FileInterface) {
-			$classMetadata = $arg->getObjectManager()->getClassMetadata(get_class($object));
-			$this->loadContainerConfig($object, $classMetadata);
+			$this->loadContainerConfig($object, $arg->getObjectManager()->getClassMetadata(get_class($object)));
 		}
 	}
 	
@@ -195,12 +182,10 @@ class FileListener implements EventSubscriber
 	 */
 	private function loadContainerConfig(FileInterface $object, ClassMetadata $classMetadata)
 	{
-		$object->setRootPath($this->rootPath);
 		$object->setHost($this->host);
 		$object->setPort($this->port);
 		$object->setSecure($this->secure);
-		$object->setFileSystem($this->fs);
-		$object->setSystemOwner($this->systemOwner);
+		$object->setRootPath($this->rootPath);
 		
 		$dirname = null;
 		$objectClass = $classMetadata->getName();
@@ -226,7 +211,8 @@ class FileListener implements EventSubscriber
 	 */
 	private function handleMoveFile(FileInterface $object)
 	{
-		$uploadedFile = $object->moveFile();
-		$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVED, new UploadedFileEvent($object, $uploadedFile));
+		if ($uploadedFile = $this->fileStorageHandler->save($object)) {
+			$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVED, new UploadedFileEvent($object, $uploadedFile));
+		}
 	}
 }

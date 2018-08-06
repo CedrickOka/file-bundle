@@ -3,6 +3,7 @@ namespace Oka\FileBundle\Model;
 
 use Imagine\Image\Box;
 use Imagine\Image\Point;
+use Oka\FileBundle\Utils\FileUtil;
 use Oka\FileBundle\Utils\ImageUtils;
 use Symfony\Component\Finder\Finder;
 
@@ -50,14 +51,16 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 	/**
 	 * @return integer
 	 */
-	public function getWidth() {
+	public function getWidth()
+	{
 		return $this->width;
 	}
 	
 	/**
 	 * @param integer $width
 	 */
-	public function setWidth($width) {
+	public function setWidth($width)
+	{
 		$this->width = $width;
 		return $this;
 	}
@@ -141,7 +144,7 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 		$uri .= '/' . self::createDirnameWith($mode, $quality, $width, $height);
 		$uri .= '/' . $this->getFilename().$this->createQueryStringForURI();
 		
-		if (!$this->fs->exists($this->getRealPathFor($width, $height, $mode, $quality))) {
+		if (false === $this->exists($this->getRealPathFor($width, $height, $mode, $quality))) {
 			$this->thumbnail($width, $height, $mode, $quality);
 		}
 		
@@ -171,8 +174,8 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 	{
 		$realPath = $this->getRealPathFor($width, $height, $mode, $quality);
 		
-		if (!$this->fs->exists($realPath)) {
-			$this->fs->remove($realPath);
+		if (true === $this->exists($realPath)) {
+			FileUtil::getFs()->remove($realPath);
 		}
 	}
 	
@@ -190,7 +193,7 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 		$mode = $mode ?: $this->thumbnailMode;
 		$quality = $quality ?: $this->thumbnailQuality;
 		
-		if (!$this->fs->exists($path)) {
+		if (false === $this->exists($path)) {
 			throw new \LogicException(sprintf('Aucune image n\'a été trouvée dans ce chemin "%s".', $path));
 		}
 		
@@ -226,7 +229,7 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 		
 		$dirPath = $this->getPathFor($width, $height, $mode, $quality);
 		
-		if (!$this->fs->exists($dirPath)) {
+		if (false === $this->exists($dirPath)) {
 			$this->mkdir($dirPath);
 		}
 		
@@ -245,7 +248,7 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 		
 		$path = $this->getRealPath();
 		
-		if (!$this->fs->exists($path)) {
+		if (false === $this->exists($path)) {
 			throw new \LogicException(sprintf('Aucune image n\'a été trouvée dans ce chemin "%s".', $path));
 		}
 		
@@ -254,7 +257,7 @@ abstract class Image extends File implements ImageInterface, ImageManipulatorInt
 		$image = $imagine->open($path);
 		$image->crop(new Point($x0, $y0), new Box(($x1 - $x0), ($y1 - $y0)));
 		
-		if ($destination === null) {
+		if (null === $destination) {
 			$this->removeFile();
 		}
 		

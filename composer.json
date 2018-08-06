@@ -28,6 +28,9 @@
 		"imagine/imagine" : "^0.6.3",
 		"symfony/symfony" : "^2.8 || ^3.4"
 	},
+	"require-dev" : {
+		"symfony/phpunit-bridge" : "^3.0"
+	},
 	"suggest" : {
 		"ext-gd" : ">=2.2.0",
 		"ext-imagick" : ">=3.1.2"

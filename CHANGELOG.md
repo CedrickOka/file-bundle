@@ -1,6 +1,13 @@
 Changelog
 =========
 
+#### 1.6.0 (2018-08-06)
+
+* Added `oka_file.storage.handler_id` configuration key.
+* Added default file storage handler service.
+* Updated `composer.json` file.
+* Updated documentation.
+
 #### 1.5.0 (2018-06-22)
 
 * Changed project folders structure.
@@ -19,13 +26,13 @@ Changelog
 
 #### 1.2.0 (2017-12-11)
 
-* [BC Break] Removed `oka_file.behaviors.picture_coverable` deprecated configuration values.
+* [BC Break] Removed `oka_file.behaviors.picture_coverable` deprecated configuration key.
 * Fixed unexcepted mappings given has doctrine behavior `PictureCoverizableListener` configuration.
-* Deprecated `oka_file.behaviors.[behaviorName].mappings.[className].target_entity` configuration values.
+* Deprecated `oka_file.behaviors.[behaviorName].mappings.[className].target_entity` configuration key.
 * Added support for database driver `mongodb`.
-* Added `oka_file.db_driver` configuration values.
-* Added `oka_file.behaviors.[behaviorName].mappings.[className].embedded` configuration values.
-* Added `oka_file.behaviors.[behaviorName].mappings.[className].target_object` configuration values.
+* Added `oka_file.db_driver` configuration key.
+* Added `oka_file.behaviors.[behaviorName].mappings.[className].embedded` configuration key.
+* Added `oka_file.behaviors.[behaviorName].mappings.[className].target_object` configuration key.
 * Updated documentation.
 
 #### 1.1.13 (2017-11-12)
@@ -56,11 +63,11 @@ Changelog
 #### 1.1.8 (2017-06-22)
 
 * Added `Avatarizable` trait behaviors.
-* Added `oka_file.behaviors.avatarizable` configuration values.
+* Added `oka_file.behaviors.avatarizable` configuration key.
 * Added `PictureCoverizable` trait behaviors.
-* Added `oka_file.behaviors.picture_coverizable` configuration values.
+* Added `oka_file.behaviors.picture_coverizable` configuration key.
 * Deprecated `PictureCoverable` trait behaviors.
-* Deprecated `oka_file.behaviors.picture_coverable` configuration values.
+* Deprecated `oka_file.behaviors.picture_coverable` configuration key.
 * Removed `Pictable` trait.
 * Improved documentation.
 

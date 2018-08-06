@@ -1,11 +1,10 @@
 <?php
 namespace Oka\FileBundle\EventListener;
 
-use Oka\FileBundle\Event\UploadedFileEvent;
 use Oka\FileBundle\OkaFileEvents;
+use Oka\FileBundle\Event\UploadedFileEvent;
 use Oka\FileBundle\Utils\FileUtil;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * 
@@ -33,11 +32,10 @@ class UploadedFileListener implements EventSubscriberInterface
 	public function onUploadedFileMoved(UploadedFileEvent $event)
 	{
 		$user = FileUtil::getSystemOwner();
-		$fs = new Filesystem();
-		
 		$realPaths = $event->getObject()->getRealPaths();
-		$fs->chown($realPaths, $user);
-		$fs->chgrp($realPaths, $user);		
+		
+		FileUtil::getFs()->chown($realPaths, $user);
+		FileUtil::getFs()->chgrp($realPaths, $user);
 	}
 	
 	public static function getSubscribedEvents()

@@ -1,9 +1,8 @@
 <?php
 namespace Oka\FileBundle\Model;
 
-use Symfony\Component\Filesystem\Filesystem;
+use Oka\FileBundle\Utils\FileUtil;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -79,21 +78,6 @@ abstract class File implements FileInterface
 	 * @var UploadedFile $uploadedFile
 	 */
 	protected $uploadedFile;
-	
-	/**
-	 * @var Filesystem $fs
-	 */
-	protected $fs;
-	
-	/**
-	 * @var string $systemOwner
-	 */
-	protected $systemOwner;
-	
-	/**
-	 * @var mixed $tmp
-	 */
-	private $tmp;
 	
 	public function __construct()
 	{
@@ -349,7 +333,7 @@ abstract class File implements FileInterface
 	 */
 	public function hasUploadedFile()
 	{
-		return $this->uploadedFile !== null;
+		return null !== $this->uploadedFile;
 	}
 	
 	/**
@@ -367,12 +351,17 @@ abstract class File implements FileInterface
 	{
 		$this->uploadedFile = $uploadedFile;
 		
-		if ($this->uploadedFile !== null) {
-			$this->prepareMoveFile();
-			
-			if ($this->createdAt !== null) {
-				$this->prepareDeletionFileInContainer();
+		if (null !== $this->uploadedFile) {
+			if (null === ($this->extension = $this->uploadedFile->guessExtension())) {
+				$this->extension = $this->uploadedFile->getExtension() ?: '';
 			}
+			
+			if (null === $this->name) {
+				$this->name = $this->uploadedFile->getClientOriginalName() ?: $this->uploadedFile->getFilename();
+			}
+			
+			$this->mimeType = $this->uploadedFile->getMimeType();
+			$this->size = $this->uploadedFile->getSize();
 		}
 		
 		return $this;
@@ -387,7 +376,7 @@ abstract class File implements FileInterface
 		$finder = new Finder();
 		$finder->files()->in($this->getPath())->name($this->getFileName());
 		
-		/** @var SplFileInfo $file */
+		/** @var \Symfony\Component\Finder\SplFileInfo $file */
 		foreach ($finder as $file) {
 			$files[] = $file->getRealPath();
 		}
@@ -395,19 +384,36 @@ abstract class File implements FileInterface
 		return $files;
 	}
 	
+	public function exists($path = null)
+	{
+		return FileUtil::getFs()->exists($path ?: $this->getRealPath());
+	}
+	
+	public function mkdir($dirs, $mode = 0755, $owner = null, $group = null, $recursive = true)
+	{
+		$fs = FileUtil::getFs();
+		$systemOwner = FileUtil::getSystemOwner();
+		
+		$fs->mkdir($dirs, $mode);
+		$fs->chown($dirs, $owner ?: $systemOwner, $recursive);
+		$fs->chgrp($dirs, $group ?: $systemOwner, $recursive);
+	}
+	
 	public function moveFile()
 	{
-		if ($this->uploadedFile === null) {
+		if (null === $this->uploadedFile) {
 			return;
 		}
 		
-		if (!$this->fs->exists($this->getPath())) {
+		if (false === FileUtil::getFs()->exists($this->getPath())) {
 			$this->mkdir($this->getPath());
 		}
-
-		$uploadedFile = $this->uploadedFile;
-		$this->deleteFileInContainer();
 		
+		if (null !== $this->createdAt) {
+			$this->removeFile();
+		}
+		
+		$uploadedFile = $this->uploadedFile;
 		$this->uploadedFile->move($this->getPath(), $this->getFilename());
 		$this->setUploadedFile(null);
 		
@@ -416,8 +422,11 @@ abstract class File implements FileInterface
 	
 	public function removeFile()
 	{
-		$this->prepareDeletionFileInContainer();
-		$this->deleteFileInContainer();
+		$paths = $this->getRealPaths();
+		
+		if (true === is_array($paths) && false === empty($paths)) {
+			FileUtil::getFs()->remove($paths);
+		}
 	}
 	
 	protected function createQueryStringForURI(array $params = [])
@@ -435,49 +444,6 @@ abstract class File implements FileInterface
 			$query = '?' . implode('&', $params);
 		}
 		
-		return $query;	
-	}
-	
-	public function mkdir($dirs, $mode = 0755, $owner = null, $group = null, $recursive = true)
-	{
-		$this->fs->mkdir($dirs, $mode);
-		$this->fs->chown($dirs, $owner ?: $this->systemOwner, $recursive);
-		$this->fs->chgrp($dirs, $group ?: $this->systemOwner, $recursive);
-	}
-	
-	protected function prepareDeletionFileInContainer()
-	{
-		$this->tmp = $this->getRealPaths();
-	}
-	
-	protected function deleteFileInContainer()
-	{		
-		if (is_array($this->tmp) && !empty($this->tmp)) {
-			$this->fs->remove($this->tmp);
-		}
-	}
-	
-	protected function prepareMoveFile()
-	{
-		if (null === ($this->extension = $this->uploadedFile->guessExtension())) {
-			$this->extension = $this->uploadedFile->getExtension() ?: '';
-		}
-		
-		if ($this->name === null) {
-			$this->name = $this->uploadedFile->getClientOriginalName() ?: $this->uploadedFile->getFilename();
-		}
-		
-		$this->mimeType = $this->uploadedFile->getMimeType();
-		$this->size = $this->uploadedFile->getSize();
-	}
-	
-	public function setFileSystem($fs)
-	{
-		$this->fs = $fs;
-	}
-	
-	public function setSystemOwner($systemOwner)
-	{
-		$this->systemOwner = $systemOwner;
+		return $query;
 	}
 }

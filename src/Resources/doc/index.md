@@ -190,8 +190,8 @@ Add the following configuration to your `config.yml`.
 # app/config/config.yml
 oka_file:
     db_driver: orm
-    model\_manager\_name: default
-    object\_default\_class:
+    model_manager_name: default
+    object_default_class:
         image: Acme\FileBundle\Entity\Image
     container_config:
         root_path: /var/www/container
@@ -215,10 +215,10 @@ oka_file:
                     target_object: Acme\FileBundle\Entity\Image
                     fetch: EAGER
                     options:
-                        default\_avatar\_uri: 'http://acme.com/images/default-avatar.png'
+                        default_avatar_uri: 'http://acme.com/images/default-avatar.png'
     image:
         uploaded:
-            detect\_dominant\_color:
+            detect_dominant_color:
                 method: k-means																				#Available methods are 'k-means' and 'quantize'
             thumbnail_factory:
                 Acme\FileBundle\Entity\Image: [{ width: 100, height: 100 }, { width: 200, height: 200 }]
@@ -226,7 +226,7 @@ oka_file:
             quality: 100
             mode: ratio
     routing:
-        bot\_service\_image:
+        bot_service_image:
             file_class: Acme\FileBundle\Entity\Image
             host: aystorage
             scheme: ~

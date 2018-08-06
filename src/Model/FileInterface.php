@@ -120,6 +120,14 @@ interface FileInterface
 	public function setUploadedFile(UploadedFile $uploadedFile = null);
 	
 	/**
+	 * Check if path exits in storage
+	 * 
+	 * @param string $path
+	 * @return boolean
+	 */
+	public function exists($path = null);
+	
+	/**
 	 * Create directory
 	 * 
 	 * @param string $dirs
@@ -141,8 +149,4 @@ interface FileInterface
 	 * Remove all file versions
 	 */
 	public function removeFile();
-	
-	public function setFileSystem($fs);
-	
-	public function setSystemOwner($systemOwner);
 }

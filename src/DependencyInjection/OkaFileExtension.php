@@ -73,8 +73,15 @@ class OkaFileExtension extends Extension
 	{
 		$loader->load('doctrine.yml');
 		
+		if (null === $config['storage']['handler_id']) {
+			$definition = new Definition('Oka\FileBundle\Service\NativeFileStorageHandler');
+			$container->setDefinition('oka_file.file_storage_handler.native', $definition);
+			$config['storage']['handler_id'] = 'oka_file.file_storage_handler.native';
+		}
+		
 		$fileListenerDefinition = $container->getDefinition('oka_file.file.doctrine_listener');
 		$fileListenerDefinition->addTag(self::$doctrineDrivers[$config['db_driver']]['tag']);
+		$fileListenerDefinition->replaceArgument(0, new Reference($config['storage']['handler_id']));
 		
 		$ImageListenerDefinition = $container->getDefinition('oka_file.image.doctrine_listener');
 		$ImageListenerDefinition->addTag(self::$doctrineDrivers[$config['db_driver']]['tag']);

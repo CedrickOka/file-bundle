@@ -2,7 +2,6 @@
 namespace Oka\FileBundle\Model;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oka\FileBundle\Model\FileManagerInterface;
 
 /**
  * 

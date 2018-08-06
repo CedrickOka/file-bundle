@@ -17,9 +17,8 @@ abstract class AbstractListener extends BaseAbstractListener
 	 */
 	protected function handleDocumentMapping($class, $mapping)
 	{
-		if (isset($this->mappings[$class])) {
-			$mapping['targetDocument'] = isset($this->mappings[$class]['target_object']) ? $this->mappings[$class]['target_object'] :
-			(isset($this->mappings[$class]['target_entity']) ? $this->mappings[$class]['target_entity'] : $this->defaultTargetObject);
+		if (isset($this->mappings[$class])) {		
+			$mapping['targetDocument'] = isset($this->mappings[$class]['target_object']) ? $this->mappings[$class]['target_object'] : $this->defaultTargetObject;
 		}
 		
 		return $mapping;

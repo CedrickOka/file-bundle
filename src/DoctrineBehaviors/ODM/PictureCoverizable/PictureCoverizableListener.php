@@ -4,7 +4,6 @@ namespace Oka\FileBundle\DoctrineBehaviors\ODM\PictureCoverizable;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Events;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
-use Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverizable\PictureCoverizable;
 use Oka\FileBundle\DoctrineBehaviors\ODM\AbstractListener;
 
 /**

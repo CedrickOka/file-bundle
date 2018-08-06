@@ -5,23 +5,23 @@ services:
         class: Oka\FileBundle\Doctrine\ImageManager
         arguments: [ '@oka_file.object_manager', '%oka_file.image.default_class%' ]
 
-#    oka_file.audio_manager.default:
+#    oka_file.audio_manager_default:
 #        class: Oka\FileBundle\Doctrine\AudioManager
-#        arguments: [ '@oka_file.object_manager', '%oka_file.entity.audio.class_name%' ]
+#        arguments: [ '@oka_file.object_manager', '%oka_file.audio.class_name%' ]
 #
-#    oka_file.video_manager.default:
+#    oka_file.video_manager_default:
 #        class: Oka\FileBundle\Doctrine\VideoManager
-#        arguments: [ '@oka_file.object_manager', '%oka_file.entity.video.class_name%' ]
+#        arguments: [ '@oka_file.object_manager', '%oka_file.video.class_name%' ]
 #
-#    oka_file.others_manager.default:
-#        class: Oka\FileBundle\Doctrine\OthersManager
-#        arguments: [ '@oka_file.object_manager', '%oka_file.entity.others.class_name%' ]
+#    oka_file.file_manager_default:
+#        class: Oka\FileBundle\Doctrine\FileManager
+#        arguments: [ '@oka_file.object_manager', '%oka_file.file.class_name%' ]
 
 # Listener
     oka_file.file.doctrine_listener:
         public: false
         class: Oka\FileBundle\Doctrine\FileListener
-        arguments: [ '', '@event_dispatcher', '%oka_file.container.root_path%', '%oka_file.container.data_dirnames%', '%oka_file.container.entity_dirnames%', '%oka_file.container.web_server.secure%', '%oka_file.container.web_server.host%', '%oka_file.container.web_server.port%' ]
+        arguments: [ '', '@event_dispatcher', '%oka_file.storage.root_path%', '%oka_file.storage.data_dirnames%', '%oka_file.storage.object_dirnames%', '%oka_file.storage.web_server.secure%', '%oka_file.storage.web_server.host%', '%oka_file.storage.web_server.port%' ]
 
     oka_file.image.doctrine_listener:
         public: false

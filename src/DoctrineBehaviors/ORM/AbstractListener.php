@@ -19,8 +19,7 @@ abstract class AbstractListener extends BaseAbstractListener
 	protected function handleEntityMapping($class, $mapping)
 	{
 		if (isset($this->mappings[$class])) {
-			$mapping['targetEntity'] = isset($this->mappings[$class]['target_object']) ? $this->mappings[$class]['target_object'] : 
-					(isset($this->mappings[$class]['target_entity']) ? $this->mappings[$class]['target_entity'] : $this->defaultTargetObject);
+			$mapping['targetEntity'] = isset($this->mappings[$class]['target_object']) ? $this->mappings[$class]['target_object'] : $this->defaultTargetObject;
 			
 			switch (strtoupper($this->mappings[$class]['fetch'])) {
 				case 'EAGER':

@@ -52,7 +52,7 @@ class OkaFileExtension extends Extension
 		$container->setParameter('oka_file.image.default_class', $config['object_default_class']['image']);
 		$container->setParameter('oka_file.video.default_class', $config['object_default_class']['video']);
 		$container->setParameter('oka_file.audio.default_class', $config['object_default_class']['audio']);
-		$container->setParameter('oka_file.others.default_class', $config['object_default_class']['others']);
+		$container->setParameter('oka_file.file.default_class', $config['object_default_class']['file']);
 		
 		// Doctrine listeners configuration
 		$this->loadDoctrineListenerConfiguration($config, $container, $loader);
@@ -110,18 +110,18 @@ class OkaFileExtension extends Extension
 	
 	protected function loadFileStorageConfiguration(array $config, ContainerBuilder $container)
 	{
-		$rootPath = realpath($config['container_config']['root_path']);
-		$container->setParameter('oka_file.container.root_path', $rootPath);
-		$container->setParameter('oka_file.container.data_dirnames', $config['container_config']['data_dirnames']);
-		$container->setParameter('oka_file.container.entity_dirnames', $config['container_config']['entity_dirnames']);
+		$container->setParameter('oka_file.storage.root_path', $config['storage']['root_path']);
+		$container->setParameter('oka_file.storage.root_path', realpath($container->getParameter('oka_file.storage.root_path')));
+		$container->setParameter('oka_file.storage.data_dirnames', $config['storage']['data_dirnames']);
+		$container->setParameter('oka_file.storage.object_dirnames', $config['storage']['object_dirnames']);
 		
-		foreach ($config['container_config']['data_dirnames'] as $key => $dirname) {
-			$container->setParameter('oka_file.container.data_dirname.'.$key, $dirname);
+		foreach ($config['storage']['data_dirnames'] as $key => $dirname) {
+			$container->setParameter('oka_file.storage.data_dirname.'.$key, $dirname);
 		}
 		
-		$container->setParameter('oka_file.container.web_server.host', $config['container_config']['web_server']['host']);
-		$container->setParameter('oka_file.container.web_server.port', $config['container_config']['web_server']['port']);
-		$container->setParameter('oka_file.container.web_server.secure', $config['container_config']['web_server']['secure']);
+		$container->setParameter('oka_file.storage.web_server.host', $config['storage']['web_server']['host']);
+		$container->setParameter('oka_file.storage.web_server.port', $config['storage']['web_server']['port']);
+		$container->setParameter('oka_file.storage.web_server.secure', $config['storage']['web_server']['secure']);
 		
 		$container->setParameter('oka_file.image.uploaded.detect_dominant_color', $config['image']['uploaded']['detect_dominant_color']);
 		$container->setParameter('oka_file.image.uploaded.thumbnail_factory', $config['image']['uploaded']['thumbnail_factory']);
@@ -134,9 +134,9 @@ class OkaFileExtension extends Extension
 		$fileUriLoaderDefinition = $container->getDefinition('oka_file.file_uri.routing_loader');
 		
 		if (!empty($config['routing'])) {
-			$defaultHost = $config['container_config']['web_server']['host'];
-			$defaultHost .= $config['container_config']['web_server']['port'] !== null ? ':' . $config['container_config']['web_server']['port'] : '';
-			$defaultScheme = $config['container_config']['web_server']['secure'] === true ? 'https' : 'http';
+			$defaultHost = $config['storage']['web_server']['host'];
+			$defaultHost .= $config['storage']['web_server']['port'] !== null ? ':' . $config['storage']['web_server']['port'] : '';
+			$defaultScheme = $config['storage']['web_server']['secure'] === true ? 'https' : 'http';
 			
 			foreach ($config['routing'] as $name => $route) {
 				if ($route['host'] === null) {

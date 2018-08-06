@@ -1,6 +1,15 @@
 Changelog
 =========
 
+#### 2.0.0 (2018-08-06)
+
+* [BC Break] Updated `composer.json` file and removed Symfony 2.8 support.
+* [BC Break] Renamed configuration key from `oka_file.container_config` to `oka_file.storage`.
+* [BC Break] Renamed configuration key from `oka_file.storage.entity_dirnames` to `oka_file.storage.object_dirnames`.
+* [BC Break] Renamed configuration key from `oka_file.storage.data_dirnames.others` to `oka_file.storage.data_dirnames.file`.
+* [BC Break] Renamed configuration key from `oka_file.object_default_class.others` to `oka_file.object_default_class.file`.
+* Updated documentation.
+
 #### 1.6.0 (2018-08-06)
 
 * Added `oka_file.storage.handler_id` configuration key.

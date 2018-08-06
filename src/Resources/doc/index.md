@@ -193,14 +193,15 @@ oka_file:
     model_manager_name: default
     object_default_class:
         image: Acme\FileBundle\Entity\Image
-    container_config:
-        root_path: /var/www/container
+    storage:
+        handler_id: ~    #File storage handler service ID.
+        root_path: '%kernel.project_dir%/web/statics'
         data_dirnames:
             image: images
         web_server:
-            host: aystorage
-            port: ~
             secure: false
+            host: statics.exemple.com
+            port: ~
     behaviors:
         reflection:
             enable_recursive: true
@@ -219,7 +220,7 @@ oka_file:
     image:
         uploaded:
             detect_dominant_color:
-                method: k-means																				#Available methods are 'k-means' and 'quantize'
+                method: k-means    #Available methods are 'k-means' and 'quantize'
             thumbnail_factory:
                 Acme\FileBundle\Entity\Image: [{ width: 100, height: 100 }, { width: 200, height: 200 }]
         thumbnail:

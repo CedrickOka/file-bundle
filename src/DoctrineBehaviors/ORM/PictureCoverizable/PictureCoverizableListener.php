@@ -1,10 +1,9 @@
 <?php
 namespace Oka\FileBundle\DoctrineBehaviors\ORM\PictureCoverizable;
 
-use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Oka\FileBundle\DoctrineBehaviors\Model\PictureCoverizable\PictureCoverizable;
 use Oka\FileBundle\DoctrineBehaviors\ORM\AbstractListener;
 
 /**

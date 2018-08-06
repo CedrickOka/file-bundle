@@ -1,12 +1,11 @@
 <?php
 namespace Oka\FileBundle\DoctrineBehaviors\ODM\Avatarizable;
 
-use Oka\FileBundle\DoctrineBehaviors\Model\Avatarizable\Avatarizable;
-use Oka\FileBundle\DoctrineBehaviors\ODM\AbstractListener;
+use Doctrine\ODM\MongoDB\Events;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Doctrine\ODM\MongoDB\Events;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
+use Oka\FileBundle\DoctrineBehaviors\ODM\AbstractListener;
 
 /**
  * 

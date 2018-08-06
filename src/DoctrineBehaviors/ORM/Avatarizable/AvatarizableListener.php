@@ -1,11 +1,10 @@
 <?php
 namespace Oka\FileBundle\DoctrineBehaviors\ORM\Avatarizable;
 
+use Doctrine\ORM\Events;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Oka\FileBundle\DoctrineBehaviors\Model\Avatarizable\Avatarizable;
 use Oka\FileBundle\DoctrineBehaviors\ORM\AbstractListener;
 
 /**

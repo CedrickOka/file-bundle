@@ -76,6 +76,7 @@ class ImageDominantColorCommand extends ContainerAwareCommand
 			}
 			
 			$objectManager->flush();
+			
 			if ($findAll === true) {
 				$offset += 100;
 			}

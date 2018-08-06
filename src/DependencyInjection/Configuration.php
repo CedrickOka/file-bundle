@@ -29,15 +29,6 @@ class Configuration implements ConfigurationInterface
 		$rootNode
 			->addDefaultsIfNotSet()
 			->children()
-				->arrayNode('storage')
-					->addDefaultsIfNotSet()
-					->children()
-						->scalarNode('handler_id')
-							->defaultNull()
-							->info('The service ID of file storage handler.')
-						->end()
-					->end()
-				->end()
 				->scalarNode('db_driver')
 					->cannotBeEmpty()
 					->defaultValue('orm')
@@ -48,7 +39,7 @@ class Configuration implements ConfigurationInterface
 				->end()
 				->scalarNode('model_manager_name')->defaultNull()->end()
 				->append($this->objectClassNodeDefinition())
-				->append($this->containerConfigNodeDefinition())
+				->append($this->storageNodeDefinition())
 				->append($this->imageNodeDefinition())
 				->append($this->behaviorsNodeDefinition())				
 				->arrayNode('routing')
@@ -98,20 +89,24 @@ class Configuration implements ConfigurationInterface
 				->scalarNode('image')->isRequired()->cannotBeEmpty()->end()
 				->scalarNode('video')->defaultNull()->end()
 				->scalarNode('audio')->defaultNull()->end()
-				->scalarNode('others')->defaultNull()->end()
+				->scalarNode('file')->defaultNull()->end()
 			->end()
 		->end();
 		
 		return $node;
 	}
 	
-	private function containerConfigNodeDefinition()
+	private function storageNodeDefinition()
 	{
-		$node = new ArrayNodeDefinition('container_config');
+		$node = new ArrayNodeDefinition('storage');
 		$node
 			->addDefaultsIfNotSet()
 			->isRequired()
 			->children()
+				->scalarNode('handler_id')
+					->defaultNull()
+					->info('The service ID of file storage handler.')
+				->end()
 				->scalarNode('root_path')
 					->isRequired()
 					->cannotBeEmpty()
@@ -127,13 +122,13 @@ class Configuration implements ConfigurationInterface
 				->arrayNode('data_dirnames')
 					->addDefaultsIfNotSet()
 					->children()
-						->append($this->createStorageConfigDataDirnameNodeDefinition('image', 'images'))
-						->append($this->createStorageConfigDataDirnameNodeDefinition('video', 'videos'))
-						->append($this->createStorageConfigDataDirnameNodeDefinition('audio', 'audios'))
-						->append($this->createStorageConfigDataDirnameNodeDefinition('other', 'others'))
+						->append($this->createStorageDataDirnameNodeDefinition('image', 'images'))
+						->append($this->createStorageDataDirnameNodeDefinition('video', 'videos'))
+						->append($this->createStorageDataDirnameNodeDefinition('audio', 'audios'))
+						->append($this->createStorageDataDirnameNodeDefinition('file', 'files'))
 					->end()
 				->end()
-				->arrayNode('entity_dirnames')
+				->arrayNode('object_dirnames')
 					->useAttributeAsKey('name')
 					->treatNullLike([])
 					->prototype('scalar')
@@ -184,7 +179,7 @@ class Configuration implements ConfigurationInterface
 		return $node;
 	}
 	
-	private function createStorageConfigDataDirnameNodeDefinition($name, $defaultValue)
+	private function createStorageDataDirnameNodeDefinition($name, $defaultValue)
 	{
 		$node = new ScalarNodeDefinition($name);
 		$node
@@ -327,11 +322,10 @@ class Configuration implements ConfigurationInterface
 			->useAttributeAsKey('name')
 			->prototype('array')
 				->children()
-					->scalarNode('target_entity')
+// 					->scalarNode('target_entity')
 // 						->setDeprecated('The "%path%.%node%" configuration key is deprecated since version 1.2.0. Use "%path%.target_object" instead.')
-						->info('This "oka_pagination.behaviors.[*].mappings.target_entity" configuration key is deprecated since version 1.2.0. Use "oka_pagination.behaviors.[*].mappings.target_object" instead.')
-						->cannotBeEmpty()
-					->end()
+// 						->cannotBeEmpty()
+// 					->end()
 					->scalarNode('target_object')->cannotBeEmpty()->end()
 					->booleanNode('embedded')
 						->defaultTrue()

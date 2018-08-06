@@ -4,16 +4,11 @@ namespace Oka\FileBundle\Controller;
 use Oka\FileBundle\Form\Type\CropImageFormType;
 use Oka\FileBundle\Form\Type\ImageFormType;
 use Oka\FileBundle\Form\Type\UploadFileFormType;
-use Oka\FileBundle\Model\FileManagerInterface;
-use Oka\FileBundle\Model\Image;
-use Oka\FileBundle\Model\ImageInterface;
-use Oka\FileBundle\Model\ImageManipulatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -49,10 +44,10 @@ class ImageController extends Controller
 	 */
 	public function showAction(Request $request, $id)
 	{
-		/** @var FileManagerInterface $fileManager */
+		/** @var \Oka\FileBundle\Model\FileManagerInterface $fileManager */
 		$fileManager = $this->get('oka_file.image_manager');
 		
-		/** @var ImageInterface $entity */
+		/** @var \Oka\FileBundle\Model\ImageInterface $entity */
 		if ($entity = $fileManager->findFile($id)) {
 			return $this->render('OkaFileBundle:Image:show.html.twig', ['entity' => $entity]);
 		}
@@ -70,7 +65,7 @@ class ImageController extends Controller
 	{
 		$router = $this->get('router');
 		$formFactory = $this->get('form.factory');
-		/** @var FileManagerInterface $fileManager */
+		/** @var \Oka\FileBundle\Model\FileManagerInterface $fileManager */
 		$fileManager = $this->get('oka_file.image_manager');
 		
 		$image = $fileManager->createFile();
@@ -98,10 +93,10 @@ class ImageController extends Controller
 	
 	public function updateAction(Request $request, $id)
 	{
-		/** @var FileManagerInterface $fileManager */
+		/** @var \Oka\FileBundle\Model\FileManagerInterface $fileManager */
 		$fileManager = $this->get('oka_file.image_manager');
 		
-		/** @var ImageInterface $entity */
+		/** @var \Oka\FileBundle\Model\ImageInterface $entity */
 		if ($entity = $fileManager->findFile($id)) {
 			$router = $this->get('router');
 			$formFactory = $this->get('form.factory');
@@ -133,7 +128,7 @@ class ImageController extends Controller
 	
 	public function deleteAction($id)
 	{
-		/** @var FileManagerInterface $fileManager */
+		/** @var \Oka\FileBundle\Model\FileManagerInterface $fileManager */
 		$fileManager = $this->get('oka_file.image_manager');
 		
 		if ($entity = $fileManager->findFile($id)) {
@@ -153,14 +148,14 @@ class ImageController extends Controller
 	 */
 	public function uploadAction(Request $request)
 	{
-		/** @var FileManagerInterface $fileManager */
+		/** @var \Oka\FileBundle\Model\FileManagerInterface $fileManager */
 		$fileManager = $this->get('oka_file.image_manager');
 		/** @var $formFactory Symfony\Component\Form\FormInterface */
 		$formFactory = $this->get('form.factory');
 		/** @var $router Symfony\Component\Routing\RouterInterface */
 		$router = $this->get('router');
 		
-		/** @var ImageInterface $entity */
+		/** @var \Oka\FileBundle\Model\ImageInterface $entity */
 		$entity = $fileManager->createFile();
 		$form = $formFactory->create(new UploadFileFormType($fileManager->getClass()), $entity, [
 				'action' => $router->generate('oka_file_image_upload', [], UrlGeneratorInterface::ABSOLUTE_PATH),
@@ -192,10 +187,10 @@ class ImageController extends Controller
 	 */
 	public function deleteSizeAction($id, $width, $height)
 	{
-		/** @var FileManagerInterface $fileManager */
+		/** @var \Oka\FileBundle\Model\FileManagerInterface $fileManager */
 		$fileManager = $this->get('oka_file.image_manager');
 		
-		/** @var ImageInterface $entity */
+		/** @var \Oka\FileBundle\Model\ImageInterface $entity */
 		if ($entity = $fileManager->findFile($id)) {
 			$entity->removeFileFor($width, $height);
 			$url = $this->get('router')->generate('oka_file_image_show', ['id' => $entity->getId()], UrlGeneratorInterface::ABSOLUTE_PATH);
@@ -215,10 +210,10 @@ class ImageController extends Controller
 	 */
 	public function cropAction(Request $request, $id)
 	{
-		/** @var FileManagerInterface $fileManager */
+		/** @var \Oka\FileBundle\Model\FileManagerInterface $fileManager */
 		$fileManager = $this->get('oka_file.image_manager');
 		
-		/** @var ImageManipulatorInterface $entity */
+		/** @var \Oka\FileBundle\Model\ImageManipulatorInterface $entity */
 		if ($entity = $fileManager->findFile($id)) {
 			/** @var $formFactory Symfony\Component\Form\FormInterface */
 			$formFactory = $this->get('form.factory');

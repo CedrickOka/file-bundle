@@ -3,6 +3,8 @@ Changelog
 
 #### 2.0.1 (2018-08-17)
 
+* Improvement.
+
 #### 2.0.0 (2018-08-06)
 
 * [BC Break] Updated `composer.json` file and removed Symfony 2.8 support.

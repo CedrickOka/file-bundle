@@ -8,8 +8,8 @@ Prerequisites
 
 The OkaFileBundle has the following requirements:
 
- - PHP 5.5
- - Symfony 2.8+
+ - PHP 5.5+
+ - Symfony 3.4+
  - Imagine library
  - OkaPaginationBundle
 

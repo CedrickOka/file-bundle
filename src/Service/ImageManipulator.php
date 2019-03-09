@@ -1,13 +1,16 @@
 <?php
 namespace Oka\FileBundle\Service;
 
+use ColorThief\ColorThief;
 use Imagine\Image\Box;
 use Imagine\Image\Point;
 use Oka\FileBundle\Model\FileInterface;
 use Oka\FileBundle\Model\FileStorageHandlerInterface;
 use Oka\FileBundle\Model\ImageInterface;
 use Oka\FileBundle\Model\ImageManipulatorInterface;
+use Oka\FileBundle\Util\ImageUtil;
 use Oka\FileBundle\Util\KmeansImage;
+use Oka\FileBundle\Util\ColorUtil;
 
 /**
  *
@@ -43,22 +46,19 @@ class ImageManipulator implements ImageManipulatorInterface
 			throw new \LogicException(sprintf('No image found from the path "%s".', $realPath));
 		}
 		
-		$img = new \Imagick($realPath);
-		
-		if (true === $optimize) {
-			if ($img->getImageHeight() > 250 && $img->getImageWidth() > 250) {
-				$img->resizeImage(250, 250, \Imagick::FILTER_GAUSSIAN, 1);
-			}
-		}
-		
 		switch (true) {
 			case self::DOMINANT_COLOR_METHOD_QUANTIZE === $method:
-				$img->quantizeImage(1, \Imagick::COLORSPACE_RGB, 0, false, false);
-				$img->setformat('RGB');
-				
-				return substr(bin2hex($img), 0, 6);
+				return ColorUtil::rgbToHex(ColorThief::getColor($realPath, true === isset($options['quality']) ? $options['quality'] : 1));
 				
 			case self::DOMINANT_COLOR_METHOD_KMEANS === $method:
+				$img = new \Imagick($realPath);
+				
+				if (true === $optimize) {
+					if ($img->getimageheight() > 250 && $img->getImageWidth() > 250) {
+						$img->resizeImage(250, 250, \Imagick::FILTER_GAUSSIAN, 1);
+					}
+				}
+				
 				$kmeans = new KmeansImage($img);
 				
 				if (false === empty($options)) {
@@ -101,8 +101,8 @@ class ImageManipulator implements ImageManipulatorInterface
 			throw new \LogicException(sprintf('No image found from the path "%s".', $realPath));
 		}
 		
-		/** @var \Imagine\Image\ImageInterface $img */
-		$imagine = static::createImagine();
+		/** @var \Imagine\Image\ImagineInterface $imagine */
+		$imagine = ImageUtil::createImagine();
 		/** @var \Imagine\Image\ImageInterface $img */
 		$img = $imagine->open($realPath);
 		$box = $img->getSize();
@@ -152,7 +152,8 @@ class ImageManipulator implements ImageManipulatorInterface
 			throw new \LogicException(sprintf('No image found from the path "%s".', $realPath));
 		}
 		
-		$imagine = new \Imagine\Imagick\Imagine();
+		/** @var \Imagine\Image\ImagineInterface $imagine */
+		$imagine = ImageUtil::createImagine();
 		/** @var \Imagine\Image\ImageInterface $img */
 		$img = $imagine->open($realPath);
 		$img->crop(new Point($x0, $y0), new Box(($x1 - $x0), ($y1 - $y0)));
@@ -162,39 +163,6 @@ class ImageManipulator implements ImageManipulatorInterface
 		}
 		
 		$img->save($destination ?: $realPath, null === $format ? [] : ['format' => $format]);
-	}
-	
-	/**
-	 * @throws \RuntimeException
-	 * @return \Imagick|\Gmagick
-	 */
-	public static function createImagick() {
-		if (true === class_exists('Imagick')) {
-			return new \Imagick;
-		}
-		
-		if (true === class_exists('Gmagick')) {
-			return new \Gmagick;
-		}
-		
-		throw new \RuntimeException('Unable to load Imagick or Gmagick class');
-	}
-	
-	/**
-	 * Create Imagine class instance
-	 * 
-	 * @return \Imagine\Image\ImagineInterface
-	 */
-	public static function createImagine() {
-		if (true === class_exists('Imagick')) {
-			return new \Imagine\Imagick\Imagine();
-		}
-		
-		if (true === class_exists('Gmagick')) {
-			return new \Imagine\Gmagick\Imagine();
-		}
-		
-		return new \Imagine\Gd\Imagine();
 	}
 	
 	protected function getRealPath(ImageInterface $image)

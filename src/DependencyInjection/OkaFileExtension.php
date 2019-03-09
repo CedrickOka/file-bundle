@@ -41,7 +41,6 @@ class OkaFileExtension extends Extension
 		$config = $this->processConfiguration($configuration, $configs);
 		
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-		$loader->load('services.yml');
 		
 		$this->storageLoad($config['storage'], $container, $loader);
 		$this->doctrineLoad($config, $container, $loader);
@@ -49,6 +48,8 @@ class OkaFileExtension extends Extension
 		if (true === $config['behaviors']['enabled']) {
 			$this->behaviorsLoad($config, $container, $loader);
 		}
+		
+		$loader->load('services.yml');
 	}
 	
 	protected function storageLoad(array $config, ContainerBuilder $container, Loader\YamlFileLoader $loader)

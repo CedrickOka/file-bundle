@@ -47,11 +47,11 @@ class NativeFileStorageHandler implements FileStorageHandlerInterface
 	public function open()
 	{
 		if (!$path = realpath($this->rootPath)) {
-			throw new \RuntimeException(sprintf('Unable to open the native file storage handler because the directory "%s" doesn\'t exist', $path));
+			throw new \RuntimeException(sprintf('Unable to open the native file storage handler because the directory "%s" doesn\'t exist', $this->rootPath));
 		}
 		$this->rootPath = $path;
 		
-		if (true === file_exists($path) && true === is_writable($path)) {
+		if (true === file_exists($this->rootPath) && true === is_writable($this->rootPath)) {
 			return;
 		}
 		
@@ -194,7 +194,7 @@ class NativeFileStorageHandler implements FileStorageHandlerInterface
 	public function getThumbnailPath(FileInterface $file, $mode = 'ratio', $quality = 100, $width = null, $height = null)
 	{
 		$path = $this->rootPath;
-		$size = ($width ?: '') . 'x' . ($width ?: '$height');
+		$size = ($width ?: '') . 'x' . ($height ?: '');
 		
 		if ($containerName = $this->getContainerName($file)) {
 			$path .= '/' . $containerName;
@@ -206,7 +206,7 @@ class NativeFileStorageHandler implements FileStorageHandlerInterface
 			$path .= '/' . $quality;
 		}
 		
-		return sprintf('%s/%s/%s', $path, $size, $file->getFilename());
+		return sprintf('%s/%s', $path, $size);
 	}
 	
 	/**
@@ -234,7 +234,7 @@ class NativeFileStorageHandler implements FileStorageHandlerInterface
 	public function getThumbnailUri(FileInterface $file, $mode = 'ratio', $quality = 100, $width = null, $height = null)
 	{
 		$baseUri = $this->getBaseUri($file);
-		$size = ($width ?: '') . 'x' . ($width ?: '$height');
+		$size = ($width ?: '') . 'x' . ($height ?: '');
 		
 		if (null !== $mode) {
 			$baseUri .= '/' . $mode;
@@ -275,7 +275,9 @@ class NativeFileStorageHandler implements FileStorageHandlerInterface
 			$uri .= ':' . $this->webserver['port'];
 		}
 		
-		$uri .= $this->webserver['path'];
+		if ('/' !== $this->webserver['path']) {
+			$uri .= $this->webserver['path'];
+		}
 		
 		if ($containerName = $this->getContainerName($file)) {
 			$uri .= '/' . $containerName;

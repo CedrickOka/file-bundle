@@ -1,6 +1,7 @@
 <?php
 namespace Oka\FileBundle\Doctrine;
 
+use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
@@ -28,6 +29,11 @@ class FileListener implements EventSubscriber
 	protected $dispatcher;
 	
 	/**
+	 * @var array $filesToMove
+	 */
+	protected $filesToMove;
+	
+	/**
 	 * @param FileStorageHandlerInterface $fileStorageHandler
 	 * @param EventDispatcherInterface $dispatcher
 	 */
@@ -35,6 +41,7 @@ class FileListener implements EventSubscriber
 	{
 		$this->fileStorageHandler = $fileStorageHandler;
 		$this->dispatcher = $dispatcher;
+		$this->fileHasMove = [];
 	}
 	
 	/**
@@ -49,10 +56,11 @@ class FileListener implements EventSubscriber
 				throw new \LogicException('It is not possible to persist a file object without attaching it to an UploadedFile object.');
 			}
 			
+			$this->fileHasMove['prePersist'][] = $object;
 			$this->fileStorageHandler->open();
-			$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVING, new UploadedFileEvent($object, $object->getUploadedFile()));			
+			$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVING, new UploadedFileEvent($object, $object->getUploadedFile()));
+			
 			$object->setLastModified();
-			var_dump($object->getUploadedFile());
 		}
 	}
 	
@@ -77,7 +85,9 @@ class FileListener implements EventSubscriber
 		
 		if ($object instanceof FileInterface) {
 			if (true === $object->hasUploadedFile()) {
+				$this->fileHasMove['preUpdate'][] = $object;
 				$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVING, new UploadedFileEvent($object, $object->getUploadedFile()));
+				
 				$object->setLastModified();
 			}
 		}
@@ -107,14 +117,31 @@ class FileListener implements EventSubscriber
 		}
 	}
 	
+	/**
+	 * @param EventArgs $arg
+	 */
+	public function postFlush(EventArgs $arg)
+	{
+		if (false === empty($this->fileHasMove)) {
+			foreach ($this->fileHasMove as $key => $files) {
+				foreach ($files as $file) {
+					if ($uploadedFile = $this->fileStorageHandler->move($file, Events::preUpdate === $key)) {
+						$this->dispatcher->dispatch(OkaFileEvents::UPLOADED_FILE_MOVED, new UploadedFileEvent($file, $uploadedFile));
+					}
+				}				
+			}
+		}
+	}
+	
 	public function getSubscribedEvents()
 	{
 		return [
 				Events::prePersist,
-				Events::postPersist,
+// 				Events::postPersist,
 				Events::preUpdate,
-				Events::postUpdate,
-				Events::postRemove
+// 				Events::postUpdate,
+				Events::postRemove,
+				Events::postFlush
 		];
 	}
 	

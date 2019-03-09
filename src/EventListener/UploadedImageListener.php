@@ -73,7 +73,7 @@ class UploadedImageListener implements EventSubscriberInterface
 			}
 			
 			foreach ($container['thumbnail_factory'] as $value) {
-				$this->imageManipulator->thumbnail($object, $value['width'], $value['height'], $value['method'], $value['quality']);
+				$this->imageManipulator->thumbnail($object, $value['width'], $value['height'], $value['mode'], $value['quality']);
 			}
 		}
 	}

@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 3.0.0 (2019-03-09)
+
+* [BC Break] New released 3.0.0 with new configuration and new system.
+
 #### 2.0.1 (2018-08-17)
 
 * Improvement.

@@ -9,7 +9,6 @@ Prerequisites
 The OkaFileBundle has the following requirements:
 
  - PHP 5.6+
- - Imagick 3.1.2+
  - Symfony 3.4+
  - Imagine library
  - OkaPaginationBundle 3+
@@ -47,24 +46,22 @@ Then, enable the bundle by adding it to the list of registered bundles
 in the `app/AppKernel.php` file of your project:
 
 ```php
-<?php
 // app/AppKernel.php
 
 // ...
 class AppKernel extends Kernel
 {
-	public function registerBundles()
-	{
-		$bundles = array(
-			// ...
-			
-			new Oka\FileBundle\OkaFileBundle(),
-		);
-		
-		// ...
-	}
-	
-	// ...
+    public function registerBundles()
+    {
+        $bundles = [
+            // ...
+            new Oka\FileBundle\OkaFileBundle(),
+        ];
+
+        // ...
+    }
+
+    // ...
 }
 ```
 

@@ -30,10 +30,11 @@
 		"symfony/config" : "^3.4 || ^4.0",
 		"symfony/form" : "^3.4 || ^4.0",
 		"symfony/translation" : "^3.4 || ^4.0",
-		"symfony/validator" : "^3.4 || ^4.0"
+		"symfony/validator" : "^3.4 || ^4.0",
+		"ksubileau/color-thief-php": "^1.4"
 	},
 	"require-dev" : {
-		"symfony/phpunit-bridge" : "^3.0",
+		"symfony/phpunit-bridge" : "^4.2",
 		"symfony/orm-pack": "^1.0",
 		"alcaeus/mongo-php-adapter": "^1.1",
 		"doctrine/mongodb-odm-bundle": "^3.5"

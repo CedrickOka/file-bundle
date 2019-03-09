@@ -2,6 +2,7 @@
 namespace Oka\FileBundle\Model;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  *
@@ -46,7 +47,7 @@ abstract class File implements FileInterface
 	protected $updatedAt;
 	
 	/**
-	 * @AssertFile()
+	 * @Assert\File()
 	 * @var UploadedFile $uploadedFile
 	 */
 	protected $uploadedFile;
@@ -252,7 +253,7 @@ abstract class File implements FileInterface
 	 */
 	public function getFilename()
 	{
-		return sprintf('%s.%s', $this->id, $this->extension ? '.' . $this->extension : '');
+		return sprintf('%s%s', $this->id, $this->extension ? '.' . $this->extension : '');
 	}
 	
 	/**

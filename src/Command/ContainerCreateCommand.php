@@ -9,18 +9,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * 
+ *
  * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
- * 
+ *
  */
 class ContainerCreateCommand extends Command
 {
 	protected static $defaultName = 'okafile:container:create';
-	
-	/**
-	 * @var string $rootPath
-	 */
-	protected $rootPath;
 	
 	/**
 	 * @var ContainerParameterBag $containerBag
@@ -32,9 +27,8 @@ class ContainerCreateCommand extends Command
 	 */
 	protected $fileStorageHandler;
 	
-	public function __construct(string $rootPath, ContainerParameterBag $containerBag, FileStorageHandlerInterface $fileStorageHandler)
+	public function __construct(ContainerParameterBag $containerBag, FileStorageHandlerInterface $fileStorageHandler)
 	{
-		$this->rootPath = $rootPath;
 		$this->containerBag = $containerBag;
 		$this->fileStorageHandler = $fileStorageHandler;
 	}
@@ -45,13 +39,26 @@ class ContainerCreateCommand extends Command
 	 */
 	protected function configure()
 	{
-		$this->setName(static::$defaultName)
-			 ->setDescription('Create file container')
-			 ->setDefinition([
-			 		new InputOption('user', null, InputOption::VALUE_OPTIONAL, 'Owner of files', null),
-			 		new InputOption('group', null, InputOption::VALUE_OPTIONAL, 'Group of files', null)
-			 ])
-			 ->setHelp('Cette commande permet de générer le systeme de fichier.');
+		$this->setName(static::getDefaultName())
+		->setDefinition([
+				new InputOption('user', null, InputOption::VALUE_OPTIONAL, 'User owner of files', null),
+				new InputOption('group', null, InputOption::VALUE_OPTIONAL, 'Group owner of files', null)
+		])
+		->setDescription('This command creates all the containers in the file storage.')
+		->setHelp(<<<EOF
+The <info>%command.name%</info> command creates all the containers in the file storage :
+
+  <info>php %command.full_name% www.exemple.com</info>
+
+You can specify the user owner of files :
+
+  <info>php %command.full_name% --user=www-data</info>
+
+You can specify the owner of files :
+
+  <info>php %command.full_name% --group=www-data</info>
+EOF
+				);
 	}
 	
 	/**
@@ -65,7 +72,10 @@ class ContainerCreateCommand extends Command
 		
 		foreach ($this->containerBag->all() as $value) {
 			$this->fileStorageHandler->createContainer($value['name'], $input->getOption('user'), $input->getOption('group'));
-			$output->writeln(sprintf('Container <info>%s</info> has been created', $value['name']));
+			$output->writeln(sprintf('<comment>[x]</comment> Container <info>%s</info> has been created successfully.', $value['name']));
 		}
+		
+		$this->fileStorageHandler->close();
+		$output->writeln('File storage handler has been closed.');
 	}
 }

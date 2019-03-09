@@ -1,5 +1,0 @@
-oka_file_image:
-    resource: "@OkaFileBundle/Resources/config/routing/image.yml"
-
-oka_file_image_manipulator:
-    resource: "@OkaFileBundle/Resources/config/routing/image_manipulator.yml"

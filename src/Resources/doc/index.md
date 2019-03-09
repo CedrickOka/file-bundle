@@ -8,10 +8,11 @@ Prerequisites
 
 The OkaFileBundle has the following requirements:
 
- - PHP 5.5+
+ - PHP 5.6+
+ - Imagick 3.1.2+
  - Symfony 3.4+
  - Imagine library
- - OkaPaginationBundle
+ - OkaPaginationBundle 3+
 
 Installation
 ============
@@ -57,7 +58,7 @@ class AppKernel extends Kernel
 		$bundles = array(
 			// ...
 			
-			new Oka\ApiBundle\OkaFileBundle(),
+			new Oka\FileBundle\OkaFileBundle(),
 		);
 		
 		// ...
@@ -188,20 +189,42 @@ Add the following configuration to your `config.yml`.
 
 ``` yaml
 # app/config/config.yml
+
+
 oka_file:
     db_driver: orm
-    model_manager_name: default
-    object_default_class:
-        image: Acme\FileBundle\Entity\Image
+    model_manager_name: ~
     storage:
-        handler_id: ~    #File storage handler service ID.
-        root_path: '%kernel.project_dir%/web/statics'
-        data_dirnames:
-            image: images
-        web_server:
-            secure: false
-            host: statics.exemple.com
-            port: ~
+        webserver:
+            path: /
+            scheme: http
+            user: null
+            password: null
+            host: localhost
+            port: 80
+            query: ~
+        containers:
+            Acme\FileBundle\Entity\Image:
+                name: picture
+                thumbnail_factory:
+                    -
+                        width: 100
+                        height: 100
+                        quality: 100
+                        mode: ratio
+                    -
+                        width: 200
+                        height: 200
+                        quality: 100
+                        mode: ratio
+                dominant_color:
+                    enabled: true
+                    method: quantize
+        handler_id: oka_file.storage_handler.default
+        root_path: %kernel.project_dir%/assets/statics
+        dominant_color:
+            enabled: true
+            method: quantize
     behaviors:
         reflection:
             enable_recursive: true
@@ -210,29 +233,7 @@ oka_file:
                 Acme\FileBundle\Entity\User:
                     target_object: Acme\FileBundle\Entity\Image
                     fetch: EAGER
-        avatarizable:
-            mappings:
-                Acme\FileBundle\Entity\User:
-                    target_object: Acme\FileBundle\Entity\Image
-                    fetch: EAGER
-                    options:
-                        default_avatar_uri: 'http://acme.com/images/default-avatar.png'
-    image:
-        uploaded:
-            detect_dominant_color:
-                method: k-means    #Available methods are 'k-means' and 'quantize'
-            thumbnail_factory:
-                Acme\FileBundle\Entity\Image: [{ width: 100, height: 100 }, { width: 200, height: 200 }]
-        thumbnail:
-            quality: 100
-            mode: ratio
-    routing:
-        bot_service_image:
-            file_class: Acme\FileBundle\Entity\Image
-            host: aystorage
-            scheme: ~
-            prefix: '/image'
-            defaults: { mode: 'ratio', quality: 100, size: '100x100' }
+                    embedded: true
 ```
 
 Step 5: Import OkaFileBundle routing

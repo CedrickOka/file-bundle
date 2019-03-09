@@ -21,14 +21,14 @@ class OkaFileBundle extends Bundle
 	 */
 	private function addRegisterMappingsPass(ContainerBuilder $container)
 	{
-		$mappings = [realpath(__DIR__.'/Resources/config/doctrine-mapping') => 'Oka\FileBundle\Model'];
+		$mapping = [realpath(__DIR__.'/Resources/config/doctrine-mapping') => 'Oka\FileBundle\Model'];
 		
 		if (true === class_exists('Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass')) {
-			$container->addCompilerPass(DoctrineOrmMappingsPass::createYamlMappingDriver($mappings, array('oka_file.model_manager_name'), 'oka_file.backend_type_orm'));
+			$container->addCompilerPass(DoctrineOrmMappingsPass::createYamlMappingDriver($mapping, array('oka_file.model_manager_name'), 'oka_file.backend_type_orm'));
 		}
 		
 		if (true === class_exists('Doctrine\Bundle\MongoDBBundle\DependencyInjection\Compiler\DoctrineMongoDBMappingsPass')) {
-			$container->addCompilerPass(DoctrineMongoDBMappingsPass::createYamlMappingDriver($mappings, array('oka_file.model_manager_name'), 'oka_file.backend_type_mongodb'));
+			$container->addCompilerPass(DoctrineMongoDBMappingsPass::createYamlMappingDriver($mapping, array('oka_file.model_manager_name'), 'oka_file.backend_type_mongodb'));
 		}
 	}
 }

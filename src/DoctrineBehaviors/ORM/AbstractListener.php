@@ -3,6 +3,7 @@ namespace Oka\FileBundle\DoctrineBehaviors\ORM;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Oka\FileBundle\DoctrineBehaviors\Common\AbstractListener as BaseAbstractListener;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
  * 
@@ -18,20 +19,24 @@ abstract class AbstractListener extends BaseAbstractListener
 	 */
 	protected function handleEntityMapping($class, $mapping)
 	{
-		if (true === isset($this->mappings[$class])) {
-			$mapping['targetEntity'] = isset($this->mappings[$class]['target_object']) ? $this->mappings[$class]['target_object'] : $this->defaultTargetObject;
-			
-			switch (strtoupper($this->mappings[$class]['fetch'])) {
-				case 'EAGER':
-					$mapping['fetch'] = ClassMetadata::FETCH_EAGER;
-					break;
-				case 'LAZY':
-					$mapping['fetch'] = ClassMetadata::FETCH_LAZY;
-					break;
-				case 'EXTRA_LAZY':
-					$mapping['fetch'] = ClassMetadata::FETCH_EXTRA_LAZY;
-					break;
-			}
+		if (false === isset($this->mappings[$class])) {
+			throw new InvalidConfigurationException(sprintf('No mapping is defined for the "%s" class to use the behavior.', $class));
+		}
+		
+		$mapping['targetEntity'] = $this->mappings[$class]['target_object'];
+		
+		switch (strtoupper($this->mappings[$class]['fetch'])) {
+			case 'EAGER':
+				$mapping['fetch'] = ClassMetadata::FETCH_EAGER;
+				break;
+				
+			case 'LAZY':
+				$mapping['fetch'] = ClassMetadata::FETCH_LAZY;
+				break;
+				
+			case 'EXTRA_LAZY':
+				$mapping['fetch'] = ClassMetadata::FETCH_EXTRA_LAZY;
+				break;
 		}
 		
 		return $mapping;

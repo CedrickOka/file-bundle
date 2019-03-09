@@ -1,13 +1,15 @@
 <?php
 namespace Oka\FileBundle\DependencyInjection;
 
+use Oka\FileBundle\Doctrine\FileListener;
+use Oka\FileBundle\Model\FileStorageHandlerInterface;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Definition;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -41,53 +43,65 @@ class OkaFileExtension extends Extension
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 		$loader->load('services.yml');
 		
-		// Object manager configuration
-		$container->setAlias('oka_file.default.doctrine_registry', new Alias(self::$doctrineDrivers[$config['db_driver']]['registry'], false));
-		$container->setParameter('oka_file.model_manager_name', $config['model_manager_name']);
-		$container->setParameter('oka_file.backend_type_'.$config['db_driver'], true);
+		$this->storageLoad($config['storage'], $container, $loader);
+		$this->doctrineLoad($config, $container, $loader);
 		
-		$definition = $container->getDefinition('oka_file.object_manager');
-		$definition->setFactory([new Reference('oka_file.default.doctrine_registry'), 'getManager']);
-		
-		$container->setParameter('oka_file.image.default_class', $config['object_default_class']['image']);
-		$container->setParameter('oka_file.video.default_class', $config['object_default_class']['video']);
-		$container->setParameter('oka_file.audio.default_class', $config['object_default_class']['audio']);
-		$container->setParameter('oka_file.file.default_class', $config['object_default_class']['file']);
-		
-		// Doctrine listeners configuration
-		$this->loadDoctrineListenerConfiguration($config, $container, $loader);
-		
-		// Doctrine behaviors configuation
 		if (true === $config['behaviors']['enabled']) {
-			$this->loadDoctrineBehaviorsConfiguration($config, $container, $loader);
+			$this->behaviorsLoad($config, $container, $loader);
 		}
-		
-		// File storage configuration
-		$this->loadFileStorageConfiguration($config, $container);
-		
-		// File Routing configuration
-		$this->loadRoutingConfiguration($config, $container);
 	}
 	
-	protected function loadDoctrineListenerConfiguration(array $config, ContainerBuilder $container, Loader\YamlFileLoader $loader)
+	protected function storageLoad(array $config, ContainerBuilder $container, Loader\YamlFileLoader $loader)
+	{
+		$loader->load('storage.yml');
+		
+		$container->setParameter('oka_file.storage.root_path', $config['root_path']);
+		$container->setParameter('oka_file.storage.webserver', $config['webserver']);
+		$container->setParameter('oka_file.storage.image.dominant_color', $config['image']['dominant_color']);
+		$container->setParameter('oka_file.storage.image.thumbnail_factory', $config['image']['thumbnail_factory']);
+		
+		$this->loadStorageHandler($config['handler_id'], $container);
+		$this->loadContainers($config['containers'], $container);
+	}
+	
+	protected function loadStorageHandler($handlerId, ContainerBuilder $container)
+	{
+		$definition = $container->findDefinition($handlerId);
+		$reflClass = new \ReflectionClass($definition->getClass());
+		
+		if (false === $reflClass->implementsInterface(FileStorageHandlerInterface::class)) {
+			throw new InvalidConfigurationException(sprintf('The handler service "%s" id must implemented "%s" interface.', $handlerId, FileStorageHandlerInterface::class));
+		}
+		
+		$container->setAlias('oka_file.storage_handler', new Alias($handlerId, true));
+		
+		$imageManipulator = $container->findDefinition('oka_file.storage.image_manipulator');
+		$imageManipulator->replaceArgument(0, new Reference('oka_file.storage_handler'));
+	}
+	
+	protected function loadContainers(array $containers, ContainerBuilder $container)
+	{
+		$definition = $container->getDefinition('oka_file.container_parameter_bag');
+		$definition->replaceArgument(0, $containers);
+	}
+	
+	protected function doctrineLoad(array $config, ContainerBuilder $container, Loader\YamlFileLoader $loader)
 	{
 		$loader->load('doctrine.yml');
 		
-		if (null === $config['storage']['handler_id']) {
-			$definition = new Definition('Oka\FileBundle\Service\NativeFileStorageHandler');
-			$container->setDefinition('oka_file.file_storage_handler.native', $definition);
-			$config['storage']['handler_id'] = 'oka_file.file_storage_handler.native';
-		}
+		$container->setParameter('oka_file.db_driver', $config['db_driver']);
+		$container->setParameter('oka_file.backend_type_'.$config['db_driver'], true);
+		$container->setParameter('oka_file.model_manager_name', $config['model_manager_name']);
+		$container->setAlias('oka_file.doctrine_registry.default', new Alias(self::$doctrineDrivers[$config['db_driver']]['registry'], false));
 		
-		$fileListenerDefinition = $container->getDefinition('oka_file.file.doctrine_listener');
-		$fileListenerDefinition->addTag(self::$doctrineDrivers[$config['db_driver']]['tag']);
-		$fileListenerDefinition->replaceArgument(0, new Reference($config['storage']['handler_id']));
+		$definition = $container->getDefinition('oka_file.object_manager');
+		$definition->setFactory([new Reference('oka_file.doctrine_registry.default'), 'getManager']);
 		
-		$ImageListenerDefinition = $container->getDefinition('oka_file.image.doctrine_listener');
-		$ImageListenerDefinition->addTag(self::$doctrineDrivers[$config['db_driver']]['tag']);
+		$fileListener = $container->getDefinition(FileListener::class);
+		$fileListener->addTag(self::$doctrineDrivers[$config['db_driver']]['tag']);
 	}
 	
-	protected function loadDoctrineBehaviorsConfiguration(array $config, ContainerBuilder $container, Loader\YamlFileLoader $loader)
+	protected function behaviorsLoad(array $config, ContainerBuilder $container, Loader\YamlFileLoader $loader)
 	{
 		$loader->load(sprintf('doctrine-behavior/%s.yml', $config['db_driver']));
 		$container->setParameter('oka_file.doctrine_behaviors.reflection.is_recursive', $config['behaviors']['reflection']['enable_recursive']);
@@ -97,59 +111,13 @@ class OkaFileExtension extends Extension
 				continue;
 			}
 			
-			$behaviorListenerDefinition = $container->getDefinition(sprintf('oka_file.doctrine_behaviors.%s_listener', preg_replace('#_+#', '', $key)));
+			$behaviorListener = $container->getDefinition(sprintf('oka_file.doctrine_behaviors.%s_listener', preg_replace('#_+#', '', $key)));
 			
-			if ($behavior['enabled'] === true) {
-				$behaviorListenerDefinition->replaceArgument(0, $behavior['mappings']);
-				$behaviorListenerDefinition->replaceArgument(1, $config['object_default_class']['image']);
+			if (true === $behavior['enabled'] && false === empty($behavior['mappings'])) {
+				$behaviorListener->replaceArgument(0, $behavior['mappings']);
 			} else {
-				$behaviorListenerDefinition->clearTags();
+				$behaviorListener->clearTags();
 			}
-		}
-	}
-	
-	protected function loadFileStorageConfiguration(array $config, ContainerBuilder $container)
-	{
-		$container->setParameter('oka_file.storage.root_path', $config['storage']['root_path']);
-		$container->setParameter('oka_file.storage.root_path', realpath($container->getParameter('oka_file.storage.root_path')));
-		$container->setParameter('oka_file.storage.data_dirnames', $config['storage']['data_dirnames']);
-		$container->setParameter('oka_file.storage.object_dirnames', $config['storage']['object_dirnames']);
-		
-		foreach ($config['storage']['data_dirnames'] as $key => $dirname) {
-			$container->setParameter('oka_file.storage.data_dirname.'.$key, $dirname);
-		}
-		
-		$container->setParameter('oka_file.storage.web_server.host', $config['storage']['web_server']['host']);
-		$container->setParameter('oka_file.storage.web_server.port', $config['storage']['web_server']['port']);
-		$container->setParameter('oka_file.storage.web_server.secure', $config['storage']['web_server']['secure']);
-		
-		$container->setParameter('oka_file.image.uploaded.detect_dominant_color', $config['image']['uploaded']['detect_dominant_color']);
-		$container->setParameter('oka_file.image.uploaded.thumbnail_factory', $config['image']['uploaded']['thumbnail_factory']);
-		$container->setParameter('oka_file.image.thumbnail.quality', $config['image']['thumbnail']['quality']);
-		$container->setParameter('oka_file.image.thumbnail.mode', $config['image']['thumbnail']['mode']);
-	}
-	
-	protected function loadRoutingConfiguration(array $config, ContainerBuilder $container)
-	{
-		$fileUriLoaderDefinition = $container->getDefinition('oka_file.file_uri.routing_loader');
-		
-		if (!empty($config['routing'])) {
-			$defaultHost = $config['storage']['web_server']['host'];
-			$defaultHost .= $config['storage']['web_server']['port'] !== null ? ':' . $config['storage']['web_server']['port'] : '';
-			$defaultScheme = $config['storage']['web_server']['secure'] === true ? 'https' : 'http';
-			
-			foreach ($config['routing'] as $name => $route) {
-				if ($route['host'] === null) {
-					$config['routing'][$name]['host'] = $defaultHost;
-				}
-				if ($route['scheme'] === null) {
-					$config['routing'][$name]['scheme'] = $defaultScheme;
-				}
-			}
-			
-			$fileUriLoaderDefinition->replaceArgument(0, $config['routing']);
-		} else {
-			$fileUriLoaderDefinition->clearTags();
 		}
 	}
 }

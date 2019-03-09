@@ -28,7 +28,6 @@ class AvatarizableListener extends AbstractListener
 				if ($this->getClassAnalyzer()->hasMethod($reflClass, 'getAvatar') && $this->getClassAnalyzer()->hasMethod($reflClass, 'setAvatar')) {
 					$mapOneToOne = $this->handleEntityMapping($reflClass->getName(), [
 							'fieldName' 	=> 'avatar',
-							'targetEntity' 	=> $this->defaultTargetObject,
 							'cascade' 		=> ['all'],
 							'fetch' 		=> ClassMetadata::FETCH_EAGER,
 							'joinColumns' 	=> [

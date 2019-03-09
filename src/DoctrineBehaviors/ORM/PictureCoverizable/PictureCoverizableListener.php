@@ -28,7 +28,6 @@ class PictureCoverizableListener extends AbstractListener
 				if ($this->getClassAnalyzer()->hasMethod($reflClass, 'getPictureCover') && $this->getClassAnalyzer()->hasMethod($reflClass, 'setPictureCover')) {
 					$mapOneToOne = $this->handleEntityMapping($reflClass->getName(), [
 							'fieldName' 	=> 'pictureCover',
-							'targetEntity' 	=> $this->defaultTargetObject,
 							'cascade' 		=> ['all'],
 							'fetch' 		=> ClassMetadata::FETCH_EAGER,
 							'joinColumns' 	=> [

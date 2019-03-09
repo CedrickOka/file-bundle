@@ -9,24 +9,37 @@ namespace Oka\FileBundle\Model;
 interface ImageManipulatorInterface
 {
 	/**
+	 * Gets image dominant color
+	 * 
+	 * @param ImageInterface $image
+	 * @param string $method
+	 * @param array $options
+	 * @param boolean $optimize
+	 * @return string
+	 */
+	public function getDominantColor(ImageInterface $image, $method = 'quantize', array $options = [], $optimize = true);
+	
+	/**
 	 * Thumbnailize image
 	 * 
-	 * @param integer $width
-	 * @param integer $height
+	 * @param ImageInterface $image
 	 * @param string $mode
-	 * @param integer $quality
+	 * @param int $quality
+	 * @param int $width
+	 * @param int $height
 	 */
-	public function thumbnail($width = null, $height = null, $mode = null, $quality = null);
+	public function thumbnail(ImageInterface $image, $width = null, $height = null, $mode = 'ratio', $quality = 100);
 	
 	/**
 	 * Crop image
 	 * 
-	 * @param integer $x0
-	 * @param integer $y0
-	 * @param integer $x1
-	 * @param integer $y1
+	 * @param ImageInterface $image
+	 * @param int $x0
+	 * @param int $y0
+	 * @param int $x1
+	 * @param int $y1
 	 * @param string $destination
 	 * @param string $format
 	 */
-	public function crop($x0, $y0, $x1, $y1, $destination = null, $format = null);
+	public function crop(ImageInterface $image, $x0, $y0, $x1, $y1, $destination = null, $format = null);
 }

@@ -3,8 +3,12 @@ Oka\FileBundle\Model\Image:
     fields:
         width:
             type: smallint
+            options:
+                unsigned: true
         height:
             type: smallint
+            options:
+                unsigned: true
         dominantColor:
             column: dominant_color
             type: string

@@ -1,11 +1,15 @@
 Oka\FileBundle\Model\File:
     type: mappedSuperclass
+    indexes:
+        mime_type_idx:
+            columns: [mime_type]
     fields:
         name:
             type: string
         mimeType:
             column: mime_type
             type: string
+            nullable: true
         extension:
             type: string
             nullable: true
@@ -19,3 +23,6 @@ Oka\FileBundle\Model\File:
         updatedAt:
             column: updated_at
             type: datetime
+#    lifecycleCallbacks:
+#        prePersist: ['setLastModified']
+#        preUpdate: ['setLastModified']

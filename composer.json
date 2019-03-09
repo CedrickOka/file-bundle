@@ -1,7 +1,8 @@
 {
 	"name" : "coka/file-bundle",
-	"description" : "Symfony Oka file bundle",
 	"type" : "symfony-bundle",
+	"description" : "Symfony Oka file bundle",
+	"homepage" : "https://github.com/CedrickOka/oka-file",
 	"license" : "MIT",
 	"keywords" : [
 		"file",
@@ -9,7 +10,6 @@
 		"audio",
 		"video",
 		"upload",
-		"manipulation",
 		"thumbnail",
 		"cropping",
 		"behaviors"
@@ -19,21 +19,34 @@
 			"email" : "okacedrick@gmail.com"
 		}
 	],
-	"homepage" : "https://github.com/CedrickOka/oka-file",
 	"require" : {
-		"php" : "^5.5 || ^7.0",
-		"coka/pagination-bundle" : "^2.0",
-		"doctrine/orm" : "^2.4.8",
-		"doctrine/doctrine-bundle" : "~1.4",
+		"php" : ">=5.6",
+		"coka/pagination-bundle" : "^3.0",
 		"imagine/imagine" : "^0.6.3",
-		"symfony/symfony" : "^3.4"
+		"symfony/framework-bundle" : "^3.4 || ^4.0",
+		"symfony/event-dispatcher" : "^3.4 || ^4.0",
+		"symfony/dependency-injection" : "^3.4 || ^4.0",
+		"symfony/console" : "^3.4 || ^4.0",
+		"symfony/config" : "^3.4 || ^4.0",
+		"symfony/form" : "^3.4 || ^4.0",
+		"symfony/translation" : "^3.4 || ^4.0",
+		"symfony/validator" : "^3.4 || ^4.0"
 	},
 	"require-dev" : {
-		"symfony/phpunit-bridge" : "^3.0"
+		"symfony/phpunit-bridge" : "^3.0",
+		"symfony/orm-pack": "^1.0",
+		"alcaeus/mongo-php-adapter": "^1.1",
+		"doctrine/mongodb-odm-bundle": "^3.5"
 	},
 	"suggest" : {
 		"ext-gd" : ">=2.2.0",
-		"ext-imagick" : ">=3.1.2"
+		"ext-gmagick" : ">=2.0.4",
+		"ext-imagick" : ">=3.1.2",
+		"alcaeus/mongo-php-adapter" : "^1.1",
+		"doctrine/doctrine-bundle" : "~1.4",
+		"doctrine/mongodb-odm-bundle" : "^3.4",
+		"doctrine/orm" : "^2.4.8",
+		"twig/twig" : "^2.5"
 	},
 	"autoload" : {
 		"psr-4" : {
@@ -49,14 +62,20 @@
 		}
 	},
 	"prefer-stable" : true,
-	"minimum-stability" : "dev",
 	"extra" : {
 		"branch-alias" : {
-			"dev-master" : "1.x.x-dev"
+			"dev-master" : "3.0.x-dev"
+		},
+		"symfony" : {
+			"allow-contrib" : "true"
 		}
 	},
 	"support" : {
 		"docs" : "https://github.com/CedrickOka/oka-file/blob/master/src/Resources/doc/index.md"
+	},
+	"config": {
+		"platform": {
+			"ext-mongo": "1.6.16"
+		}
 	}
 }
-

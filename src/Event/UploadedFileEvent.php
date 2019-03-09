@@ -37,15 +37,6 @@ class UploadedFileEvent extends Event
 	}
 	
 	/**
-	 * @deprecated Use instead UploadedFileEvent::getObject().
-	 * @return \Oka\FileBundle\Model\FileInterface
-	 */
-	public function getEntity()
-	{
-		return $this->getObject();
-	}
-	
-	/**
 	 * @return \Symfony\Component\HttpFoundation\File\UploadedFile
 	 */
 	public function getUploadedFile()

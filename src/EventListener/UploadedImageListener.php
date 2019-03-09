@@ -1,11 +1,11 @@
 <?php
 namespace Oka\FileBundle\EventListener;
 
+use Oka\FileBundle\OkaFileEvents;
 use Oka\FileBundle\Event\UploadedFileEvent;
 use Oka\FileBundle\Model\ImageInterface;
 use Oka\FileBundle\Model\ImageManipulatorInterface;
-use Oka\FileBundle\OkaFileEvents;
-use Oka\FileBundle\Service\UploadedImageManager;
+use Oka\FileBundle\Service\ContainerParameterBag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -16,28 +16,48 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class UploadedImageListener implements EventSubscriberInterface
 {
 	/**
-	 * @var UploadedImageManager $uploadedImageManager
+	 * @var ImageManipulatorInterface $imageManipulator
 	 */
-	protected $uploadedImageManager;
+	protected $imageManipulator;
 	
 	/**
-	 * @var array $detectDominantColor
+	 * @var ContainerParameterBag $containerBag
 	 */
-	protected $detectDominantColor;
+	protected $containerBag;
 	
-	public function __construct(UploadedImageManager $uploadedImageManager, array $detectDominantColor)
+	/**
+	 * @var array $dominantColor
+	 */
+	protected $dominantColor;
+	
+	/**
+	 * @var array $thumbnailFactory
+	 */
+	protected $thumbnailFactory;
+	
+	public function __construct(ImageManipulatorInterface $imageManipulator, ContainerParameterBag $containerBag, array $dominantColor, array $thumbnailFactory = [])
 	{
-		$this->uploadedImageManager = $uploadedImageManager;
-		$this->detectDominantColor = $detectDominantColor;
+		$this->imageManipulator = $imageManipulator;
+		$this->containerBag = $containerBag;
+		$this->dominantColor = $dominantColor;
+		$this->thumbnailFactory = $thumbnailFactory;
 	}
 	
 	public function onUploadedFileMoving(UploadedFileEvent $event)
 	{
 		$object = $event->getObject();
 		
-		if ($object instanceof ImageInterface && true === $this->detectDominantColor['enabled']) {
-			$realPath = $event->getUploadedFile()->getRealPath();
-			$object->setDominantColor($this->uploadedImageManager->findImageDominantColor($realPath, $this->detectDominantColor['method'], $this->detectDominantColor['options']));
+		if ($object instanceof ImageInterface) {
+			$uploadedFile = $event->getUploadedFile();
+			$container = $this->containerBag->get($object, ['dominant_color' => $this->dominantColor]);
+			
+			if (true === $container['dominant_color']['enabled']) {
+				$object->setDominantColor($this->imageManipulator->getDominantColor($object, $container['dominant_color']['method'], $container['dominant_color']['options']));
+			}
+			
+			list($width, $height) = getimagesize($uploadedFile->getRealPath());
+			$object->setHeight($height);
+			$object->setWidth($width);
 		}
 	}
 	
@@ -45,8 +65,16 @@ class UploadedImageListener implements EventSubscriberInterface
 	{
 		$object = $event->getObject();
 		
-		if ($object instanceof ImageManipulatorInterface) {
-			$this->uploadedImageManager->buildThumbnails($object);
+		if ($object instanceof ImageInterface) {
+			$container = $this->containerBag->get($object, ['thumbnail_factory' => $this->thumbnailFactory]);
+			
+			if (true === empty($container['thumbnail_factory'])) {
+				return;
+			}
+			
+			foreach ($container['thumbnail_factory'] as $value) {
+				$this->imageManipulator->thumbnail($object, $value['width'], $value['height'], $value['method'], $value['quality']);
+			}
 		}
 	}
 	
@@ -54,7 +82,7 @@ class UploadedImageListener implements EventSubscriberInterface
 	{
 		return [
 				OkaFileEvents::UPLOADED_FILE_MOVING => 'onUploadedFileMoving',
-				OkaFileEvents::UPLOADED_FILE_MOVED => ['onUploadedFileMoved', 5]
+				OkaFileEvents::UPLOADED_FILE_MOVED => 'onUploadedFileMoved'
 		];
 	}
 }

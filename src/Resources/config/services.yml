@@ -1,45 +1,13 @@
 services:
-# Factory
-    oka_file.object_manager:
-        class: Doctrine\Common\Persistence\ObjectManager
-        arguments: [ '%oka_file.model_manager_name%' ]
-        public: false
+#    Oka\FileBundle\Command\:
+#        resource: '../../Command/*'
+#        tags: ['console.command']
 
-# Form
-    oka_file.upload_file.form_type:
-        class: Oka\FileBundle\Form\Type\UploadFileFormType
-        arguments: [ '' ]
-        tags:
-          - { name: form.type }
-
-    oka_file.image.form_type:
-        class: Oka\FileBundle\Form\Type\ImageFormType
-        arguments: [ '%oka_file.image.default_class%' ]
-        tags:
-          - { name: form.type }
-
-#    oka_file.video.form_type:
-#        class: Oka\FileBundle\Form\Type\VideoFormType
-#        arguments: [ '%oka_file.video.default_class%' ]
-#        tags:
-#          - { name: form.type }
-
-# Services
-    oka_file.uploaded_image.manager:
-        class: Oka\FileBundle\Service\UploadedImageManager
-        arguments: [ '%oka_file.image.uploaded.thumbnail_factory%', '%oka_file.image.thumbnail.mode%', '%oka_file.image.thumbnail.quality%' ]
-
-# Listener
-    oka_file.uploaded_image.event_listener:
-        class: Oka\FileBundle\EventListener\UploadedImageListener
-        arguments: [ '@oka_file.uploaded_image.manager', '%oka_file.image.uploaded.detect_dominant_color%' ]
-        tags:
-          - { name: kernel.event_subscriber }
-
-# Routing
-    oka_file.file_uri.routing_loader:
-        class: Oka\FileBundle\Routing\FileUriLoader
-        arguments: [ [], '%kernel.environment%', '%oka_file.image.thumbnail.mode%', '%oka_file.image.thumbnail.quality%' ]
-        public: false
-        tags:
-          - { name: routing.loader }
+#    Oka\FileBundle\Command\ConfigureContainerCommand:
+#        arguments: ['%oka_file.storage.root_path%', '%oka_file.container.data_dirnames%']
+#
+#    Oka\FileBundle\Command\ImageDominantColorCommand:
+#        arguments: ['@oka_file.image_manager', '@oka_file.uploaded_image.manager', '%oka_file.image.uploaded.detect_dominant_color%']
+#
+#    Oka\FileBundle\Command\UpgradeImageCommand:
+#        arguments: ['@oka_file.image_manager', '@oka_file.uploaded_image.manager', '%oka_file.image.uploaded.detect_dominant_color%']

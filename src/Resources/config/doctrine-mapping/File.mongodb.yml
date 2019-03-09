@@ -6,16 +6,18 @@ Oka\FileBundle\Model\File:
         mimeType:
             name: mime_type
             type: string
+            nullable: true
         extension:
             type: string
             nullable: true
         size:
             type: int
-            options:
-                unsigned: true
         createdAt:
             name: created_at
             type: date
         updatedAt:
             name: updated_at
             type: date
+#    lifecycleCallbacks:
+#        prePersist: ['setLastModified']
+#        preUpdate: ['setLastModified']

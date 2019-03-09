@@ -27,9 +27,8 @@ class PictureCoverizableListener extends AbstractListener
 			if ($this->getClassAnalyzer()->hasProperty($reflClass, 'pictureCover')) {
 				if ($this->getClassAnalyzer()->hasMethod($reflClass, 'getPictureCover') && $this->getClassAnalyzer()->hasMethod($reflClass, 'setPictureCover')) {
 					$map = $this->handleDocumentMapping($reflClass->getName(), [
-							'name' 				=> 'picture_cover',
-							'fieldName' 		=> 'pictureCover',
-							'targetDocument' 	=> $this->defaultTargetObject
+							'name' 		=> 'picture_cover',
+							'fieldName' => 'pictureCover'
 					]);
 					
 					if (isset($this->mappings[$reflClass->getName()]['embedded']) && true === $this->mappings[$reflClass->getName()]['embedded']) {

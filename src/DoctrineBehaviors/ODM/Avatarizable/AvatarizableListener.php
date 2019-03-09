@@ -2,8 +2,8 @@
 namespace Oka\FileBundle\DoctrineBehaviors\ODM\Avatarizable;
 
 use Doctrine\ODM\MongoDB\Events;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Oka\FileBundle\DoctrineBehaviors\ODM\AbstractListener;
 
@@ -28,9 +28,8 @@ class AvatarizableListener extends AbstractListener
 			if ($this->getClassAnalyzer()->hasProperty($reflClass, 'avatar')) {
 				if ($this->getClassAnalyzer()->hasMethod($reflClass, 'getAvatar') && $this->getClassAnalyzer()->hasMethod($reflClass, 'setAvatar')) {
 					$map = $this->handleDocumentMapping($reflClass->getName(), [
-							'name' 				=> 'avatar',
-							'fieldName' 		=> 'avatar',
-							'targetDocument' 	=> $this->defaultTargetObject
+							'name' 		=> 'avatar',
+							'fieldName' => 'avatar'
 					]);
 					
 					if (isset($this->mappings[$reflClass->getName()]['embedded']) && true === $this->mappings[$reflClass->getName()]['embedded']) {
@@ -74,7 +73,7 @@ class AvatarizableListener extends AbstractListener
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \Oka\FileBundle\DoctrineBehaviors\AbstractListener::isEntitySupported()
+	 * @see \Oka\FileBundle\DoctrineBehaviors\Common\AbstractListener::isEntitySupported()
 	 */
 	protected function isEntitySupported(\ReflectionClass $reflClass)
 	{

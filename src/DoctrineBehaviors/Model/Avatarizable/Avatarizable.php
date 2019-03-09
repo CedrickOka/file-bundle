@@ -25,7 +25,7 @@ trait Avatarizable
 	 */
 	public function hasAvatar()
 	{
-		return $this->avatar !== null;
+		return null !== $this->avatar;
 	}
 	
 	/**
@@ -53,18 +53,6 @@ trait Avatarizable
 	{
 		$this->avatar = null;
 		return $this;
-	}
-	
-	/**
-	 * @param integer $width
-	 * @param integer $height
-	 * @param string $mode
-	 * @param integer $quality
-	 * @return string
-	 */
-	public function getAvatarUriFor($width = null, $height = null, $mode = null, $quality = null)
-	{
-		return $this->avatar !== null ? $this->avatar->getUriFor($width, $height, $mode, $quality) : $this->defaultUri;
 	}
 	
 	/**

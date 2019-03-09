@@ -27,18 +27,12 @@ abstract class AbstractListener implements EventSubscriber
 	protected $mappings;
 	
 	/**
-	 * @var string $defaultTargetObject
-	 */
-	protected $defaultTargetObject;
-	
-	/**
 	 * @param array $mappings
 	 * @param string $defaultClass
 	 */
-	public function __construct(array $mappings, $defaultClass)
+	public function __construct(array $mappings)
 	{
 		$this->mappings = $mappings;
-		$this->defaultTargetObject = $defaultClass;
 	}
 	
 	/**

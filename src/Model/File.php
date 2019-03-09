@@ -1,15 +1,12 @@
 <?php
 namespace Oka\FileBundle\Model;
 
-use Oka\FileBundle\Utils\FileUtil;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * 
+ *
  * @author  Cedrick Oka Baidai <okacedrick@gmail.com>
- * 
+ *
  */
 abstract class File implements FileInterface
 {
@@ -34,7 +31,7 @@ abstract class File implements FileInterface
 	protected $extension;
 	
 	/**
-	 * @var integer $size
+	 * @var int $size
 	 */
 	protected $size;
 	
@@ -49,32 +46,7 @@ abstract class File implements FileInterface
 	protected $updatedAt;
 	
 	/**
-	 * @var string $rootPath
-	 */
-	protected $rootPath;
-	
-	/**
-	 * @var string $dirname
-	 */
-	protected $dirname;
-	
-	/**
-	 * @var string $host
-	 */
-	protected $host;
-	
-	/**
-	 * @var integer $port
-	 */
-	protected $port;
-	
-	/**
-	 * @var boolean $secure
-	 */
-	protected $secure;
-	
-	/**
-	 * @Assert\File()
+	 * @AssertFile()
 	 * @var UploadedFile $uploadedFile
 	 */
 	protected $uploadedFile;
@@ -94,6 +66,7 @@ abstract class File implements FileInterface
 	
 	/**
 	 * @param mixed $id
+	 * @return \Oka\FileBundle\Model\File
 	 */
 	public function setId($id)
 	{
@@ -111,6 +84,7 @@ abstract class File implements FileInterface
 	
 	/**
 	 * @param string $name
+	 * @return \Oka\FileBundle\Model\File
 	 */
 	public function setName($name)
 	{
@@ -145,6 +119,7 @@ abstract class File implements FileInterface
 	
 	/**
 	 * @param string $extension
+	 * @return \Oka\FileBundle\Model\File
 	 */
 	public function setExtension($extension)
 	{
@@ -153,7 +128,7 @@ abstract class File implements FileInterface
 	}
 	
 	/**
-	 * @return integer
+	 * @return int
 	 */
 	public function getSize()
 	{
@@ -161,7 +136,7 @@ abstract class File implements FileInterface
 	}
 	
 	/**
-	 * @param integer $size
+	 * @param int $size
 	 */
 	public function setSize($size)
 	{
@@ -179,6 +154,7 @@ abstract class File implements FileInterface
 	
 	/**
 	 * @param \DateTime $createdAt
+	 * @return \Oka\FileBundle\Model\File
 	 */
 	public function setCreatedAt(\DateTime $createdAt = null)
 	{
@@ -195,38 +171,13 @@ abstract class File implements FileInterface
 	}
 	
 	/**
-	 * @param \DateTime $createdAt
+	 * @param \DateTime $updatedAt
+	 * @return \Oka\FileBundle\Model\File
 	 */
 	public function setUpdatedAt(\DateTime $updatedAt = null)
 	{
 		$this->updatedAt = $updatedAt ?: new \DateTime();
 		return $this;
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getFilename()
-	{
-		return $this->id . ($this->extension ? '.' . $this->extension : '');
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \Oka\FileBundle\Model\FileInterface::getPath()
-	 */
-	public function getPath()
-	{
-		return $this->rootPath . ($this->dirname ? '/' . $this->dirname : '');
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \Oka\FileBundle\Model\FileInterface::getRealPath()
-	 */
-	public function getRealPath()
-	{
-		return $this->getPath() . '/' . $this->getFilename();
 	}
 	
 	/**
@@ -242,102 +193,30 @@ abstract class File implements FileInterface
 	 * {@inheritDoc}
 	 * @see \Oka\FileBundle\Model\FileInterface::setLastModified()
 	 */
-	public function setLastModified() 
+	public function setLastModified()
 	{
+		$now = new \DateTime();
+		
 		if (null === $this->createdAt) {
-			$this->setCreatedAt();
+			$this->createdAt = $now;
 		}
 		
-		return $this->setUpdatedAt();
+		$this->updatedAt = $now;
+		return $this;
 	}
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \Oka\FileBundle\Model\FileInterface::getVersion()
-	 */
-	public function getVersion()
-	{
-		return $this->updatedAt instanceof \DateTime ? $this->updatedAt->getTimestamp() : null;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \Oka\FileBundle\Model\FileInterface::getUri()
-	 */
-	public function getUri()
-	{
-		return sprintf(
-				'%s://%s/%s%s',
-				$this->secure === true ? 'https' : 'http',
-				$this->host . ($this->port === null ? '' : ':' . $this->port),
-				$this->dirname ? $this->dirname . '/' . $this->getFilename() : $this->getFilename(),
-				$this->createQueryStringForURI()
-		);
-	}
-	
-	/**
-	 * @param string $rootPath
-	 */
-	public function setRootPath($rootPath)
-	{
-		$this->rootPath = $rootPath;
-		return $this;
-	}
-	
-	/**
-	 * @param string $dirname
-	 */
-	public function setDirname($dirname)
-	{
-		$this->dirname = $dirname;
-		return $this;
-	}
-	
-	/**
-	 * @param string $host
-	 */
-	public function setHost($host)
-	{
-		$this->host = $host;
-		return $this;
-	}
-	
-	/**
-	 * @param integer $port
-	 */
-	public function setPort($port)
-	{
-		$this->port = $port;
-		return $this;
-	}
-	
-	/**
-	 * @return boolean
-	 */
-	public function isSecure()
-	{
-		return $this->secure;
-	}
-	
-	/**
-	 * @param boolean $secure
-	 */
-	public function setSecure($secure)
-	{
-		$this->secure = $secure;
-		return $this;
-	}
-	
-	/**
-	 * @return boolean
+	 * @see \Oka\FileBundle\Model\FileInterface::hasUploadedFile()
 	 */
 	public function hasUploadedFile()
 	{
-		return null !== $this->uploadedFile;
+		return $this->uploadedFile instanceof UploadedFile;
 	}
 	
 	/**
-	 * @return UploadedFile
+	 * {@inheritDoc}
+	 * @see \Oka\FileBundle\Model\FileInterface::getUploadedFile()
 	 */
 	public function getUploadedFile()
 	{
@@ -345,7 +224,8 @@ abstract class File implements FileInterface
 	}
 	
 	/**
-	 * @param UploadedFile $uploadedFile
+	 * {@inheritDoc}
+	 * @see \Oka\FileBundle\Model\FileInterface::setUploadedFile()
 	 */
 	public function setUploadedFile(UploadedFile $uploadedFile = null)
 	{
@@ -353,7 +233,7 @@ abstract class File implements FileInterface
 		
 		if (null !== $this->uploadedFile) {
 			if (null === ($this->extension = $this->uploadedFile->guessExtension())) {
-				$this->extension = $this->uploadedFile->getExtension() ?: '';
+				$this->extension = $this->uploadedFile->getExtension();
 			}
 			
 			if (null === $this->name) {
@@ -363,87 +243,39 @@ abstract class File implements FileInterface
 			$this->mimeType = $this->uploadedFile->getMimeType();
 			$this->size = $this->uploadedFile->getSize();
 		}
-		
 		return $this;
 	}
 	
 	/**
-	 * @return array
+	 * {@inheritDoc}
+	 * @see \Oka\FileBundle\Model\FileInterface::getFilename()
 	 */
-	public function getRealPaths()
+	public function getFilename()
 	{
-		$files = [];
-		$finder = new Finder();
-		$finder->files()->in($this->getPath())->name($this->getFileName());
-		
-		/** @var \Symfony\Component\Finder\SplFileInfo $file */
-		foreach ($finder as $file) {
-			$files[] = $file->getRealPath();
-		}
-		
-		return $files;
+		return sprintf('%s.%s', $this->id, $this->extension ? '.' . $this->extension : '');
 	}
 	
-	public function exists($path = null)
+	/**
+	 * {@inheritDoc}
+	 * @see \Oka\FileBundle\Model\FileInterface::getVersion()
+	 */
+	public function getVersion()
 	{
-		return FileUtil::getFs()->exists($path ?: $this->getRealPath());
+		return $this->updatedAt instanceof \DateTime ? $this->updatedAt->getTimestamp() : 0;
 	}
 	
-	public function mkdir($dirs, $mode = 0755, $owner = null, $group = null, $recursive = true)
+	public static function createFromUploadedFile(UploadedFile $file)
 	{
-		$fs = FileUtil::getFs();
-		$systemOwner = FileUtil::getSystemOwner();
+		$image = new self();
+		$image->setUploadedFile($file);
 		
-		$fs->mkdir($dirs, $mode);
-		$fs->chown($dirs, $owner ?: $systemOwner, $recursive);
-		$fs->chgrp($dirs, $group ?: $systemOwner, $recursive);
+		return $image;
 	}
 	
-	public function moveFile()
+	public static function createFromPath($path, $originalName)
 	{
-		if (null === $this->uploadedFile) {
-			return;
-		}
+		$file = new UploadedFile($path, $originalName, finfo_file(finfo_open(FILEINFO_MIME_TYPE), $path), filesize($path), UPLOAD_ERR_OK, true);
 		
-		if (false === FileUtil::getFs()->exists($this->getPath())) {
-			$this->mkdir($this->getPath());
-		}
-		
-		if (null !== $this->createdAt) {
-			$this->removeFile();
-		}
-		
-		$uploadedFile = $this->uploadedFile;
-		$this->uploadedFile->move($this->getPath(), $this->getFilename());
-		$this->setUploadedFile(null);
-		
-		return $uploadedFile;
-	}
-	
-	public function removeFile()
-	{
-		$paths = $this->getRealPaths();
-		
-		if (true === is_array($paths) && false === empty($paths)) {
-			FileUtil::getFs()->remove($paths);
-		}
-	}
-	
-	protected function createQueryStringForURI(array $params = [])
-	{
-		$query = '';
-		
-		if ($this->updatedAt instanceof \DateTime) {
-			$params = array_merge(['v' => $this->updatedAt->getTimestamp()], $params);
-		}
-		
-		if (!empty($params)) {
-			foreach ($params as $key => $value) {
-				$params[$key] = $key . '=' . $value;
-			}
-			$query = '?' . implode('&', $params);
-		}
-		
-		return $query;
+		return self::createFromUploadedFile($file);
 	}
 }

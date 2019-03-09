@@ -2,6 +2,7 @@
 namespace Oka\FileBundle\DoctrineBehaviors\ODM;
 
 use Oka\FileBundle\DoctrineBehaviors\Common\AbstractListener as BaseAbstractListener;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
  * 
@@ -17,9 +18,11 @@ abstract class AbstractListener extends BaseAbstractListener
 	 */
 	protected function handleDocumentMapping($class, $mapping)
 	{
-		if (true === isset($this->mappings[$class])) {
-			$mapping['targetDocument'] = isset($this->mappings[$class]['target_object']) ? $this->mappings[$class]['target_object'] : $this->defaultTargetObject;
+		if (false === isset($this->mappings[$class])) {
+			throw new InvalidConfigurationException(sprintf('No mapping is defined for the "%s" class to use the behavior.', $class));
 		}
+		
+		$mapping['targetDocument'] = $this->mappings[$class]['target_object'];
 		
 		return $mapping;
 	}

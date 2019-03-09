@@ -9,53 +9,51 @@ namespace Oka\FileBundle\Model;
 interface ImageInterface
 {
 	/**
-	 * @return integer
+	 * Get the image width
+	 * 
+	 * @return int
 	 */
 	public function getWidth();
 	
 	/**
-	 * @param integer $width
+	 * Set the image width
+	 * 
+	 * @param int $width
 	 */
 	public function setWidth($width);
 	
 	/**
-	 * @return integer
+	 * Get the image height
+	 * 
+	 * @return int
 	 */
 	public function getHeight();
 	
 	/**
-	 * @param integer $height
+	 * Set the image height
+	 * 
+	 * @param int $height
 	 */
 	public function setHeight($height);
 	
 	/**
+	 * Get the dominant color in RGB format
+	 * 
 	 * @return string
 	 */
 	public function getDominantColor();
 	
 	/**
-	 * @return string
-	 */
-	public function getPlaceholder();
-	
-	/**
+	 * Set the dominant color in RGB format
+	 * 
 	 * @param string $colorRGB
 	 */
 	public function setDominantColor($colorRGB);
 	
-	public function setThumbnailMode($thumbnailMode);
-	
-	public function setThumbnailQuality($thumbnailQuality);
-	
-	public static function createDirnameWith($mode, $quality, $width = null, $height = null);
-	
-	public function getUriFor($width = null, $height = null, $mode = null, $quality = null);
-	
-	public function getPathFor($width = null, $height = null, $mode = null, $quality = null);
-	
-	public function getRealPathFor($width = null, $height = null, $mode = null, $quality = null);
-	
-	public function getRealPathsFor($width = null, $height = null, $mode = null, $quality = null);
-	
-	public function removeFileFor($width = null, $height = null, $mode = null, $quality = null);
+	/**
+	 * Get the dominant color image placeholder
+	 * 
+	 * @return string
+	 */
+	public function getPlaceholder();
 }

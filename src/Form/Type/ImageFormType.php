@@ -10,6 +10,6 @@ class ImageFormType extends FileFormType
 {
 	public function getBlockPrefix()
 	{
-		return 'oka_file_image_type';
+		return 'oka_file_image';
 	}
 }

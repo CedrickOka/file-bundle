@@ -96,7 +96,6 @@ class NativeFileStorageHandler implements FileStorageHandlerInterface
 				if (false === is_dir($filename)) {
 					unlink($filename);
 				} else {
-// 					$this->clear();
 					rmdir($filename);
 				}
 			}

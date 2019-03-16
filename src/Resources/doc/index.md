@@ -121,7 +121,7 @@ use Oka\FileBundle\Model\Image as BaseImage;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(name="oka_image")
  */
 class Image extends BaseImage
@@ -139,6 +139,8 @@ class Image extends BaseImage
         
         // your own logic
     }
+
+    // ...
 }
 ```
 
@@ -149,13 +151,12 @@ If you use yml to configure Doctrine you must add two files. The Entity and the 
 ```php
 <?php
 // src/Acme/FileBundle/Entity/User.php
-namespace Acme\FileBundle\Entity;
 
-use Oka\FileBundle\Model\Image as BaseImage;
+namespace Acme\FileBundle\Entity
 
-/**
- * Image
- */
+use Oka\FileBundle\Model\Image as BaseImage
+
+// ...
 class Image extends BaseImage
 {
 	public function __construct()
@@ -164,6 +165,8 @@ class Image extends BaseImage
 		
 		// your own logic
 	}
+
+    // ...
 }
 ```
 
@@ -186,8 +189,6 @@ Add the following configuration to your `config.yml`.
 
 ``` yaml
 # app/config/config.yml
-
-
 oka_file:
     db_driver: orm
     model_manager_name: ~

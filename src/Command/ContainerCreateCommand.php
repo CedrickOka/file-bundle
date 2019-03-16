@@ -29,6 +29,8 @@ class ContainerCreateCommand extends Command
 	
 	public function __construct(ContainerParameterBag $containerBag, FileStorageHandlerInterface $fileStorageHandler)
 	{
+		parent::__construct();
+		
 		$this->containerBag = $containerBag;
 		$this->fileStorageHandler = $fileStorageHandler;
 	}

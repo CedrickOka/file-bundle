@@ -18,6 +18,10 @@ services:
         public: true
         alias: oka_file.storage.image_manipulator
 
+    Oka\FileBundle\Model\FileStorageHandlerInterface:
+        public: false
+        alias: oka_file.storage_handler
+
     Oka\FileBundle\EventListener\UploadedImageListener:
         arguments: ['@oka_file.storage.image_manipulator', '@oka_file.container_parameter_bag', '%oka_file.storage.image.dominant_color%', '%oka_file.storage.image.thumbnail_factory%']
         tags:

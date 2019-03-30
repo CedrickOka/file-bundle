@@ -1,7 +1,7 @@
 <?php
 namespace Oka\FileBundle\DependencyInjection;
 
-use Oka\FileBundle\Doctrine\FileListener;
+use Oka\FileBundle\EventListener\FileListener;
 use Oka\FileBundle\Model\FileStorageHandlerInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -75,7 +75,6 @@ class OkaFileExtension extends Extension
 		}
 		
 		$container->setAlias('oka_file.storage_handler', new Alias($handlerId, true));
-		
 		$imageManipulator = $container->findDefinition('oka_file.storage.image_manipulator');
 		$imageManipulator->replaceArgument(0, new Reference('oka_file.storage_handler'));
 	}

@@ -1,6 +1,14 @@
 Changelog
 =========
 
+#### 3.0.2 (2019-03-30)
+
+* Fixed autowire bug.
+
+#### 3.0.1 (2019-03-16)
+
+* Fixed command not correctly initialized bug.
+
 #### 3.0.0 (2019-03-09)
 
 * [BC Break] New released 3.0.0 with new configuration and new system.

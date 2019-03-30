@@ -1,5 +1,5 @@
 <?php
-namespace Oka\FileBundle\Doctrine;
+namespace Oka\FileBundle\EventListener;
 
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;

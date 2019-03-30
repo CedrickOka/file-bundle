@@ -6,9 +6,3 @@ services:
     Oka\FileBundle\Command\ContainerCreateCommand:
         arguments: ['@oka_file.container_parameter_bag', '@oka_file.storage_handler']
         tags: ['console.command']
-
-#    Oka\FileBundle\Command\ImageDominantColorCommand:
-#        arguments: ['@oka_file.image_manager', '@oka_file.uploaded_image.manager', '%oka_file.image.uploaded.detect_dominant_color%']
-#
-#    Oka\FileBundle\Command\UpgradeImageCommand:
-#        arguments: ['@oka_file.image_manager', '@oka_file.uploaded_image.manager', '%oka_file.image.uploaded.detect_dominant_color%']

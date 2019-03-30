@@ -5,5 +5,5 @@ services:
         class: Doctrine\Common\Persistence\ObjectManager
 
 # Listener
-    Oka\FileBundle\Doctrine\FileListener:
+    Oka\FileBundle\EventListener\FileListener:
         arguments: ['@oka_file.storage_handler', '@event_dispatcher']

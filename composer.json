@@ -2,7 +2,7 @@
 	"name" : "coka/file-bundle",
 	"type" : "symfony-bundle",
 	"description" : "Symfony Oka file bundle",
-	"homepage" : "https://github.com/CedrickOka/oka-file",
+	"homepage" : "https://github.com/CedrickOka/file-bundle",
 	"license" : "MIT",
 	"keywords" : [
 		"file",
@@ -31,13 +31,13 @@
 		"symfony/form" : "^3.4 || ^4.0",
 		"symfony/translation" : "^3.4 || ^4.0",
 		"symfony/validator" : "^3.4 || ^4.0",
-		"ksubileau/color-thief-php": "^1.4"
+		"ksubileau/color-thief-php" : "^1.4"
 	},
 	"require-dev" : {
 		"symfony/phpunit-bridge" : "^4.2",
-		"symfony/orm-pack": "^1.0",
-		"alcaeus/mongo-php-adapter": "^1.1",
-		"doctrine/mongodb-odm-bundle": "^3.5"
+		"symfony/orm-pack" : "^1.0",
+		"alcaeus/mongo-php-adapter" : "^1.1",
+		"doctrine/mongodb-odm-bundle" : "^3.5"
 	},
 	"suggest" : {
 		"ext-gd" : ">=2.2.0",
@@ -72,11 +72,11 @@
 		}
 	},
 	"support" : {
-		"docs" : "https://github.com/CedrickOka/oka-file/blob/master/src/Resources/doc/index.md"
+		"docs" : "https://github.com/CedrickOka/file-bundle/blob/master/src/Resources/doc/index.md"
 	},
-	"config": {
-		"platform": {
-			"ext-mongo": "1.6.16"
+	"config" : {
+		"platform" : {
+			"ext-mongo" : "1.6.16"
 		}
 	}
 }
